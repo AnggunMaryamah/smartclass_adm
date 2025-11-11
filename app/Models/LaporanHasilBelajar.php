@@ -12,9 +12,14 @@ class LaporanHasilBelajar extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
+    
     protected $fillable = [
-        'siswa_id', 'mata_pelajaran', 'nilai', 'kehadiran',
-        'catatan', 'status_laporan'
+        'siswa_id', 
+        'mata_pelajaran', 
+        'nilai', 
+        'kehadiran',
+        'catatan', 
+        'status_laporan'
     ];
 
     protected static function boot()
@@ -27,9 +32,9 @@ class LaporanHasilBelajar extends Model
         });
     }
 
+    // Relasi dengan Siswa
     public function siswa()
     {
         return $this->belongsTo(Siswa::class);
     }
 }
-
