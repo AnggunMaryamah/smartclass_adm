@@ -222,6 +222,36 @@
         <div class="logout-section">
             <a href="#" class="logout-btn">Logout</a>
         </div>
+    <h2>SmartClass</h2>
+    
+    <!-- Dashboard - PAKAI ROUTE -->
+    <a href="{{ route('admin.dashboard') }}" 
+       style="{{ request()->routeIs('admin.dashboard') ? 'background-color: #1A3E78;' : '' }}">
+        🏠 Dashboard
+    </a>
+    
+    <!-- Users - PAKAI ROUTE -->
+    <a href="{{ route('admin.users') }}" 
+       style="{{ request()->routeIs('admin.users*') ? 'background-color: #1A3E78;' : '' }}">
+        👥 Users
+    </a>
+    
+    <!-- Data Kelas - BELUM ADA ROUTE (nanti dibuat) -->
+    <a href="#">🏫 Data Kelas</a>
+    
+    <!-- Laporan - BELUM ADA ROUTE (nanti dibuat) -->
+    <a href="#">📊 Laporan</a>
+    
+    <!-- Pembayaran - BELUM ADA ROUTE (nanti dibuat) -->
+   <a href="{{ route('admin.payments.index') }}" 
+   style="{{ request()->routeIs('admin.payments*') ? 'background-color: #1A3E78;' : '' }}">
+    💳 Pembayaran
+</a>
+    <!-- Settings - BELUM ADA ROUTE (nanti dibuat) -->
+    <a href="#">⚙️ Settings</a>
+    
+    <div class="logout-section">
+        <a href="#" class="logout-btn">Logout</a>
     </div>
 
 
