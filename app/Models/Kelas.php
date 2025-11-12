@@ -34,14 +34,21 @@ class Kelas extends Model
         });
     }
 
+    // Relasi dengan Guru
     public function guru()
     {
         return $this->belongsTo(Guru::class);
     }
 
+    // Relasi dengan Pemesanan
     public function pemesanans()
     {
         return $this->hasMany(Pemesanan::class);
     }
-}
 
+    // Relasi dengan Siswa melalui Pemesanan
+    public function siswa()
+    {
+        return $this->hasManyThrough(Siswa::class, Pemesanan::class, 'kelas_id', 'id', 'id', 'siswa_id');
+    }
+}
