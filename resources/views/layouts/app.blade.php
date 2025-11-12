@@ -176,8 +176,10 @@
     <a href="#">📊 Laporan</a>
     
     <!-- Pembayaran - BELUM ADA ROUTE (nanti dibuat) -->
-    <a href="#">💳 Pembayaran</a>
-    
+   <a href="{{ route('admin.payments.index') }}" 
+   style="{{ request()->routeIs('admin.payments*') ? 'background-color: #1A3E78;' : '' }}">
+    💳 Pembayaran
+</a>
     <!-- Settings - BELUM ADA ROUTE (nanti dibuat) -->
     <a href="#">⚙️ Settings</a>
     

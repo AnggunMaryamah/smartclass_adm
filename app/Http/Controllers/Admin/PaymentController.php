@@ -1,15 +1,16 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Payment; // pastikan model ini ada
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
     public function index()
     {
-        $payments = Payment::all(); // ambil semua data pembayaran
+        $payments = Payment::all(); // pastikan model Payment sudah ada
         return view('admin.payments.index', compact('payments'));
     }
 
@@ -25,6 +26,6 @@ class PaymentController extends Controller
         $payment->status = 'verified';
         $payment->save();
 
-        return redirect()->route('admin.payments.index')->with('success', 'Pembayaran berhasil diverifikasi');
+        return redirect()->route('admin.payments')->with('success', 'Pembayaran berhasil diverifikasi!');
     }
 }

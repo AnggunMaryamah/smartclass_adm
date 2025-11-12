@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-      Schema::create('payments', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('user_id')->constrained()->onDelete('cascade');
-        $table->string('package_name');
-        $table->decimal('amount', 12, 2);
-        $table->string('status')->default('pending');
-        $table->string('proof')->nullable();
-        $table->timestamps();
+     Schema::create('payments', function (Blueprint $table) {
+    $table->id();
+    $table->string('payer_name');
+    $table->string('payer_email');
+    $table->string('package_name');
+    $table->integer('amount');
+    $table->enum('status', ['pending', 'verified', 'rejected'])->default('pending');
+    $table->timestamps();
     });
     }
 
