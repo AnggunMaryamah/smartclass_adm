@@ -155,22 +155,44 @@
 </head>
 <body>
     <div class="sidebar">
-        <h2>SmartClass</h2>
-        <a href="#">🏠 Dashboard</a>
-        <a href="#">👥 Users</a>
-        <a href="#">🏫 Data Kelas</a>
-        <a href="#">📊 Laporan</a>
-        <a href="#">💳 Pembayaran</a>
-        <a href="#">⚙️ Settings</a>
-        <div class="logout-section">
-            <a href="#" class="logout-btn">Logout</a>
-        </div>
+    <h2>SmartClass</h2>
+    
+    <!-- Dashboard - PAKAI ROUTE -->
+    <a href="{{ route('admin.dashboard') }}" 
+       style="{{ request()->routeIs('admin.dashboard') ? 'background-color: #1A3E78;' : '' }}">
+        🏠 Dashboard
+    </a>
+    
+    <!-- Users - PAKAI ROUTE -->
+    <a href="{{ route('admin.users') }}" 
+       style="{{ request()->routeIs('admin.users*') ? 'background-color: #1A3E78;' : '' }}">
+        👥 Users
+    </a>
+    
+    <!-- Data Kelas - BELUM ADA ROUTE (nanti dibuat) -->
+    <a href="#">🏫 Data Kelas</a>
+    
+    <!-- Laporan - BELUM ADA ROUTE (nanti dibuat) -->
+    <a href="#">📊 Laporan</a>
+    
+    <!-- Pembayaran - BELUM ADA ROUTE (nanti dibuat) -->
+   <a href="{{ route('admin.payments.index') }}" 
+   style="{{ request()->routeIs('admin.payments*') ? 'background-color: #1A3E78;' : '' }}">
+    💳 Pembayaran
+</a>
+    <!-- Settings - BELUM ADA ROUTE (nanti dibuat) -->
+    <a href="#">⚙️ Settings</a>
+    
+    <div class="logout-section">
+        <a href="#" class="logout-btn">Logout</a>
     </div>
+</div>
+
 
     <div class="main">
         <div class="header">
             <div class="header-left">
-                <h1>Dashboard</h1>
+                <h2>Dashoard Admin</h2>
             </div>
             <div class="header-right">
                 <p>Hello, Admin</p>

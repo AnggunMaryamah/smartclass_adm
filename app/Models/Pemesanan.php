@@ -12,9 +12,13 @@ class Pemesanan extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
+
     protected $fillable = [
-        'siswa_id', 'kelas_id', 'tanggal_pesan', 
-        'nominal_tagihan', 'status_pemesanan'
+        'siswa_id',
+        'kelas_id',
+        'tanggal_pesan',      // ← PENTING
+        'nominal_tagihan',    // ← PENTING
+        'status_pemesanan'
     ];
 
     protected static function boot()
@@ -42,4 +46,3 @@ class Pemesanan extends Model
         return $this->hasOne(Pembayaran::class);
     }
 }
-

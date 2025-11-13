@@ -12,9 +12,14 @@ class Pembayaran extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
+    
     protected $fillable = [
-        'pemesanan_id', 'tanggal_pembayaran', 'metode_pembayaran', 
-        'nominal_pembayaran', 'bukti_pembayaran', 'status_pembayaran'
+        'pemesanan_id', 
+        'tanggal_pembayaran', 
+        'metode_pembayaran', 
+        'nominal_pembayaran', 
+        'bukti_pembayaran', 
+        'status_pembayaran'
     ];
 
     protected static function boot()
@@ -27,9 +32,9 @@ class Pembayaran extends Model
         });
     }
 
+    // Relasi dengan Pemesanan
     public function pemesanan()
     {
         return $this->belongsTo(Pemesanan::class);
     }
 }
-
