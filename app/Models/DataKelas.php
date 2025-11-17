@@ -10,11 +10,15 @@ class DataKelas extends Model
     use HasFactory;
 
     protected $table = 'data_kelas'; // sesuaikan dengan nama tabel di database
-    protected $fillable = [
-        'nama_guru',
-        'nama_kelas',
-        'durasi_pengajaran',
-        'tahun_ajaran',
-        'status_guru',
-    ];
+protected $fillable = [
+    'nama_guru',
+    'nama_kelas',
+    'durasi_pengajaran',
+    'tahun_ajaran',
+    'status_guru',
+    'siswa_aktif',
+    'jenjang_pendidikan',
+    'kelas',
+];
+
 }

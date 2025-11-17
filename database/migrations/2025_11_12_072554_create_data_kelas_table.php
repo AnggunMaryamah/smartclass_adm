@@ -6,21 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
-    {
-        Schema::create('data_kelas', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_guru');
-            $table->string('nama_kelas');
-            $table->string('durasi_pengajaran');
-            $table->string('tahun_ajaran');
-            $table->string('status_guru');
-            $table->timestamps();
-        });
-    }
+public function up(): void
+{
+    Schema::create('data_kelas', function (Blueprint $table) {
+        $table->id();
+        $table->string('nama_guru');
+        $table->string('nama_kelas');
+        $table->string('durasi_pengajaran')->nullable();
+        $table->string('tahun_ajaran');
+        $table->string('status_guru')->default('Aktif');
+        $table->integer('siswa_aktif')->nullable();
+        $table->string('jenjang_pendidikan')->nullable();
+        $table->timestamps();
+    });
+}
 
-    public function down(): void
-    {
-        Schema::dropIfExists('data_kelas');
-    }
+public function down(): void
+{
+    Schema::dropIfExists('data_kelas');
+}
+
 };
