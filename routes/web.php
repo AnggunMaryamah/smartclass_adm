@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DataKelasController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\PembayaranController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,3 +25,10 @@ Route::patch('/admin/data-kelas/{id}/toggle', [DataKelasController::class, 'togg
 
 Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('admin.laporan');
 Route::get('/admin/laporan/export', [LaporanController::class, 'export'])->name('admin.laporan.export');
+# pembayaran manajemen
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayarans.index');
+    Route::post('/pembayaran', [PembayaranController::class, 'store'])->name('pembayarans.store');
+    Route::get('/pembayaran/{id}', [PembayaranController::class, 'show'])->name('pembayarans.show');
+    Route::delete('/pembayaran/{id}', [PembayaranController::class, 'destroy'])->name('pembayarans.destroy');
+});
