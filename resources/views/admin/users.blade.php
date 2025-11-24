@@ -4,8 +4,28 @@
 
 @section('content')
     <div class="container">
-        <div class="flex justify-between mb-4">
-            <h1 class="text-lg font-semibold">Daftar Pengguna</h1>
+        
+        <!-- TAMBAHAN 1: Success Message -->
+        @if(session('success'))
+            <div style="background: #D1FAE5; color: #065F46; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: 600;">
+                ✅ {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- TAMBAHAN 2: Header dengan Filter -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 style="font-size: 24px; font-weight: 700; color: #0B1D51;">Daftar Pengguna</h1>
+            
+            <!-- Filter Dropdown -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label style="font-size: 14px; color: #666; font-weight: 500;">Filter Role:</label>
+                <select id="filterRole" onchange="applyFilter()" style="padding: 10px 20px; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 14px; cursor: pointer; background: white; font-weight: 600;">
+                    <option value="semua" {{ ($filterRole ?? 'semua') == 'semua' ? 'selected' : '' }}>🌐 Semua</option>
+                    <option value="admin" {{ ($filterRole ?? '') == 'admin' ? 'selected' : '' }}>👤 Admin</option>
+                    <option value="guru" {{ ($filterRole ?? '') == 'guru' ? 'selected' : '' }}>👨‍🏫 Guru</option>
+                    <option value="siswa" {{ ($filterRole ?? '') == 'siswa' ? 'selected' : '' }}>👨‍🎓 Siswa</option>
+                </select>
+            </div>
         </div>
 
         <table class="table">
@@ -46,12 +66,28 @@
                                     <button type="submit" class="btn-nonaktif">Nonaktifkan</button>
                                 @endif
                             </form>
+
+                            <!-- TAMBAHAN 3: Button Hapus -->
+                            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" 
+                                  onsubmit="return confirm('Yakin ingin menghapus {{ $user->name }}?')" style="display:inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-hapus">Hapus</button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     </div>
+
+    <!-- TAMBAHAN 4: Script untuk Filter -->
+    <script>
+        function applyFilter() {
+            const role = document.getElementById('filterRole').value;
+            window.location.href = '{{ route("admin.users") }}?role=' + role;
+        }
+    </script>
 
     <style>
         .table {
@@ -135,6 +171,16 @@
 
         .btn-nonaktif:hover {
             background-color: #D97706;
+        }
+
+        /* TAMBAHAN 5: Style Button Hapus */
+        .btn-hapus {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        .btn-hapus:hover {
+            background-color: #DC2626;
         }
     </style>
 @endsection

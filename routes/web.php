@@ -5,6 +5,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DataKelasController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JenjangController;
+use App\Http\Controllers\SdController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,3 +27,18 @@ Route::patch('/admin/data-kelas/{id}/toggle', [DataKelasController::class, 'togg
 
 Route::get('/admin/laporan', [LaporanController::class, 'index'])->name('admin.laporan');
 Route::get('/admin/laporan/export', [LaporanController::class, 'export'])->name('admin.laporan.export');
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// test route (opsional) — untuk cek routing dasar
+Route::get('/jenjang/test-route', function () {
+    return 'OK ROUTE';
+});
+// Tambahkan route ini ke file routes/web.php Anda
+
+// Route Home
+Route::get('/', function () {
+    return view('home');
+})->name('home');
+
+Route::get('/sd', [SdController::class, 'index'])->name('sd.index');

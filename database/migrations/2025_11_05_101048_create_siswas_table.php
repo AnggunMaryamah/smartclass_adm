@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('email_orangtua', 50)->nullable();
             $table->enum('status_akun', ['Aktif', 'Nonaktif'])->default('Aktif');
             $table->timestamps();
+            
         });
     }
 
