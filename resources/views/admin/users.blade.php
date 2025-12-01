@@ -18,12 +18,12 @@
             
             <!-- Filter Dropdown -->
             <div style="display: flex; align-items: center; gap: 10px;">
-                <label style="font-size: 14px; color: #666; font-weight: 500;">Filter Role:</label>
+                <label style="font-size: 14px; color: #666; font-weight: 500;">Filter:</label>
                 <select id="filterRole" onchange="applyFilter()" style="padding: 10px 20px; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 14px; cursor: pointer; background: white; font-weight: 600;">
-                    <option value="semua" {{ ($filterRole ?? 'semua') == 'semua' ? 'selected' : '' }}>🌐 Semua</option>
-                    <option value="admin" {{ ($filterRole ?? '') == 'admin' ? 'selected' : '' }}>👤 Admin</option>
-                    <option value="guru" {{ ($filterRole ?? '') == 'guru' ? 'selected' : '' }}>👨‍🏫 Guru</option>
-                    <option value="siswa" {{ ($filterRole ?? '') == 'siswa' ? 'selected' : '' }}>👨‍🎓 Siswa</option>
+                    <option value="semua" {{ ($filterRole ?? 'semua') == 'semua' ? 'selected' : '' }}>Semua</option>
+                    <option value="admin" {{ ($filterRole ?? '') == 'admin' ? 'selected' : '' }}>Admin</option>
+                    <option value="guru" {{ ($filterRole ?? '') == 'guru' ? 'selected' : '' }}>Guru</option>
+                    <option value="siswa" {{ ($filterRole ?? '') == 'siswa' ? 'selected' : '' }}>Siswa</option>
                 </select>
             </div>
         </div>

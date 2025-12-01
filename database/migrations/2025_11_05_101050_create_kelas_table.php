@@ -9,19 +9,35 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kelas', function (Blueprint $table) {
-            $table->uuid('id')->primary(); // UUID sebagai primary key
-            $table->uuid('guru_id'); // relasi ke tabel guru
-            $table->string('nama_kelas');
+            $table->uuid('id')->primary();
+            $table->uuid('guru_id');
+            
+            $table->string('nama_kelas', 255);
             $table->text('deskripsi')->nullable();
-            $table->string('jenjang_pendidikan'); // SD, SMP, SMA, dst
-            $table->decimal('harga', 10, 2); // harga bisa punya angka desimal
-            $table->string('durasi'); // contoh: “1 bulan”, “1 semester”
-            $table->string('jadwal_kelas')->nullable(); // misal Senin & Rabu pukul 10.00
-            $table->text('materi_pembelajaran')->nullable(); // bisa berupa ringkasan materi
+            $table->enum('jenjang_pendidikan', ['SD', 'SMP', 'SMA'])->default('SD');
+            
+            $table->unsignedBigInteger('harga')->default(0);
+            
+            // UBAH INI - Tambahkan ->nullable()
+            $table->string('durasi', 100)->nullable();
+            
+            $table->json('jadwal_kelas')->nullable();
+            $table->text('materi_pembelajaran')->nullable();
+            $table->unsignedInteger('jumlah_siswa')->default(0);
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+            
             $table->timestamps();
-
-            // Foreign key ke tabel guru
-            $table->foreign('guru_id')->references('id')->on('gurus')->onDelete('cascade');
+            $table->softDeletes();
+            
+            $table->index('guru_id');
+            $table->index('jenjang_pendidikan');
+            $table->index('status');
+            
+            $table->foreign('guru_id')
+                  ->references('id')
+                  ->on('gurus')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
         });
     }
 
@@ -30,5 +46,3 @@ return new class extends Migration
         Schema::dropIfExists('kelas');
     }
 };
-
-

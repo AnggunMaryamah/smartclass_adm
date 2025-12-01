@@ -3,17 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
 
-class Guru extends Model
+class Guru extends Authenticatable
 {
     use HasFactory;
 
+    protected $table = 'gurus';
+    protected $primaryKey = 'id';
     protected $keyType = 'string';
     public $incrementing = false;
+
     protected $fillable = [
-        'admin_id', 'email', 'password', 'nama_lengkap', 
+        'admin_id', 'email', 'password', 'nama_lengkap',
         'jenis_kelamin', 'no_hp', 'mata_pelajaran', 'cv', 'status_akun'
     ];
 
@@ -40,5 +43,9 @@ class Guru extends Model
     public function tesKemampuans()
     {
         return $this->hasMany(TesKemampuan::class);
+    }
+    public function siswas()
+    {
+        return $this->hasMany(Siswa::class);
     }
 }

@@ -14,12 +14,14 @@ class LaporanHasilBelajar extends Model
     public $incrementing = false;
     
     protected $fillable = [
-        'siswa_id', 
-        'mata_pelajaran', 
-        'nilai', 
-        'kehadiran',
-        'catatan', 
-        'status_laporan'
+    'siswa_id',
+    'jenis_penilaian',
+    'materi_pembelajaran',
+    'nilai',
+    'predikat',
+    'capaian_kompetensi',
+    'catatan_guru',
+    'status_laporan'
     ];
 
     protected static function boot()

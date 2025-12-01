@@ -12,10 +12,12 @@ class Siswa extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
+    
     protected $fillable = [
         'admin_id', 'guru_id', 'nisn', 'nama_lengkap', 'email', 
-        'jenis_kelamin', 'tanggal_lahir', 'alamat', 'nama_orangtua', 
-        'email_orangtua', 'status_akun'
+        'jenis_kelamin', 'jenjang_pendidikan', // ← TAMBAH INI
+        'tanggal_lahir', 'alamat', 'nama_orangtua', 
+        'email_orangtua', 'no_hp_orangtua', 'status_akun'
     ];
 
     protected static function boot()
@@ -38,6 +40,14 @@ class Siswa extends Model
         return $this->belongsTo(Guru::class);
     }
 
+    // ✅ TAMBAHAN: Relasi many-to-many ke Kelas
+    public function kelas()
+    {
+        return $this->belongsToMany(Kelas::class, 'kelas_siswa', 'siswa_id', 'kelas_id')
+                    ->withPivot('tanggal_daftar', 'status')
+                    ->withTimestamps();
+    }
+
     public function pemesanans()
     {
         return $this->hasMany(Pemesanan::class);
@@ -53,4 +63,3 @@ class Siswa extends Model
         return $this->hasMany(TesKemampuan::class);
     }
 }
-
