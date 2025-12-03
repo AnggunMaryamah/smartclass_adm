@@ -15,6 +15,7 @@ return new class extends Migration
         $table->string('role')->default('Guru');
         $table->string('status')->default('Aktif');
     });
+    
 }
 
 public function down(): void

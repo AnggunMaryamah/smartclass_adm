@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'defaults' => [
         'guard' => 'web',
         'passwords' => 'users',
@@ -11,15 +12,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        // KEDAPAN: tambahkan saja guard lain di sini, misal 'guru', 'siswa', 'admin'
+        // nanti kalau mau guard lain (guru/siswa/admin) bisa ditambah di sini
     ],
 
     'providers' => [
-    'users' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\Guru::class, // ← UBah ke Guru
-    ],
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class, // ← HARUS User, bukan Guru
+        ],
 
+        // contoh kalau nanti mau provider terpisah:
         // 'gurus' => [
         //     'driver' => 'eloquent',
         //     'model' => App\Models\Guru::class,
@@ -28,7 +30,6 @@ return [
         //     'driver' => 'eloquent',
         //     'model' => App\Models\Siswa::class,
         // ],
-        // dst
     ],
 
     'passwords' => [
@@ -41,4 +42,5 @@ return [
     ],
 
     'password_timeout' => 10800,
+
 ];
