@@ -219,8 +219,12 @@
             📊 Laporan
         </a>
 
-        <!-- Pembayaran - BELUM ADA ROUTE -->
-        <a href="#">💳 Pembayaran</a>
+       <!-- Pembayaran -->
+        <a href="{{ route('admin.pembayarans.index') }}"
+            style="{{ request()->routeIs('admin.pembayarans*') ? 'background-color: #1A3E78;' : '' }}">
+            💳 Pembayaran
+        </a>
+
 
         <!-- Settings - BELUM ADA ROUTE  -->
         <a href="#">⚙️ Settings</a>
