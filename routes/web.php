@@ -1,5 +1,6 @@
 <?php
 
+// ==================== IMPORT KAMU (LENGKAP) + TAMBAH TIM ====================
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GuruController;
@@ -8,30 +9,34 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TinyMceUploadController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SiswaKelasController;
+use Illuminate\Support\Facades\Route;
 
-// ===================== AUTH & DASHBOARD BAWAAN =====================
+// TAMBAH DARI TIM (TIDAK BENTROK)
+use App\Http\Controllers\DataKelasController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JenjangController;
+use App\Http\Controllers\SdController;
 
-// Halaman welcome (opsional)
+// ===================== AUTH & DASHBOARD BAWAAN (KAMU) =====================
 Route::get('/', function () {
     return view('welcome');
 });
-// Profile bawaan Breeze
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route auth (login, register, logout, dll)
 require __DIR__.'/auth.php';
 
-// ===================== ADMIN =====================
+// ===================== ADMIN (KAMU + TAMBAH FITUR TIM) =====================
 Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group(function () {
-
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
+    // User management (KAMU)
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/{id}', [UserController::class, 'show'])->name('show');
@@ -39,14 +44,23 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
     });
 
+    // Payment (KAMU)
     Route::prefix('payments')->name('payments.')->group(function () {
         Route::get('/', [PaymentController::class, 'index'])->name('index');
         Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
         Route::post('/{id}/verify', [PaymentController::class, 'verify'])->name('verify');
     });
+
+    // TAMBAH DARI TIM: Data Kelas
+    Route::get('/data-kelas', [DataKelasController::class, 'index'])->name('data_kelas');
+    Route::patch('/data-kelas/{id}/toggle', [DataKelasController::class, 'toggleStatus'])->name('data_kelas.toggle');
+
+    // TAMBAH DARI TIM: Laporan Admin
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+    Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
 });
 
-// ===================== GURU =====================
+// ===================== GURU (KAMU 100% - SUDAH LENGKAP) =====================
 Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(function () {
     Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
 
@@ -102,30 +116,32 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
     Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
 });
 
-/// ===================== SISWA =====================
+// ===================== SISWA (KAMU 100% - SUDAH LENGKAP) =====================
 Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group(function () {
-    // Dashboard siswa
     Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
 
-    // Kelas siswa
     Route::get('/kelas', [SiswaController::class, 'kelas'])->name('kelas.index');
     Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])->name('kelas.riwayat'); 
     Route::get('/kelas/{kelas}/materi/{materi?}', [SiswaKelasController::class, 'read'])->name('kelas.read'); 
     Route::post('/kelas/{kelas}/materi/{materi}/complete',[SiswaKelasController::class, 'markComplete'])->name('kelas.materi.complete');
-   // Tugas siswa
+    
     Route::get('/tugas', [SiswaController::class, 'tugas'])->name('tugas.index');
 
-    // Pembayaran (riwayat / upload bukti)
     Route::get('/pembayaran', [SiswaController::class, 'pembayaran'])->name('pembayaran.index');
     Route::post('/pembayaran', [SiswaController::class, 'storePembayaran'])->name('pembayaran.store');
 
-    // Riwayat transaksi siswa
     Route::get('/transaksi', [SiswaController::class, 'transaksi'])->name('transaksi.index');
 
-    // Profil siswa
     Route::get('/profil', [SiswaController::class, 'profil'])->name('profil.index');
     Route::put('/profil', [SiswaController::class, 'updateProfil'])->name('profil.update');
-    // routes/web.php
     Route::post('/catatan', [SiswaController::class, 'storeCatatan'])->name('catatan.store');
-    
+});
+
+// ===================== TAMBAHAN DARI TIM (TIDAK BENTROK) =====================
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/sd', [SdController::class, 'index'])->name('sd.index');
+
+// Test route dari tim (opsional)
+Route::get('/jenjang/test-route', function () {
+    return 'OK ROUTE';
 });
