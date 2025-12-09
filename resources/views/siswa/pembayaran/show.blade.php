@@ -4,8 +4,17 @@
 
 @section('content')
 <div class="detail-container">
-    <div class="payment-detail-card">
+    {{-- TOMBOL KEMBALI DI ATAS KARTU --}}
+    <div class="back-button-wrapper">
+        <a href="{{ route('siswa.pembayaran.index') }}" class="btn-back">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <span>Kembali</span>
+        </a>
+    </div>
 
+    <div class="payment-detail-card">
         {{-- JUDUL DI DALAM KOTAK --}}
         <div class="detail-title">
             <h1>Detail Pembayaran</h1>
@@ -112,21 +121,44 @@
                 </p>
             @endif
         </section>
-
-        <div class="detail-footer">
-            <a href="{{ route('siswa.pembayaran.index') }}" class="detail-back-link">
-                &larr; Kembali ke Riwayat Pembayaran
-            </a>
-        </div>
     </div>
 </div>
 
 <style>
-/* container lebih sempit & ada padding kiri kanan supaya konten agak ke tengah */
 .detail-container{
     max-width: 960px;
     margin: 0 auto 2rem;
     padding: 0 2rem;
+}
+
+/* Tombol kembali di atas kartu */
+.back-button-wrapper{
+    margin-bottom: 1rem;
+}
+
+.btn-back{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.1rem;
+    background: #fff;
+    border: 1.5px solid #D1D5DB;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover{
+    background: #F9FAFB;
+    border-color: #0EA5E9;
+    color: #0EA5E9;
+}
+
+.btn-back svg{
+    flex-shrink: 0;
 }
 
 /* kartu detail */
@@ -218,24 +250,13 @@
     border-radius:8px;
 }
 
-.detail-footer{
-    margin-top:1.5rem;
-    text-align:right;
-}
-.detail-back-link{
-    font-size:.85rem;
-    font-weight:600;
-    color:#0369A1;
-    text-decoration:none;
-}
-.detail-back-link:hover{text-decoration:underline;}
-
 .text-center{text-align:center;}
 
 @media(max-width:768px){
     .detail-container{padding:0 1rem;}
     .payment-detail-card{padding:1.4rem 1.25rem 1.6rem;}
     .detail-title h1{font-size:1.4rem;}
+    .btn-back{padding: 0.5rem 0.9rem;font-size: 0.85rem;}
 }
 </style>
 @endsection

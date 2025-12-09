@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Tugas extends Model
 {
-    protected $table = 'tugas';
+    use HasFactory;
 
     protected $fillable = [
         'kelas_id',
@@ -15,16 +15,24 @@ class Tugas extends Model
         'deskripsi',
         'deadline',
         'status',
+        'tipe',
     ];
+    public function materi()
+{
+    return $this->hasOne(MateriPembelajaran::class, 'tugas_id');
+}
 
-    protected $casts = [
-        'deadline' => 'datetime',
-    ];
+    public function soals()
+    {
+        return $this->hasMany(TugasSoal::class);
+    }
 
-    /**
-     * Relasi ke Kelas
-     */
-    public function kelas(): BelongsTo
+    public function jawabanSiswa()
+    {
+        return $this->hasMany(TugasJawaban::class);
+    }
+
+    public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
     }

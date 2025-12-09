@@ -4,6 +4,7 @@
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\Guru\TugasController;
 use App\Http\Controllers\MateriPembelajaranController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TinyMceUploadController;
@@ -33,46 +34,55 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 // ===================== ADMIN (KAMU + TAMBAH FITUR TIM) =====================
-Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
 
-    // User management (KAMU)
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
-        Route::get('/{id}', [UserController::class, 'show'])->name('show');
-        Route::patch('/{id}/verifikasi', [UserController::class, 'verifikasi'])->name('verifikasi');
-        Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
+        // Dashboard admin
+        Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+
+        // User management (KAMU)
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/{id}', [UserController::class, 'show'])->name('show');
+            Route::patch('/{id}/verifikasi', [UserController::class, 'verifikasi'])->name('verifikasi');
+            Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
+        });
+
+        // Halaman utama pembayaran admin + pengaturan QRIS admin
+        Route::get('/pembayaran', [PaymentController::class, 'index'])->name('pembayaran.index');
+        Route::post('/pembayaran/qris', [PaymentController::class, 'updateQris'])->name('pembayaran.qris.update');
+
+        // Payment (KAMU) - manajemen pembayaran per transaksi
+        Route::prefix('payments')->name('payments.')->group(function () {
+            Route::get('/', [PaymentController::class, 'index'])->name('index');
+            Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
+            Route::post('/{id}/verify', [PaymentController::class, 'verify'])->name('verify');
+        });
+
+        // TAMBAH DARI TIM: Data Kelas
+        Route::get('/data-kelas', [DataKelasController::class, 'index'])->name('data_kelas');
+        Route::patch('/data-kelas/{id}/toggle', [DataKelasController::class, 'toggleStatus'])->name('data_kelas.toggle');
+
+        // TAMBAH DARI TIM: Laporan Admin
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+        Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
     });
-
-    // Payment (KAMU)
-    Route::prefix('payments')->name('payments.')->group(function () {
-        Route::get('/', [PaymentController::class, 'index'])->name('index');
-        Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
-        Route::post('/{id}/verify', [PaymentController::class, 'verify'])->name('verify');
-    });
-
-    // TAMBAH DARI TIM: Data Kelas
-    Route::get('/data-kelas', [DataKelasController::class, 'index'])->name('data_kelas');
-    Route::patch('/data-kelas/{id}/toggle', [DataKelasController::class, 'toggleStatus'])->name('data_kelas.toggle');
-
-    // TAMBAH DARI TIM: Laporan Admin
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
-    Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
-});
 
 // ===================== GURU (KAMU 100% - SUDAH LENGKAP) =====================
 Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(function () {
-    Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [GuruController::class, 'index'])->name('dashboard');
 
     Route::prefix('kelas')->name('kelas.')->group(function () {
-        Route::get('/', [GuruController::class, 'indexKelas'])->name('index');
-        Route::get('/tambah', [GuruController::class, 'createKelas'])->name('create');
-        Route::post('/', [GuruController::class, 'storeKelas'])->name('store');
-        Route::get('/{id}', [GuruController::class, 'showKelas'])->name('show');
-        Route::get('/{id}/edit', [GuruController::class, 'editKelas'])->name('edit');
-        Route::put('/{id}', [GuruController::class, 'updateKelas'])->name('update');
-        Route::delete('/{id}', [GuruController::class, 'destroyKelas'])->name('destroy');
-        Route::patch('/{id}/toggle-status', [GuruController::class, 'toggleStatusKelas'])->name('toggle-status');
+    Route::get('/', [GuruController::class, 'kelas'])->name('index');
+    Route::get('/tambah', [GuruController::class, 'kelasCreate'])->name('create');
+    Route::post('/', [GuruController::class, 'kelasStore'])->name('store');
+    Route::get('/{id}', [GuruController::class, 'kelasDetail'])->name('show');
+    Route::get('/{id}/edit', [GuruController::class, 'kelasEdit'])->name('edit');
+    Route::put('/{id}', [GuruController::class, 'kelasUpdate'])->name('update');
+    Route::delete('/{id}', [GuruController::class, 'kelasDestroy'])->name('destroy');
+    Route::patch('/{id}/toggle-status', [GuruController::class, 'toggleStatusKelas'])->name('toggle-status');
 
         Route::post('/kelas/tambah-siswa', [\App\Http\Controllers\SiswaKelasController::class, 'tambahSiswaKeKelas'])->name('kelas.tambah-siswa');
         Route::delete('/kelas/{kelasId}/siswa/{siswaId}', [\App\Http\Controllers\SiswaKelasController::class, 'hapusSiswaDariKelas'])->name('kelas.hapus-siswa');
@@ -88,8 +98,9 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
         Route::put('/{materiId}', [MateriPembelajaranController::class, 'update'])->name('update');
         Route::delete('/{materiId}', [MateriPembelajaranController::class, 'destroy'])->name('destroy');
     });
-
+    Route::get('/pembayaran', [GuruController::class, 'pembayaran'])->name('pembayaran.index');  
     Route::get('/laporan-siswa', [GuruController::class, 'laporanSiswa'])->name('laporan_siswa.index');
+    Route::get('/laporan-siswa', [GuruController::class, 'laporan'])->name('laporan_siswa.index');
     Route::get('/laporan-siswa/kelas/{kelasId}', [GuruController::class, 'laporanSiswaDaftarKelas'])->name('laporan_siswa.daftar');
     Route::get('/laporan-siswa/detail/{siswa_id}', [GuruController::class, 'laporanSiswaDetailSatuan'])->name('laporan_siswa.detail');
 
@@ -103,18 +114,28 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
     Route::get('/laporan-siswa/edit/{laporan_id}', [GuruController::class, 'editLaporanSiswa'])->name('laporan_siswa.edit');
     Route::put('/laporan-siswa/update/{laporan_id}', [GuruController::class, 'updateLaporanSiswa'])->name('laporan_siswa.update');
     Route::delete('/laporan-siswa/hapus/{laporan_id}', [GuruController::class, 'destroyLaporanSiswa'])->name('laporan_siswa.destroy');
+    // kuis dan tugas siswa
+Route::prefix('kelas/{kelasId}/tugas')->name('tugas.')->group(function () {
+    Route::get('/', [TugasController::class, 'index'])->name('index');
+    Route::get('/create', [TugasController::class, 'create'])->name('create');
+    Route::post('/', [TugasController::class, 'store'])->name('store');
 
-    Route::get('/pembayaran', [GuruController::class, 'pembayaran'])->name('pembayaran.index');
-    Route::post('/pembayaran/upload-qris', [GuruController::class, 'uploadQris'])->name('pembayaran.upload_qris');
-    Route::put('/pembayaran/{id}/verify', [GuruController::class, 'verifyPembayaran'])->name('pembayaran.verify');
+    // kelola soal
+    Route::get('/{tugas}/soal', [TugasController::class, 'editSoal'])->name('soal.edit');
+    Route::post('/{tugas}/soal', [TugasController::class, 'storeSoal'])->name('soal.store');
+}); // <-- PASTIKAN INI ADA
 
-    Route::post('/upload-image', [TinyMceUploadController::class, 'upload'])->name('upload.image');
-    Route::get('/siswa', [GuruController::class, 'siswa'])->name('siswa.index');
-    Route::get('/laporan', [GuruController::class, 'laporan'])->name('laporan.index');
-    Route::get('/transaksi', [GuruController::class, 'transaksi'])->name('transaksi.index');
-    Route::get('/profil', [GuruController::class, 'profil'])->name('profil.index');
-    Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
-});
+// route hapus tugas (DI LUAR grup di atas)
+Route::delete('/kelas/{kelasId}/tugas/{tugas}', [TugasController::class, 'destroy'])
+    ->name('tugas.destroy');
+
+Route::post('/upload-image', [TinyMceUploadController::class, 'upload'])->name('upload.image');
+Route::get('/siswa', [GuruController::class, 'siswa'])->name('siswa.index');
+Route::get('/laporan', [GuruController::class, 'laporan'])->name('laporan.index');
+Route::get('/transaksi', [GuruController::class, 'transaksi'])->name('transaksi.index');
+Route::get('/profil', [GuruController::class, 'profil'])->name('profil.index');
+Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
+}); // <-- kurung tutup grup guru
 
 // ===================== SISWA (KAMU 100% - SUDAH LENGKAP) =====================
 Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group(function () {
@@ -129,6 +150,7 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group
 
     Route::get('/pembayaran', [SiswaController::class, 'pembayaran'])->name('pembayaran.index');
     Route::post('/pembayaran', [SiswaController::class, 'storePembayaran'])->name('pembayaran.store');
+    Route::get('/pembayaran/{pembayaran}', [SiswaController::class, 'showPembayaran'])->name('pembayaran.show');
 
     Route::get('/transaksi', [SiswaController::class, 'transaksi'])->name('transaksi.index');
 

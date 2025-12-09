@@ -12,6 +12,9 @@ class SiswaKelas extends Model
     protected $fillable = [
         'siswa_id',
         'kelas_id',
+        'progress',
+        'is_completed',
+        'status',
         'enrolled_at',
         'completed_at',
     ];
@@ -22,18 +25,22 @@ class SiswaKelas extends Model
     ];
 
     /**
-     * Relasi ke User (Siswa)
+     * ✅ PERBAIKAN: Relasi ke Siswa (BUKAN User)
      */
     public function siswa(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'siswa_id');
+        return $this->belongsTo(Siswa::class, 'siswa_id');
     }
 
     /**
      * Relasi ke Kelas
      */
-    public function kelas(): BelongsTo
+    /*public function kelas(): BelongsTo
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
-    }
+    }*/
+    public function kelas()
+{
+    return $this->belongsTo(Kelas::class, 'kelas_id');
+}
 }

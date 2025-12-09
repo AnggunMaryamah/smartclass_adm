@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamp('deadline')->nullable();
             $table->enum('status', ['pending', 'selesai'])->default('pending');
             $table->timestamps();
-            
+            $table->uuid('materi_id')->nullable()->after('kelas_id');
             $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
         });
     }

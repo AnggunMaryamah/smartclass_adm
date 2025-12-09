@@ -5,7 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;   // ⬅️ ini yang benar
 use Illuminate\Support\Str;
+use App\Models\Materi;
 
 class Kelas extends Model
 {
@@ -14,17 +16,17 @@ class Kelas extends Model
     protected $table = 'kelas';
 
     /**
-     * The primary key type.
+     * Tipe primary key (UUID string).
      */
     protected $keyType = 'string';
 
     /**
-     * Indicates if the IDs are auto-incrementing.
+     * ID tidak auto-increment.
      */
     public $incrementing = false;
 
     /**
-     * The attributes that are mass assignable.
+     * Kolom yang bisa diisi mass-assignment.
      */
     protected $fillable = [
         'guru_id',
@@ -39,7 +41,7 @@ class Kelas extends Model
     ];
 
     /**
-     * The attributes that should be cast.
+     * Casting atribut.
      */
     protected $casts = [
         'harga' => 'integer',
@@ -50,7 +52,7 @@ class Kelas extends Model
     ];
 
     /**
-     * Boot function untuk generate UUID
+     * Boot: generate UUID untuk primary key.
      */
     protected static function boot()
     {
@@ -62,14 +64,14 @@ class Kelas extends Model
             }
         });
 
-        // COMMENT DULU untuk debugging - Aktifkan setelah tabel pemesanan ready
+        // Aktifkan lagi jika sudah butuh auto-update jumlah_siswa
         // static::saved(function ($model) {
         //     $model->updateJumlahSiswa();
         // });
     }
 
     /**
-     * Relationship: Guru (Belongs To)
+     * Relasi: Guru (belongsTo).
      */
     public function guru()
     {
@@ -77,7 +79,7 @@ class Kelas extends Model
     }
 
     /**
-     * Relationship: Pemesanan (Has Many)
+     * Relasi: Pemesanan (hasMany).
      */
     public function pemesanans()
     {
@@ -85,42 +87,57 @@ class Kelas extends Model
     }
 
     /**
-     * Relationship: Siswa melalui Pemesanan (Has Many Through)
+     * Relasi: Siswa melalui Pemesanan (hasManyThrough).
+     * (jika masih dipakai di tempat lain)
      */
     public function siswa()
     {
         return $this->hasManyThrough(
             Siswa::class,
             Pemesanan::class,
-            'kelas_id',
-            'id',
-            'id',
-            'siswa_id'
+            'kelas_id',   // Foreign key di tabel pemesanan
+            'id',         // Primary key di tabel siswa
+            'id',         // Local key di tabel kelas
+            'siswa_id'    // Foreign key di tabel pemesanan ke siswa
         );
     }
 
     /**
-     * Relationship: Siswa yang terdaftar (untuk pivot table jika ada)
+     * Relasi: pivot siswa_kelas (detail enrollment).
+     */
+    public function siswaKelas()
+    {
+        return $this->hasMany(SiswaKelas::class, 'kelas_id');
+    }
+
+    /**
+     * Relasi: siswa yang terdaftar melalui pivot siswa_kelas.
+     * Bisa dipakai untuk kebutuhan detail.
      */
     public function siswaTerdaftar()
     {
-        return $this->belongsToMany(Siswa::class, 'kelas_siswa', 'kelas_id', 'siswa_id')
-            ->withPivot('tanggal_daftar', 'status')
+        return $this->belongsToMany(User::class, 'siswa_kelas', 'kelas_id', 'siswa_id')
+            ->withPivot('progress', 'is_completed', 'status', 'enrolled_at', 'completed_at')
             ->withTimestamps();
     }
 
     /**
-     * ✅ TAMBAHAN: Alias untuk siswas() - untuk compatibility dengan view
-     * Mengembalikan siswa yang terdaftar melalui pivot table
+     * Alias untuk dipakai di view guru: $kelas->siswas->count()
      */
     public function siswas()
+{
+    return $this->belongsToMany(Siswa::class, 'siswa_kelas', 'kelas_id', 'siswa_id')
+        ->withPivot('progress', 'is_completed', 'status', 'enrolled_at', 'completed_at')
+        ->withTimestamps();
+}
+
+    public function materi(): HasMany
     {
-        return $this->belongsToMany(Siswa::class, 'kelas_siswa', 'kelas_id', 'siswa_id')
-            ->withTimestamps();
+        return $this->hasMany(Materi::class, 'kelas_id');
     }
 
     /**
-     * Relationship: Materi Pembelajaran
+     * Relasi: Materi Pembelajaran.
      */
     public function materiPembelajaran()
     {
@@ -128,7 +145,7 @@ class Kelas extends Model
     }
 
     /**
-     * ✅ TAMBAHAN: Alias untuk materiPembelajarans() - untuk compatibility dengan view
+     * Alias untuk compat: materiPembelajarans().
      */
     public function materiPembelajarans()
     {
@@ -136,15 +153,15 @@ class Kelas extends Model
     }
 
     /**
-     * Accessor: Format Harga (Rupiah)
+     * Accessor: format harga rupiah.
      */
     public function getHargaFormatAttribute()
     {
-        return 'Rp '.number_format($this->harga, 0, ',', '.');
+        return 'Rp ' . number_format($this->harga, 0, ',', '.');
     }
 
     /**
-     * Accessor: Status Badge Color
+     * Accessor: class badge status.
      */
     public function getStatusBadgeAttribute()
     {
@@ -152,12 +169,12 @@ class Kelas extends Model
     }
 
     /**
-     * Accessor: Jenjang Badge Color
+     * Accessor: class badge jenjang.
      */
     public function getJenjangBadgeAttribute()
     {
         $badges = [
-            'SD' => 'primary',
+            'SD'  => 'primary',
             'SMP' => 'success',
             'SMA' => 'danger',
         ];
@@ -166,7 +183,7 @@ class Kelas extends Model
     }
 
     /**
-     * Scope: Kelas Aktif
+     * Scope: kelas aktif.
      */
     public function scopeAktif($query)
     {
@@ -174,7 +191,7 @@ class Kelas extends Model
     }
 
     /**
-     * Scope: Kelas By Guru
+     * Scope: filter by guru.
      */
     public function scopeByGuru($query, $guruId)
     {
@@ -182,7 +199,7 @@ class Kelas extends Model
     }
 
     /**
-     * Scope: Kelas By Jenjang
+     * Scope: filter by jenjang.
      */
     public function scopeByJenjang($query, $jenjang)
     {
@@ -190,19 +207,19 @@ class Kelas extends Model
     }
 
     /**
-     * Scope: Search (nama kelas, deskripsi, jenjang)
+     * Scope: pencarian.
      */
     public function scopeSearch($query, $keyword)
     {
         return $query->where(function ($q) use ($keyword) {
-            $q->where('nama_kelas', 'like', '%'.$keyword.'%')
-                ->orWhere('deskripsi', 'like', '%'.$keyword.'%')
-                ->orWhere('jenjang_pendidikan', 'like', '%'.$keyword.'%');
+            $q->where('nama_kelas', 'like', '%' . $keyword . '%')
+                ->orWhere('deskripsi', 'like', '%' . $keyword . '%')
+                ->orWhere('jenjang_pendidikan', 'like', '%' . $keyword . '%');
         });
     }
 
     /**
-     * Scope: Order By Popular (based on jumlah_siswa)
+     * Scope: urut berdasarkan popularitas (jumlah_siswa).
      */
     public function scopePopular($query)
     {
@@ -210,7 +227,7 @@ class Kelas extends Model
     }
 
     /**
-     * Scope: Order By Latest
+     * Scope: urut terbaru.
      */
     public function scopeLatest($query)
     {
@@ -218,11 +235,10 @@ class Kelas extends Model
     }
 
     /**
-     * Method: Update Jumlah Siswa
+     * Hitung ulang jumlah_siswa dari pemesanan.
      */
     public function updateJumlahSiswa()
     {
-        // Hitung siswa dari pemesanan yang sudah dibayar
         $jumlah = $this->pemesanans()
             ->whereIn('status', ['lunas', 'aktif'])
             ->distinct('siswa_id')
@@ -233,7 +249,7 @@ class Kelas extends Model
     }
 
     /**
-     * Method: Check if Kelas is Full
+     * Cek apakah kelas penuh.
      */
     public function isFull($maxSiswa = 30)
     {
@@ -241,7 +257,7 @@ class Kelas extends Model
     }
 
     /**
-     * Method: Check if Guru owns this Kelas
+     * Cek kepemilikan kelas oleh guru.
      */
     public function isOwnedBy($guruId)
     {
@@ -249,54 +265,51 @@ class Kelas extends Model
     }
 
     /**
-     * Method: Activate Kelas
+     * Aktivasi kelas.
      */
     public function activate()
     {
         $this->status = 'aktif';
-
         return $this->save();
     }
 
     /**
-     * Method: Deactivate Kelas
+     * Nonaktifkan kelas.
      */
     public function deactivate()
     {
         $this->status = 'nonaktif';
-
         return $this->save();
     }
 
     /**
-     * Method: Toggle Status
+     * Toggle status kelas.
      */
     public function toggleStatus()
     {
         $this->status = $this->status === 'aktif' ? 'nonaktif' : 'aktif';
-
         return $this->save();
     }
 
     /**
-     * Static Method: Get Available Jenjang
+     * Opsi jenjang.
      */
     public static function getJenjangOptions()
     {
         return [
-            'SD' => 'Sekolah Dasar (SD)',
+            'SD'  => 'Sekolah Dasar (SD)',
             'SMP' => 'Sekolah Menengah Pertama (SMP)',
             'SMA' => 'Sekolah Menengah Atas (SMA)',
         ];
     }
 
     /**
-     * Static Method: Get Status Options
+     * Opsi status.
      */
     public static function getStatusOptions()
     {
         return [
-            'aktif' => 'Aktif',
+            'aktif'    => 'Aktif',
             'nonaktif' => 'Nonaktif',
         ];
     }

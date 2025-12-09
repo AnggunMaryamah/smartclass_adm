@@ -60,9 +60,20 @@
                     @foreach($activeClasses as $siswaKelas)
                         @php
                             $kelas = $siswaKelas->kelas;
+                            if (!$kelas) {
+                                continue;
+                            }
+
                             $progress = $siswaKelas->progress ?? 0;
-                            $deadline = \Carbon\Carbon::parse($kelas->deadline);
-                            $deadlineDiff = $deadline->diffForHumans();
+
+                            $deadlineText = 'Tidak ada batas waktu';
+                            $deadlineDate = null;
+
+                            if (!empty($kelas->deadline)) {
+                                $deadline = \Carbon\Carbon::parse($kelas->deadline);
+                                $deadlineText = $deadline->diffForHumans();
+                                $deadlineDate = $deadline->format('d M Y H:i');
+                            }
                         @endphp
 
                         <div class="learning-card">
@@ -95,11 +106,11 @@
                                                 <div class="lp-deadline-title">
                                                     Deadline Belajar:
                                                     <span class="lp-deadline-date">
-                                                        {{ $deadline->format('d M Y H:i') }}
+                                                        {{ $deadlineDate ?? '-' }}
                                                     </span>
                                                 </div>
                                                 <div class="lp-deadline-sub">
-                                                    {{ $deadlineDiff }}
+                                                    {{ $deadlineText }}
                                                 </div>
                                                 <button type="button" class="lp-info-link" data-deadline-modal>
                                                     Informasi lebih lanjut mengenai deadline
@@ -108,8 +119,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>{{-- /.learning-body --}}
-                        </div>{{-- /.learning-card --}}
+                            </div>
+                        </div>
                     @endforeach
                 @endif
             </div>
@@ -131,6 +142,9 @@
                     @foreach($completedClasses as $siswaKelas)
                         @php
                             $kelas = $siswaKelas->kelas;
+                            if (!$kelas) {
+                                continue;
+                            }
                         @endphp
 
                         <div class="learning-card completed">
@@ -171,18 +185,18 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>{{-- /.learning-body --}}
-                        </div>{{-- /.learning-card --}}
+                            </div>
+                        </div>
                     @endforeach
                 @endif
             </div>
-        </div>{{-- /.academy-main --}}
+        </div>
 
         {{-- KOLOM KANAN: REKOMENDASI HANYA UNTUK TAB ACTIVE --}}
         @php
-            $firstActive = $kelasList->filter(fn($item) => !$item->is_completed)->first();
-            $kelasRekom = optional($firstActive)->kelas;
-            $materiRekom = optional($kelasRekom?->materi)->first();
+            $firstActive = $kelasList->first(fn($item) => !$item->is_completed && $item->kelas);
+            $kelasRekom = $firstActive ? $firstActive->kelas : null;
+            $materiRekom = $kelasRekom ? optional($kelasRekom->materi)->first() : null;
         @endphp
 
         @if($kelasRekom)
@@ -224,7 +238,7 @@
             </div>
         </aside>
         @endif
-    </div>{{-- /.academy-layout --}}
+    </div>
 </div>
 
 {{-- MODAL INFO DEADLINE --}}
@@ -245,7 +259,6 @@
     </div>
 </div>
 
-{{-- CSS HALAMAN INI --}}
 <style>
 .academy-container{max-width:1200px;margin:0 auto;padding:0 1rem;}
 .academy-hero{position:relative;background:linear-gradient(135deg,#0EA5E9,#38BDF8,#22C55E);border-radius:20px;padding:24px 28px;margin-bottom:1.5rem;overflow:hidden;color:#fff;box-shadow:0 10px 32px rgba(14,165,233,.35);}
@@ -259,31 +272,14 @@
 .hero-content h1{font-size:1.75rem;font-weight:700;margin-bottom:.25rem;text-shadow:0 2px 4px rgba(0,0,0,.1);}
 .hero-content p{font-size:.95rem;opacity:.95;margin:0;}
 
-/* WRAPPER TABS FULL WIDTH */
-.academy-tabs-wrapper{
-    margin-top:.75rem;
-    margin-bottom:1rem;
-    border-bottom:2px solid #E2E8F0;
-}
+.academy-tabs-wrapper{margin-top:.75rem;margin-bottom:1rem;border-bottom:2px solid #E2E8F0;}
 
-/* LAYOUT 2 KOLOM */
-.academy-layout{
-    display:grid;
-    grid-template-columns:minmax(0,3fr) minmax(260px,1.4fr);
-    gap:24px;
-    align-items:flex-start;
-}
+.academy-layout{display:grid;grid-template-columns:minmax(0,3fr) minmax(260px,1.4fr);gap:24px;align-items:flex-start;}
 .academy-main{min-width:0;}
 .academy-side{min-width:0;}
 .sticky-recommend{position:sticky;top:110px;}
 
-/* TABS */
-.academy-tabs{
-    display:flex;
-    gap:1rem;
-    margin-bottom:-2px; /* nempel ke garis wrapper */
-    border-bottom:none;
-}
+.academy-tabs{display:flex;gap:1rem;margin-bottom:-2px;border-bottom:none;}
 .tab-btn{display:flex;align-items:center;gap:.5rem;padding:.875rem 1.25rem;background:none;border:none;border-bottom:3px solid transparent;font-size:.95rem;font-weight:600;color:#64748B;cursor:pointer;transition:.3s;position:relative;bottom:-2px;font-family:'Inter',sans-serif;}
 .tab-btn i{font-size:1.1rem;transition:.3s;}
 .tab-btn:hover{color:#0EA5E9;background:rgba(14,165,233,.05);}
@@ -292,12 +288,8 @@
 
 .tab-content{display:none;animation:fadeIn .5s ease;}
 .tab-content.active{display:block;}
-@keyframes fadeIn{
-    from{opacity:0;transform:translateY(10px)}
-    to{opacity:1;transform:translateY(0)}
-}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* CARD LAYOUT */
 .learning-card{background:#fff;border-radius:18px;box-shadow:0 4px 18px rgba(15,23,42,.08);border:1px solid #E2E8F0;margin-bottom:1.75rem;overflow:hidden;}
 .learning-card.completed{border-color:rgba(34,197,94,.4);}
 .learning-header{padding:1.25rem 1.5rem 1rem;display:flex;flex-direction:column;gap:.35rem;border-bottom:1px solid #E2E8F0;position:relative;}
@@ -306,11 +298,9 @@
 .learning-body{padding:1.25rem 1.5rem 1.4rem;}
 .learning-main{flex:1 1 auto;min-width:0;}
 
-/* BUTTON UTAMA */
 .btn-primary-ghost{display:inline-flex;align-items:center;justify-content:center;padding:.6rem 1.2rem;border-radius:999px;border:1px solid #0EA5E9;background:#0EA5E9;color:#fff;font-size:.9rem;font-weight:600;text-decoration:none;transition:.25s;box-shadow:0 4px 12px rgba(14,165,233,.32);}
 .btn-primary-ghost:hover{background:#0284C7;border-color:#0284C7;box-shadow:0 6px 18px rgba(14,165,233,.42);}
 
-/* KARTU PROGRESS */
 .learning-progress-card{background:#F9FAFB;border-radius:14px;border:1px solid #E5E7EB;padding:1rem 1.1rem;}
 .lp-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.55rem;}
 .lp-label{font-size:.85rem;font-weight:600;color:#4B5563;}
@@ -327,7 +317,6 @@
 .lp-deadline-sub{color:#F97316;font-weight:600;font-size:.8rem;margin-bottom:.25rem;}
 .lp-info-link{padding:0;margin:0;border:none;background:none;color:#0EA5E9;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:underline;}
 
-/* REKOMENDASI */
 .recommend-card{background:#F1F5F9;border-radius:12px;border:1px solid #E2E8F0;padding:.95rem 1rem;}
 .recommend-card.completed{background:#F0FDF4;border-color:rgba(34,197,94,.3);}
 .recommend-title{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:700;color:#111827;margin-bottom:.5rem;}
@@ -339,7 +328,6 @@
 .recommend-link{display:inline-block;font-size:.8rem;font-weight:600;color:#0EA5E9;text-decoration:none;border-bottom:1px solid transparent;transition:.2s;}
 .recommend-link:hover{border-bottom-color:#0EA5E9;}
 
-/* EMPTY STATES */
 .empty-state-modern{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:45vh;padding:2.5rem 1.5rem;text-align:center;}
 .empty-illustration{position:relative;width:170px;height:170px;margin-bottom:1.75rem;}
 .empty-circle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:130px;height:130px;background:linear-gradient(135deg,#0EA5E9,#38BDF8);border-radius:50%;opacity:.12;animation:pulse 3s ease-in-out infinite;}
@@ -356,7 +344,6 @@
 .empty-icon i{font-size:3rem;color:#4A7BA7;text-shadow:0 6px 18px rgba(15,23,42,.25);}
 .empty-state-simple h3{font-size:1.15rem;color:#4A5568;font-weight:600;}
 
-/* MODAL DEADLINE */
 .deadline-modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:999;}
 .deadline-modal-backdrop.show{display:flex;}
 .deadline-modal{background:#fff;border-radius:16px;max-width:720px;width:90%;max-height:80vh;overflow:auto;box-shadow:0 20px 50px rgba(15,23,42,.35);}
@@ -366,20 +353,12 @@
 .deadline-modal-body ul{padding-left:1.1rem;margin:0;}
 .deadline-modal-body li{margin-bottom:.45rem;}
 
-/* BADGE COMPLETED */
 .badge-completed{padding:.25rem .7rem;background:#22C55E;color:#fff;border-radius:999px;font-size:.75rem;font-weight:700;}
 
-/* RESPONSIVE */
 @media(max-width:1024px){
-    .academy-layout{
-        grid-template-columns:1fr;
-    }
-    .academy-side{
-        order:-1;
-    }
-    .sticky-recommend{
-        position:static;
-    }
+    .academy-layout{grid-template-columns:1fr;}
+    .academy-side{order:-1;}
+    .sticky-recommend{position:static;}
 }
 
 @media(max-width:768px){
@@ -403,37 +382,34 @@
     .lp-deadline-text{font-size:.8rem;}
 }
 </style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
     const recommendAside = document.getElementById('recommend-aside');
 
-    // FUNGSI UNTUK SWITCH TAB
     function switchTab(targetTab) {
         tabBtns.forEach(b => b.classList.remove('active'));
         tabContents.forEach(c => c.classList.remove('active'));
-        
+
         const btn = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
         const content = document.getElementById('tab-' + targetTab);
-        
+
         if (btn) btn.classList.add('active');
         if (content) content.classList.add('active');
-        
-        // Show/hide rekomendasi: hanya di tab "active"
+
         if (recommendAside) {
             recommendAside.style.display = (targetTab === 'active') ? '' : 'none';
         }
     }
 
-    // CEK QUERY PARAMETER SAAT LOAD
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
-    
+
     if (tabParam === 'completed') {
         switchTab('completed');
     } else {
-        // Inisialisasi default
         const activeBtn = document.querySelector('.tab-btn.active');
         const tab = activeBtn ? activeBtn.dataset.tab : 'active';
         if (recommendAside) {
@@ -441,22 +417,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // EVENT LISTENER UNTUK BUTTON TAB
     tabBtns.forEach(btn => {
         btn.addEventListener('click', function () {
             const target = this.dataset.tab;
             switchTab(target);
-            
-            // Update URL tanpa reload
+
             const url = new URL(window.location);
             url.searchParams.set('tab', target);
             window.history.pushState({}, '', url);
-            
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     });
 
-    // SCRIPT MODAL DEADLINE
     const backdrop = document.getElementById('deadline-modal');
     if (backdrop) {
         document.querySelectorAll('[data-deadline-modal]').forEach(btn => {

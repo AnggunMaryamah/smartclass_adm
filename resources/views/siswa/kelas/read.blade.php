@@ -32,7 +32,7 @@
     {{-- AREA BACA + NAV BAWAH --}}
     <main class="reader-shell" id="readerShell">
         <article class="reader-article" id="readerArticle"
-                 style="background: inherit; box-shadow: none; border: none; border-radius: 0;">
+                style="background: inherit; box-shadow: none; border: none; border-radius: 0;">
             @if($currentMateri)
                 <h2 class="reader-materi-title">{{ $currentMateri->judul }}</h2>
                 <div class="reader-materi-content" id="materiContent">
@@ -42,7 +42,6 @@
                 <p>Belum ada materi pada kelas ini.</p>
             @endif
         </article>
-
         {{-- NAVIGASI BAWAH --}}
         <nav class="reader-bottom-nav" id="readerBottomNav">
             <div class="reader-bottom-nav-left" style="display:flex;justify-content:flex-start;">
@@ -92,7 +91,7 @@
         
         $groupedMateri = $materiList->groupBy('bab');
     @endphp
-
+    
     <aside class="reader-sidebar" id="readerSidebar" aria-label="Daftar modul dan catatan">
         <div class="reader-sidebar-header">
             <button class="reader-sidebar-close" id="closeSidebar" aria-label="Tutup sidebar">
@@ -1851,6 +1850,43 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     });
+    document.addEventListener('DOMContentLoaded', function () {
+    const article   = document.getElementById('readerArticle');
+    const kelasId   = @json($kelas->id);
+    const materiId  = @json($currentMateri->id ?? null);
+    let alreadySent = false;
+
+    if (!article || !materiId) {
+        return;
+    }
+
+    function checkScrollComplete() {
+        const rect   = article.getBoundingClientRect();
+        const bottom = rect.bottom - window.innerHeight;
+
+        // kalau bagian bawah artikel sudah lewat sedikit di atas viewport
+        if (!alreadySent && bottom <= 50) {
+            alreadySent = true;
+
+            fetch("{{ route('siswa.kelas.materi.complete', ['kelas' => '__KELAS__', 'materi' => '__MATERI__']) }}"
+                    .replace('__KELAS__', kelasId)
+                    .replace('__MATERI__', materiId), {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+            }).then(() => {
+                console.log('Materi ditandai selesai');
+            }).catch(err => {
+                console.error(err);
+                alreadySent = false;
+            });
+        }
+    }
+
+    window.addEventListener('scroll', checkScrollComplete);
+});
     @endif
 
     // ==========================================

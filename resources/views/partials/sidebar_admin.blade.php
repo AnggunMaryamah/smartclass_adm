@@ -214,17 +214,20 @@
             <i class="fas fa-users"></i>
             <span>Users</span>
         </a>
-
+        <a href="{{ route('admin.data_kelas') }}"
+       class="nav-link {{ request()->routeIs('admin.data_kelas*') ? 'active' : '' }}">
+        <i class="fas fa-school"></i> 
+        <span>Data Kelas</span>
+    </a>
+        <a href="{{ route('admin.laporan') }}"
+       class="nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
+        <i class="fas fa-chart-line"></i> 
+        <span>Laporan Data Kelas</span>
+    </a>
         <a href="{{ route('admin.payments.index') }}"
            class="nav-link {{ request()->routeIs('admin.payments*') ? 'active' : '' }}">
             <i class="fas fa-credit-card"></i>
             <span>Pembayaran</span>
-        </a>
-
-        <a href="{{ route('admin.settings.index') ?? '#' }}"
-           class="nav-link {{ request()->routeIs('admin.settings*') ? 'active' : '' }}">
-            <i class="fas fa-cog"></i>
-            <span>Settings</span>
         </a>
     </nav>
 

@@ -87,33 +87,22 @@
         </div>
 
         {{-- Progress Belajar --}}
-        <div class="stat-card stat-blue-dark">
-            <div class="stat-header">
-                <div>
-                    <p class="stat-title">PROGRES BELAJAR</p>
-                    @php
-                        $avgProgress = isset($kelasAktif) && $kelasAktif > 0 && isset($kelasAktifList)
-                            ? round($kelasAktifList->avg('progress') ?? 0) 
-                            : 0;
-                    @endphp
-                    <h3 class="stat-number">{{ $avgProgress }}%</h3>
-                    <p class="stat-desc">Progres rata-rata dari semua kelas aktif</p>
+            <div class="stat-card stat-blue-dark">
+                <div class="stat-header">
+                    <div>
+                        <p class="stat-title">PROGRES BELAJAR</p>
+                        <h3 class="stat-number">{{ $progressRataRata ?? 0 }}%</h3>
+                        <p class="stat-desc">Progres rata-rata dari semua kelas aktif</p>
+                    </div>
+
+                        <a href="#" class="stat-link">
+                            <span>Lanjut Belajar</span>
+                            <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
-                <div class="stat-icon bg-blue-dark">
-                    {{-- Icon TrendingUp --}}
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                    </svg>
-                </div>
-            </div>
-            <a href="#" class="stat-link">
-                <span>Lanjut Belajar</span>
-                <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-            </a>
-        </div>
-    </div>
 
     {{-- Kelas Aktif List --}}
     @if(isset($kelasAktifList) && $kelasAktifList->count() > 0)

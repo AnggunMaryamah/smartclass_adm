@@ -7,7 +7,7 @@
     {{-- Header --}}
     <div class="gs-header">
         <div>
-            <h2 class="gs-title">👥 Siswa Saya</h2>
+            <h2 class="gs-title">Siswa Saya</h2>
             <p class="gs-subtitle">Daftar semua siswa dari kelas yang Anda ampu</p>
         </div>
     </div>
@@ -75,7 +75,7 @@
                                 'nisn'            => $siswa->nisn ?? '-',
                                 'jenis_kelamin'   => $siswa->jenis_kelamin ?? '-',
                                 'jenjang'         => $siswa->kelas->isNotEmpty() ? $siswa->kelas->first()->jenjang_pendidikan : '-',
-                                'no_hp_siswa'     => $siswa->no_hp_siswa ?? '-',
+                                'no_hp'           => $siswa->no_hp_siswa ?? '-',
                                 'email_siswa'     => $siswa->email ?? '-',
                                 'alamat'          => $siswa->alamat ?? '-',
                                 'nama_orangtua'   => $siswa->nama_orangtua ?? '-',
@@ -86,7 +86,7 @@
                             ];
                         @endphp
                         <tr>
-                            <td>{{ $daftarSiswa->firstItem() + $index }}</td>
+                            <td>{{ $index + 1 }}</td>
                             <td>
                                 <div class="gs-siswa-name-wrapper">
                                     <span class="gs-siswa-name">{{ $siswa->nama_lengkap ?? '-' }}</span>
@@ -146,9 +146,6 @@
             </div>
 
             {{-- Pagination --}}
-            <div class="gs-pagination">
-                {{ $daftarSiswa->links() }}
-            </div>
         @else
             <div class="gs-empty">
                 <div class="gs-empty-icon">👥</div>
@@ -272,11 +269,7 @@
 </div>
 
 <style>
-    .gs-container {
-        padding: 24px;
-        background: linear-gradient(135deg, #F9FAFB 0%, #EFF6FF 100%);
-        min-height: 100vh;
-    }
+    
 
     .gs-header { margin-bottom: 24px; }
     .gs-title {
