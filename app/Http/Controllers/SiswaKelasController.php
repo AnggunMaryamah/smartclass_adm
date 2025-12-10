@@ -145,7 +145,7 @@ class SiswaKelasController extends Controller
             'completedMateriIds' => $completedMateriIds,
         ]);
     }
-    public function markComplete(Kelas $kelas, MateriPembelajaran $materi)
+ public function markComplete(Kelas $kelas, MateriPembelajaran $materi)
 {
     $user = Auth::user();
 
@@ -161,7 +161,21 @@ class SiswaKelasController extends Controller
         ]
     );
 
-    return response()->json(['status' => 'ok']);
-}
+    // ⬇️ TAMBAHKAN perhitungan progress di sini ⬇️
+    $total = $kelas->materiPembelajaran()->count();
+    $done  = MateriProgress::where('user_id', $user->id)
+        ->where('kelas_id', $kelas->id)
+        ->where('is_completed', true)
+        ->count();
 
+    $progress = $total > 0 ? round(($done / $total) * 100) : 0;
+
+    // ⬇️ UBAH respon JSON-nya jadi seperti ini ⬇️
+    return response()->json([
+        'success'   => true,
+        'progress'  => $progress,
+        'completed' => $done,
+        'total'     => $total,
+    ]);
+}
 }

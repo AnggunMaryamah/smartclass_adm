@@ -1,26 +1,18 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table('materi_pembelajaran', function (Blueprint $table) {
-            $table->dropColumn('tugas_id');
-        });
-
-        Schema::table('materi_pembelajaran', function (Blueprint $table) {
-            $table->unsignedBigInteger('tugas_id')->nullable()->after('kelas_id');
-        });
+        // Kosong - kolom tugas_id sudah di-drop sebelumnya
     }
 
-    public function down()
+    public function down(): void
     {
-        Schema::table('materi_pembelajaran', function (Blueprint $table) {
-            $table->dropColumn('tugas_id');
-        });
+        // Kosong
     }
 };
-

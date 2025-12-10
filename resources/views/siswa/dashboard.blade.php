@@ -402,7 +402,7 @@
 
 .kelas-thumbnail {
     height: 160px;
-    background: linear-gradient(135deg, #0EA5E9, #A855F7);
+    background: linear-gradient(135deg, #0EA5E9, #55f7dc);
     position: relative;
     overflow: hidden;
 }

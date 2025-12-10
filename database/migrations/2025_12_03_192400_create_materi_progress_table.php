@@ -12,15 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('materi_progress', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();   // ganti dari $table->id();
             $table->uuid('user_id');
             $table->uuid('kelas_id');
-            $table->unsignedBigInteger('materi_id');
+            $table->unsignedBigInteger('materi_id'); // atau uuid juga, sesuaikan
             $table->boolean('is_completed')->default(false);
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
-
-            $table->unique(['user_id', 'materi_id']);   // satu baris per user+materi
         });
     }
     /**
