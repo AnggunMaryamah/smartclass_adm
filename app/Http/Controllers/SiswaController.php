@@ -12,82 +12,84 @@ use App\Models\Pembayaran;
 
 class SiswaController extends Controller
 {
-    // ✅ DASHBOARD SISWA
     public function dashboard()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
+    $siswa = Siswa::where('email', $user->email)->first();
 
-        // Mapping user -> siswa (email sama)
-        $siswa = Siswa::where('email', $user->email)->first();
-
-        if (!$siswa) {
-            // Fallback jika belum ada data siswa
-            $kelasAktif         = 0;
-            $kelasAktifList     = collect();
-            $kelasSelesai       = 0;
-            $tugasBelumSelesai  = 0;
-            $progressRataRata   = 0;
-
-            return view('siswa.dashboard', compact(
-                'user',
-                'kelasAktif',
-                'kelasAktifList',
-                'kelasSelesai',
-                'tugasBelumSelesai',
-                'progressRataRata'
-            ));
-        }
-
-        // ✅ Ambil pivot siswa_kelas + relasi kelas & guru
-        $pivot = SiswaKelas::with(['kelas.guru', 'kelas.materiPembelajaran'])
-            ->where('siswa_id', $siswa->id)
-            ->where('status', 'aktif')
-            ->get();
-
-        // Bentuk collection kelas aktif (dipakai di kartu bawah)
-        $kelasAktifList = $pivot->map(function ($row) {
-            $kelas = $row->kelas;
-            if ($kelas) {
-                // progress awal dari kolom pivot kalau ada
-                $kelas->progress = $row->progress ?? 0;
-            }
-            return $kelas;
-        })->filter(); // buang null kalau ada
-
-        // ✅ Hitung progress per kelas berdasarkan materi_progress
-        foreach ($kelasAktifList as $kelas) {
-            if (!$kelas) {
-                continue;
-            }
-
-            $completedCount = MateriProgress::where('user_id', $user->id)
-                ->where('kelas_id', $kelas->id)
-                ->where('is_completed', true)
-                ->count();
-
-            $totalMateri = max($kelas->materiPembelajaran->count(), 1);
-            $kelas->progress = round(($completedCount / $totalMateri) * 100);
-        }
-
-        // Angka ringkasan
-        $kelasAktif   = $kelasAktifList->count();
-        $kelasSelesai = $kelasAktifList->where('progress', '>=', 100)->count();
-        $progressRataRata = $kelasAktif > 0
-            ? round($kelasAktifList->avg('progress'))
-            : 0;
-
-        // TODO: isi hitung tugas yang belum selesai sesuai logika kamu
-        $tugasBelumSelesai = 0;
-
+    if (!$siswa) {
         return view('siswa.dashboard', [
-            'user'              => $user,
-            'kelasAktif'        => $kelasAktif,
-            'kelasAktifList'    => $kelasAktifList,
-            'kelasSelesai'      => $kelasSelesai,
-            'tugasBelumSelesai' => $tugasBelumSelesai,
-            'progressRataRata'  => $progressRataRata,
+            'user' => $user,
+            'kelasAktif' => 0,
+            'kelasAktifList' => collect(),
+            'kelasSelesai' => 0,
+            'tugasBelumSelesai' => 0,
+            'progressRataRata' => 0,
         ]);
     }
+
+    $kelasAktifList = SiswaKelas::with([
+            'kelas.guru',
+            'kelas.materiPembelajaran'
+        ])
+        ->where('siswa_id', $siswa->id)
+        ->where('status', 'aktif')
+        ->get()
+        ->map(function ($row) use ($user) {
+            $kelas = $row->kelas;
+            
+            if (!$kelas) {
+                return null;
+            }
+
+            // ✅ PERBAIKAN: Hitung progress dengan groupBy untuk hindari duplikat
+            $totalMateri = $kelas->materiPembelajaran->count();
+            
+            // Gunakan groupBy untuk ambil materi unik saja
+            $completedMateri = MateriProgress::where('user_id', $user->id)
+                ->where('kelas_id', $kelas->id)
+                ->where('is_completed', true)
+                ->select('materi_id')
+                ->groupBy('materi_id')
+                ->get()
+                ->count();
+            
+            // ✅ Batasi progress maksimal 100%
+            $progress = $totalMateri > 0 
+                ? min(round(($completedMateri / $totalMateri) * 100), 100) 
+                : 0;
+
+            return (object) [
+                'id'           => $kelas->id,
+                'nama'         => $kelas->nama_kelas,
+                'jenjang'      => $kelas->jenjang_pendidikan,
+                'guru'         => $kelas->guru,
+                'progress'     => $progress,
+                'total_materi' => $totalMateri,
+                'total_tugas'  => 0,
+            ];
+        })
+        ->filter();
+
+    $kelasAktif = $kelasAktifList->count();
+    $kelasSelesai = $kelasAktifList->where('progress', '>=', 100)->count();
+    
+    // ✅ Batasi progress rata-rata juga
+    $progressRataRata = $kelasAktif > 0 
+        ? min(round($kelasAktifList->avg('progress')), 100) 
+        : 0;
+    
+    $tugasBelumSelesai = 0;
+
+    return view('siswa.dashboard', [
+        'user'              => $user,
+        'kelasAktif'        => $kelasAktif,
+        'kelasAktifList'    => $kelasAktifList,
+        'kelasSelesai'      => $kelasSelesai,
+        'tugasBelumSelesai' => $tugasBelumSelesai,
+        'progressRataRata'  => $progressRataRata,
+    ]);
+}
 
     // ✅ HALAMAN KELAS
     public function kelas()

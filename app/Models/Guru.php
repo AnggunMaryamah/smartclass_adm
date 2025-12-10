@@ -30,6 +30,17 @@ class Guru extends Authenticatable
         });
     }
 
+    /**
+     * ✅ TAMBAHAN BARU: Accessor untuk atribut 'name'
+     * Tambahkan di BARIS 35-41 (setelah method boot, sebelum relasi)
+     */
+    public function getNameAttribute()
+    {
+        return $this->attributes['nama_lengkap'] ?? 'Guru';
+    }
+
+    // ===== RELASI ===== (kode asli kamu tetap di bawah)
+
     public function admin()
     {
         return $this->belongsTo(Admin::class);
@@ -44,6 +55,7 @@ class Guru extends Authenticatable
     {
         return $this->hasMany(TesKemampuan::class);
     }
+    
     public function siswas()
     {
         return $this->hasMany(Siswa::class);

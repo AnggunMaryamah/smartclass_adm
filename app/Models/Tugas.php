@@ -2,38 +2,56 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Tugas extends Model
 {
-    use HasFactory;
+    protected $table = 'tugas';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'kelas_id',
+        'materi_id',
         'judul',
         'deskripsi',
         'deadline',
         'status',
         'tipe',
     ];
-    public function materi()
-{
-    return $this->hasOne(MateriPembelajaran::class, 'tugas_id');
-}
 
-    public function soals()
+    protected static function boot()
     {
-        return $this->hasMany(TugasSoal::class);
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
     }
 
-    public function jawabanSiswa()
-    {
-        return $this->hasMany(TugasJawaban::class);
-    }
-
+    // Relasi ke Kelas
     public function kelas()
     {
         return $this->belongsTo(Kelas::class, 'kelas_id');
+    }
+
+    // Relasi ke Materi
+    public function materi()
+    {
+        return $this->belongsTo(MateriPembelajaran::class, 'materi_id');
+    }
+
+    // Relasi ke Soal
+    public function soal()
+    {
+        return $this->hasMany(TugasSoal::class, 'tugas_id');
+    }
+
+    // Relasi ke Jawaban Siswa
+    public function jawabans()
+    {
+        return $this->hasMany(TugasJawaban::class, 'tugas_id');
     }
 }

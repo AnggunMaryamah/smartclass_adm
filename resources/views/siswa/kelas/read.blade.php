@@ -139,94 +139,133 @@
                                         @endif
                                     </button>
                                     <ul class="chapter-content">
-                                        @foreach($materiInBab as $materi)
-                                            @php
-                                                $isActive    = $currentMateri && $currentMateri->id === $materi->id;
-                                                $isCompleted = in_array($materi->id, $completedIds);
-                                            @endphp
-                                            <li class="sidebar-module-item {{ $isActive ? 'active' : '' }} {{ $isCompleted ? 'is-completed' : '' }}">
-                                                <a href="{{ route('siswa.kelas.read', ['kelas' => $kelas->id, 'materi' => $materi->id]) }}">
-                                                    <span class="module-status-icon">
-                                                        @if($isCompleted)
-                                                            <i class="fas fa-check"></i>
-                                                        @endif
-                                                    </span>
-                                                    <span class="module-title">{{ $materi->judul }}</span>
-                                                    @if($isActive)
-                                                        <span class="module-badge">Sedang dibaca</span>
-                                                    @endif
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
+    @foreach($materiInBab as $materi)
+        @php
+            $isActive    = $currentMateri && $currentMateri->id === $materi->id;
+            $isCompleted = in_array($materi->id, $completedIds);
+        @endphp
+        
+        {{-- MATERI --}}
+        <li class="sidebar-module-item {{ $isActive ? 'active' : '' }} {{ $isCompleted ? 'is-completed' : '' }}">
+            <a href="{{ route('siswa.kelas.read', ['kelas' => $kelas->id, 'materi' => $materi->id]) }}">
+                <span class="module-status-icon">
+                    @if($isCompleted)
+                        <i class="fas fa-check"></i>
+                    @endif
+                </span>
+                <span class="module-title">{{ $materi->judul }}</span>
+                @if($isActive)
+                    <span class="module-badge">Sedang dibaca</span>
+                @endif
+            </a>
+        </li>
+
+        {{-- ✅ KUIS/UJIAN DI BAWAH MATERI --}}
+        @if($materi->tugas && $materi->tugas->count() > 0)
+            @foreach($materi->tugas as $tugas)
+                @php
+                    $tugasCompleted = \App\Models\TugasJawaban::where('tugas_id', $tugas->id)
+                        ->where('siswa_id', $siswa->id ?? null)
+                        ->where('status', 'selesai')
+                        ->exists();
+                @endphp
+                <li class="sidebar-module-item sidebar-tugas-item {{ $tugasCompleted ? 'is-completed' : '' }}">
+                    <a href="{{ route('siswa.kuis.show', $tugas->id) }}">
+                        <span class="module-status-icon">
+                            @if($tugasCompleted)
+                                <i class="fas fa-check"></i>
+                            @endif
+                        </span>
+                        <span class="module-title">
+                            @if($tugas->tipe === 'kuis')
+                                <i class="fas fa-clipboard-list"></i>
+                            @else
+                                <i class="fas fa-graduation-cap"></i>
+                            @endif
+                            {{ $tugas->judul }}
+                        </span>
+                    </a>
+                </li>
+            @endforeach
+        @endif
+    @endforeach
+</ul>
                                 </div>
                             @endforeach
                         @else
-                            <ul class="sidebar-module-list">
-                                @foreach($materiList as $materi)
-                                    @php
-                                        $isActive    = $currentMateri && $currentMateri->id === $materi->id;
-                                        $isCompleted = in_array($materi->id, $completedIds);
-                                    @endphp
-                                    <li class="sidebar-module-item {{ $isActive ? 'active' : '' }} {{ $isCompleted ? 'is-completed' : '' }}">
-                                        <a href="{{ route('siswa.kelas.read', ['kelas' => $kelas->id, 'materi' => $materi->id]) }}">
-                                            <span class="module-status-icon">
-                                                @if($isCompleted)
-                                                    <i class="fas fa-check"></i>
-                                                @endif
-                                            </span>
-                                            <span class="module-title">{{ $materi->judul }}</span>
-                                            @if($isActive)
-                                                <span class="module-badge">Sedang dibaca</span>
-                                            @endif
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
+                           <ul class="sidebar-module-list">
+    @foreach($materiList as $materi)
+        @php
+            $isActive    = $currentMateri && $currentMateri->id === $materi->id;
+            $isCompleted = in_array($materi->id, $completedIds);
+        @endphp
+        
+        {{-- MATERI --}}
+        <li class="sidebar-module-item {{ $isActive ? 'active' : '' }} {{ $isCompleted ? 'is-completed' : '' }}">
+            <a href="{{ route('siswa.kelas.read', ['kelas' => $kelas->id, 'materi' => $materi->id]) }}">
+                <span class="module-status-icon">
+                    @if($isCompleted)
+                        <i class="fas fa-check"></i>
+                    @endif
+                </span>
+                <span class="module-title">{{ $materi->judul }}</span>
+                @if($isActive)
+                    <span class="module-badge">Sedang dibaca</span>
+                @endif
+            </a>
+        </li>
+
+        {{-- ✅ KUIS/UJIAN DI BAWAH MATERI --}}
+        @if($materi->tugas && $materi->tugas->count() > 0)
+            @foreach($materi->tugas as $tugas)
+                @php
+                    $tugasCompleted = \App\Models\TugasJawaban::where('tugas_id', $tugas->id)
+                        ->where('siswa_id', $siswa->id ?? null)
+                        ->where('status', 'selesai')
+                        ->exists();
+                @endphp
+                <li class="sidebar-module-item sidebar-tugas-item {{ $tugasCompleted ? 'is-completed' : '' }}">
+                    <a href="{{ route('siswa.kuis.show', $tugas->id) }}">
+                        <span class="module-status-icon">
+                            @if($tugasCompleted)
+                                <i class="fas fa-check"></i>
+                            @endif
+                        </span>
+                        <span class="module-title">
+                            @if($tugas->tipe === 'kuis')
+                                <i class="fas fa-clipboard-list"></i>
+                            @else
+                                <i class="fas fa-graduation-cap"></i>
+                            @endif
+                            {{ $tugas->judul }}
+                        </span>
+                    </a>
+                </li>
+            @endforeach
+        @endif
+    @endforeach
+</ul>
                         @endif
                     </div>
                 @endif
             </section>
 
-            {{-- TAB CATATAN --}}
-            <section class="sidebar-panel" id="tabNotes">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-top:10px;">
-                    <span style="font-size:0.85rem;font-weight:600;">Semua Catatan</span>
-                    <span id="noteCount" style="font-size:0.75rem;opacity:.8;">0 catatan</span>
-                </div>
-
-                <ul class="sidebar-note-list" id="noteList">
-                    {{-- Catatan dari Database --}}
-                    @if(isset($catatan) && $catatan->count())
-                        @foreach($catatan as $note)
-                            <li class="sidebar-note-item" data-note-id="db-{{ $note->id }}">
-    <div class="note-header-row">
-        <div style="font-size:0.8rem;font-weight:600;margin-bottom:4px;flex:1;">
-            {{ optional($note->materi)->judul ?? 'Catatan' }}
-        </div>
+            {{-- TAB CATATAN - DISABLED SEMENTARA --}}
+{{-- 
+<section class="sidebar-panel" id="tabNotes">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-top:10px;">
+        <span style="font-size:0.85rem;font-weight:600;">Semua Catatan</span>
+        <span id="noteCount" style="font-size:0.75rem;opacity:.8;">0 catatan</span>
     </div>
 
-    <div class="note-body-container">
-        <div class="note-body-text {{ strlen($note->body) > 100 ? 'truncated' : '' }}">
-            {{ $note->body }}
-        </div>
-        @if(strlen($note->body) > 100)
-            <button class="note-toggle-btn">Lihat lebih banyak</button>
-        @endif
-    </div>
+    <ul class="sidebar-note-list" id="noteList">
+    </ul>
 
-    <div class="note-meta">
-        <span>{{ $note->created_at->format('d M Y') }}</span>
-    </div>
-</li>
-                        @endforeach
-                    @endif
-                </ul>
-
-                <p class="sidebar-empty" id="emptyNoteMessage" style="padding-top:10px;display:none;">
-                    Belum ada catatan.
-                </p>
-            </section>
+    <p class="sidebar-empty" id="emptyNoteMessage" style="padding-top:10px;">
+        Belum ada catatan.
+    </p>
+</section>
+--}
         </div>
     </aside>
 
@@ -699,6 +738,32 @@
         font-weight: 600;
         transition: all 0.2s ease;
     }
+    /* Styling untuk tugas/kuis di sidebar */
+.sidebar-tugas-item {
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.sidebar-tugas-item::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(148, 163, 184, 0.3);
+}
+
+.sidebar-tugas-item .module-title i {
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
+    color: #0EA5E9;
+}
+
+.sidebar-tugas-item.is-completed .module-title i {
+    color: #22C55E;
+}
+
 
     .reader-root.theme-light .sidebar-tab,
     .reader-root.theme-warm .sidebar-tab {
@@ -1463,19 +1528,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // UPDATE NOTE COUNT
     // ==========================================
     function updateNoteCount() {
-        const noteList  = document.getElementById('noteList');
-        const noteCount = document.getElementById('noteCount');
-        const emptyMsg  = document.getElementById('emptyNoteMessage');
-
-        const count = noteList.querySelectorAll('.sidebar-note-item').length;
-        noteCount.textContent = `${count} catatan`;
-
-        if (count === 0) {
-            emptyMsg.style.display = 'block';
-        } else {
-            emptyMsg.style.display = 'none';
-        }
+    const noteList = document.querySelector('#noteList');
+    if (!noteList) return; // ← TAMBAHKAN BARIS INI
+    
+    const noteCount = noteList.querySelectorAll('.sidebar-note-item').length;
+    const noteCountEl = document.querySelector('#noteCount');
+    if (noteCountEl) {
+        noteCountEl.textContent = noteCount + ' catatan';
     }
+}
 
     openSettings.addEventListener('click', showSettings);
     closeSettings.addEventListener('click', hideSettings);

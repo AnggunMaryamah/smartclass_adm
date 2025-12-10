@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class TugasJawaban extends Model
 {
-    use HasFactory;
+    protected $table = 'tugas_jawabans';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'tugas_id',
@@ -18,13 +20,25 @@ class TugasJawaban extends Model
         'status',
     ];
 
-    public function tugas()
+    protected static function boot()
     {
-        return $this->belongsTo(Tugas::class);
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
     }
 
+    // Relasi ke Tugas
+    public function tugas()
+    {
+        return $this->belongsTo(Tugas::class, 'tugas_id');
+    }
+
+    // Relasi ke Detail Jawaban
     public function details()
     {
-        return $this->hasMany(TugasJawabanDetail::class);
+        return $this->hasMany(TugasJawabanDetail::class, 'tugas_jawaban_id');
     }
 }

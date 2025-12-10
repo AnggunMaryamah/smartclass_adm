@@ -64,7 +64,21 @@
                                 continue;
                             }
 
-                            $progress = $siswaKelas->progress ?? 0;
+                            // ✅ PERBAIKAN: Hitung progress real-time dari materi_progress
+                            $user = Auth::user();
+                            $totalMateri = $kelas->materiPembelajaran->count();
+                            
+                            // ✅ Gunakan groupBy untuk hitung materi unik saja
+                            $completedMateri = \App\Models\MateriProgress::where('user_id', $user->id)
+                                ->where('kelas_id', $kelas->id)
+                                ->where('is_completed', true)
+                                ->select('materi_id')
+                                ->groupBy('materi_id')
+                                ->get()
+                                ->count();
+                            
+                            // ✅ Batasi progress maksimal 100%
+                            $progress = $totalMateri > 0 ? min(round(($completedMateri / $totalMateri) * 100), 100) : 0;
 
                             $deadlineText = 'Tidak ada batas waktu';
                             $deadlineDate = null;
@@ -196,7 +210,7 @@
         @php
             $firstActive = $kelasList->first(fn($item) => !$item->is_completed && $item->kelas);
             $kelasRekom = $firstActive ? $firstActive->kelas : null;
-            $materiRekom = $kelasRekom ? optional($kelasRekom->materi)->first() : null;
+            $materiRekom = $kelasRekom ? optional($kelasRekom->materiPembelajaran)->first() : null;
         @endphp
 
         @if($kelasRekom)

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class TugasSoal extends Model
 {
-    use HasFactory;
+    protected $table = 'tugas_soal_id';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'tugas_id',
@@ -19,8 +21,19 @@ class TugasSoal extends Model
         'jawaban_benar',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
+    }
+
+    // Relasi ke Tugas
     public function tugas()
     {
-        return $this->belongsTo(Tugas::class);
+        return $this->belongsTo(Tugas::class, 'tugas_id');
     }
 }

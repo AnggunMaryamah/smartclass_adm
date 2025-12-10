@@ -20,4 +20,22 @@ class MateriPembelajaran extends Model
     {
         return $this->belongsTo(Kelas::class, 'kelas_id', 'id');
     }
+    // Relasi ke Tugas (Kuis/Ujian)
+public function tugas()
+{
+    return $this->hasMany(Tugas::class, 'materi_id');
+}
+
+// Relasi ke Kuis (filter tipe)
+public function kuis()
+{
+    return $this->hasMany(Tugas::class, 'materi_id')->where('tipe', 'kuis');
+}
+
+// Relasi ke Ujian (filter tipe)
+public function ujian()
+{
+    return $this->hasMany(Tugas::class, 'materi_id')->whereIn('tipe', ['ujian', 'ujian_bab']);
+}
+
 }

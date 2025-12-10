@@ -87,68 +87,75 @@ class SiswaKelasController extends Controller
 
         return view('guru.kelas.siswa', compact('kelas'));
     }
-    public function read(Kelas $kelas, $materi = null)
-    {
-        $user  = Auth::user();
-        $siswa = Siswa::where('email', $user->email)->first();
+    public function read(Kelas $kelas, $materiId = null)
+{
+    $user = Auth::user();
+    $siswa = Siswa::where('email', $user->email)->first();
 
-        // Cek siswa terdaftar
-        $terdaftar = SiswaKelas::where('siswa_id', $siswa->id ?? null)
-            ->where('kelas_id', $kelas->id)
-            ->where('status', 'aktif')
-            ->exists();
+    if (!$siswa) {
+        return redirect()->route('siswa.dashboard')->with('error', 'Data siswa tidak ditemukan');
+    }
 
-        if (!$terdaftar) {
-            abort(403, 'Kamu belum terdaftar di kelas ini.');
-        }
+    // Cek enrollment
+    $isEnrolled = SiswaKelas::where('siswa_id', $siswa->id)
+        ->where('kelas_id', $kelas->id)
+        ->exists();
 
-        // Ambil semua materi pembelajaran
-        $materiList = $kelas->materiPembelajaran()
-            ->orderBy('urutan')
-            ->get();
+    if (!$isEnrolled) {
+        return redirect()->route('siswa.kelas.index')->with('error', 'Anda tidak terdaftar di kelas ini');
+    }
 
-        // Tentukan current materi
-        if ($materi) {
-            $currentMateri = $materiList->firstWhere('id', $materi);
-        } else {
-            $currentMateri = $materiList->first();
-        }
+    // ✅ Load materi dengan relasi tugas (kuis/ujian)
+    $materiList = MateriPembelajaran::where('kelas_id', $kelas->id)
+        ->with(['tugas' => function($query) {
+            $query->whereIn('tipe', ['kuis', 'ujian', 'ujian_bab']);
+        }])
+        ->orderBy('urutan', 'asc')
+        ->get();
 
-        // ⬇️ KODE PREV/NEXT DITARUH DI SINI ⬇️
-        $prevMateri = null;
-        $nextMateri = null;
+    // Tentukan materi yang sedang dibaca
+    if ($materiId) {
+        $currentMateri = $materiList->firstWhere('id', $materiId);
+    } else {
+        $currentMateri = $materiList->first();
+    }
 
-        if ($currentMateri) {
-            $currentIndex = $materiList->search(fn ($m) => $m->id === $currentMateri->id);
+    // Hitung prev/next materi
+    $currentIndex = $materiList->search(function($item) use ($currentMateri) {
+        return $item->id === optional($currentMateri)->id;
+    });
 
-            if ($currentIndex !== false) {
-                if ($currentIndex > 0) {
-                    $prevMateri = $materiList[$currentIndex - 1];
-                }
-                if ($currentIndex < $materiList->count() - 1) {
-                    $nextMateri = $materiList[$currentIndex + 1];
-                }
-            }
-        }
-        $completedMateriIds = MateriProgress::where('user_id', $user->id)
+    $prevMateri = $currentIndex > 0 ? $materiList[$currentIndex - 1] : null;
+    $nextMateri = $currentIndex !== false && $currentIndex < $materiList->count() - 1 
+        ? $materiList[$currentIndex + 1] 
+        : null;
+
+    // Hitung completed materi
+    $completedMateriIds = MateriProgress::where('user_id', $user->id)
         ->where('kelas_id', $kelas->id)
         ->where('is_completed', true)
         ->pluck('materi_id')
         ->toArray();
 
-        return view('siswa.kelas.read', [
-            'kelas'              => $kelas,
-            'materiList'         => $materiList,
-            'currentMateri'      => $currentMateri,
-            'prevMateri'         => $prevMateri,
-            'nextMateri'         => $nextMateri,
-            'completedMateriIds' => $completedMateriIds,
-        ]);
-    }
+    
+
+    return view('siswa.kelas.read', [
+        'kelas' => $kelas,
+        'materiList' => $materiList,
+        'currentMateri' => $currentMateri,
+        'prevMateri' => $prevMateri,
+        'nextMateri' => $nextMateri,
+        'completedMateriIds' => $completedMateriIds,
+        'user' => $user,
+        'siswa' => $siswa,
+    ]);
+}
+
  public function markComplete(Kelas $kelas, MateriPembelajaran $materi)
 {
     $user = Auth::user();
 
+    // ✅ BENAR: updateOrCreate untuk hindari duplikat
     MateriProgress::updateOrCreate(
         [
             'user_id'   => $user->id,
@@ -161,16 +168,22 @@ class SiswaKelasController extends Controller
         ]
     );
 
-    // ⬇️ TAMBAHKAN perhitungan progress di sini ⬇️
+    // ✅ PERBAIKAN: Hitung total materi
     $total = $kelas->materiPembelajaran()->count();
-    $done  = MateriProgress::where('user_id', $user->id)
+    
+    // ✅ PERBAIKAN: Hitung materi completed UNIK dengan groupBy
+    $done = MateriProgress::where('user_id', $user->id)
         ->where('kelas_id', $kelas->id)
         ->where('is_completed', true)
+        ->select('materi_id')
+        ->groupBy('materi_id')
+        ->get()
         ->count();
 
-    $progress = $total > 0 ? round(($done / $total) * 100) : 0;
+    // ✅ PERBAIKAN: Batasi progress maksimal 100%
+    $progress = $total > 0 ? min(round(($done / $total) * 100), 100) : 0;
 
-    // ⬇️ UBAH respon JSON-nya jadi seperti ini ⬇️
+    // ✅ Return JSON response
     return response()->json([
         'success'   => true,
         'progress'  => $progress,

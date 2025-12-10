@@ -158,6 +158,15 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group
     Route::put('/profil', [SiswaController::class, 'updateProfil'])->name('profil.update');
     Route::post('/catatan', [SiswaController::class, 'storeCatatan'])->name('catatan.store');
 });
+// Kuis & Ujian Routes
+    Route::prefix('kuis')->name('kuis.')->group(function () {
+        Route::get('/{tugas}', [App\Http\Controllers\Siswa\KuisController::class, 'show'])->name('show');
+        Route::post('/{tugas}/start', [App\Http\Controllers\Siswa\KuisController::class, 'start'])->name('start');
+        Route::get('/attempt/{attempt}', [App\Http\Controllers\Siswa\KuisController::class, 'attempt'])->name('attempt');
+        Route::post('/attempt/{attempt}/submit', [App\Http\Controllers\Siswa\KuisController::class, 'submit'])->name('submit');
+        Route::get('/result/{attempt}', [App\Http\Controllers\Siswa\KuisController::class, 'result'])->name('result');
+        Route::get('/{tugas}/riwayat', [App\Http\Controllers\Siswa\KuisController::class, 'riwayat'])->name('riwayat');
+    });
 
 // ===================== TAMBAHAN DARI TIM (TIDAK BENTROK) =====================
 Route::get('/home', [HomeController::class, 'index'])->name('home');
