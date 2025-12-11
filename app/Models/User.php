@@ -18,14 +18,14 @@ class User extends Authenticatable
     protected $keyType = 'string';
 
     protected $fillable = [
-        'id',           // penting untuk UUID manual
         'name',
         'email',
         'password',
         'role',
-        'status_akun',
+        'google_id',
+        'avatar',
+        'email_verified_at',
     ];
-
     protected $hidden = [
         'password',
         'remember_token',
@@ -35,7 +35,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'password' => 'hashed',
         ];
     }
 
@@ -57,7 +57,7 @@ class User extends Authenticatable
 
         return match ($role) {
             'admin' => '/admin/dashboard',
-            'guru'  => '/guru/dashboard',
+            'guru' => '/guru/dashboard',
             'siswa' => '/siswa/dashboard',
             default => '/dashboard',
         };

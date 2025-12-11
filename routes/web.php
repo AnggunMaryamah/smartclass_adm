@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GuruController;
@@ -8,15 +10,31 @@ use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TinyMceUploadController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SiswaKelasController;
+use App\Http\Controllers\Auth\SiswaAuthController;
+use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\Auth\GeneralLoginController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\KelasController; // pastikan ada di bagian atas file
 
-// ===================== AUTH & DASHBOARD BAWAAN =====================
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Rapi tanpa mengubah logika atau nama route — semua route yang ada dipertahankan.
+|
+*/
+
+/*
+|===================== AUTH & DASHBOARD BAWAAN =====================|
+*/
 
 // Halaman welcome (opsional)
 Route::get('/', function () {
     return view('welcome');
 });
+
 // Profile bawaan Breeze
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -27,7 +45,9 @@ Route::middleware('auth')->group(function () {
 // Route auth (login, register, logout, dll)
 require __DIR__.'/auth.php';
 
-// ===================== ADMIN =====================
+/*
+|===================== ADMIN =====================|
+*/
 Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group(function () {
 
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
@@ -46,7 +66,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group
     });
 });
 
-// ===================== GURU =====================
+/*
+|===================== GURU =====================|
+*/
 Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(function () {
     Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
 
@@ -60,9 +82,9 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
         Route::delete('/{id}', [GuruController::class, 'destroyKelas'])->name('destroy');
         Route::patch('/{id}/toggle-status', [GuruController::class, 'toggleStatusKelas'])->name('toggle-status');
 
-        Route::post('/kelas/tambah-siswa', [\App\Http\Controllers\SiswaKelasController::class, 'tambahSiswaKeKelas'])->name('kelas.tambah-siswa');
-        Route::delete('/kelas/{kelasId}/siswa/{siswaId}', [\App\Http\Controllers\SiswaKelasController::class, 'hapusSiswaDariKelas'])->name('kelas.hapus-siswa');
-        Route::get('/kelas/{kelasId}/siswa', [\App\Http\Controllers\SiswaKelasController::class, 'daftarSiswaKelas'])->name('kelas.daftar-siswa');
+        Route::post('/kelas/tambah-siswa', [SiswaKelasController::class, 'tambahSiswaKeKelas'])->name('kelas.tambah-siswa');
+        Route::delete('/kelas/{kelasId}/siswa/{siswaId}', [SiswaKelasController::class, 'hapusSiswaDariKelas'])->name('kelas.hapus-siswa');
+        Route::get('/kelas/{kelasId}/siswa', [SiswaKelasController::class, 'daftarSiswaKelas'])->name('kelas.daftar-siswa');
     });
 
     Route::prefix('kelas/{kelasId}/materi')->name('materi_pembelajaran.')->group(function () {
@@ -102,17 +124,20 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
     Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
 });
 
-/// ===================== SISWA =====================
+/*
+|===================== SISWA =====================|
+*/
 Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group(function () {
     // Dashboard siswa
     Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
 
     // Kelas siswa
     Route::get('/kelas', [SiswaController::class, 'kelas'])->name('kelas.index');
-    Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])->name('kelas.riwayat'); 
-    Route::get('/kelas/{kelas}/materi/{materi?}', [SiswaKelasController::class, 'read'])->name('kelas.read'); 
-    Route::post('/kelas/{kelas}/materi/{materi}/complete',[SiswaKelasController::class, 'markComplete'])->name('kelas.materi.complete');
-   // Tugas siswa
+    Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])->name('kelas.riwayat');
+    Route::get('/kelas/{kelas}/materi/{materi?}', [SiswaKelasController::class, 'read'])->name('kelas.read');
+    Route::post('/kelas/{kelas}/materi/{materi}/complete', [SiswaKelasController::class, 'markComplete'])->name('kelas.materi.complete');
+
+    // Tugas siswa
     Route::get('/tugas', [SiswaController::class, 'tugas'])->name('tugas.index');
 
     // Pembayaran (riwayat / upload bukti)
@@ -125,7 +150,77 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group
     // Profil siswa
     Route::get('/profil', [SiswaController::class, 'profil'])->name('profil.index');
     Route::put('/profil', [SiswaController::class, 'updateProfil'])->name('profil.update');
-    // routes/web.php
+
+    // Catatan siswa
     Route::post('/catatan', [SiswaController::class, 'storeCatatan'])->name('catatan.store');
-    
 });
+
+/*
+|===================== PUBLIC PAGES =====================|
+*/
+
+// route halaman SD (tanpa auth)
+// sebelum
+
+Route::get('/jenjang/{jenjang}', [KelasController::class, 'publicByJenjang'])
+    ->name('jenjang.index');
+
+
+Route::get('/guru/Daftar', function () {
+    return view('guru.index');
+})->name('guru.index');
+
+// HALAMAN KONTAK (GET)
+Route::get('/kontak', [ContactController::class, 'page'])->name('kontak');
+
+// KIRIM FORM KONTAK (POST) – opsional, kalau pakai form
+Route::post('/kontak', [ContactController::class, 'send'])->name('kontak.kirim');
+
+
+
+/*
+|===================== GENERAL LOGIN (Dipakai welcome.blade.php & Breeze) =====================|
+*/
+
+// Halaman login (GET) — dipakai tombol Login dan dipakai Breeze
+Route::get('/login', [GeneralLoginController::class, 'showLogin'])->name('login');
+
+// Proses form login (POST)
+Route::post('/login', [GeneralLoginController::class, 'login'])->name('login.submit');
+
+// Logout
+Route::post('/logout', [GeneralLoginController::class, 'logout'])->name('logout');
+
+/*
+|===================== GOOGLE OAUTH LOGIN =====================|
+*/
+
+Route::get('/auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])
+    ->name('google.redirect');
+    
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])
+    ->name('google.callback');
+/*  
+|===================== DASHBOARD REDIRECT SAMPLE =====================|
+*/
+Route::get('/dashboard/siswa', function () {
+    return 'Dashboard Siswa';
+})->name('dashboard.siswa')->middleware('auth');
+
+Route::get('/dashboard/guru', function () {
+    return 'Dashboard Guru';
+})->name('dashboard.guru')->middleware('auth');
+
+Route::get('/dashboard/admin', function () {
+    return 'Dashboard Siswa';
+})->name('dashboard.admin')->middleware('auth');
+
+Route::get('/dashboard/pengunjung', function () {
+    return 'Dashboard Pengunjung';
+})->name('dashboard.pengunjung')->middleware('auth');
+
+// Halaman form pendaftaran
+Route::get('/daftar', function () {
+    return view('daftar');
+})->name('daftar');
+
