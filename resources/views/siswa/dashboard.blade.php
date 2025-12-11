@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    {{-- Stats Cards (4 cards sejajar) --}}
+    {{-- Stats Cards (4 cards sejajar di laptop, 2 di mobile) --}}
     <div class="stats-grid">
         
         {{-- Kelas Aktif --}}
@@ -91,22 +91,16 @@
             <div class="stat-header">
                 <div>
                     <p class="stat-title">PROGRES BELAJAR</p>
-                    @php
-                        $avgProgress = isset($kelasAktif) && $kelasAktif > 0 && isset($kelasAktifList)
-                            ? round($kelasAktifList->avg('progress') ?? 0) 
-                            : 0;
-                    @endphp
-                    <h3 class="stat-number">{{ $avgProgress }}%</h3>
+                    <h3 class="stat-number">{{ $progressRataRata ?? 0 }}%</h3>
                     <p class="stat-desc">Progres rata-rata dari semua kelas aktif</p>
                 </div>
                 <div class="stat-icon bg-blue-dark">
-                    {{-- Icon TrendingUp --}}
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
                 </div>
             </div>
-            <a href="#" class="stat-link">
+            <a href="{{ route('siswa.kelas.index') }}" class="stat-link stat-link-dark">
                 <span>Lanjut Belajar</span>
                 <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -117,44 +111,49 @@
 
     {{-- Kelas Aktif List --}}
     @if(isset($kelasAktifList) && $kelasAktifList->count() > 0)
-    <div class="content-panel">
-        <div class="panel-header">
-            <h2>Kelas Sedang Berlangsung</h2>
-            <a href="{{ route('siswa.kelas.index') }}" class="panel-link-header">Lihat Semua →</a>
-        </div>
+    <div class="section-header">
+        <h2>Kelas Sedang Berlangsung</h2>
+        <a href="{{ route('siswa.kelas.index') }}" class="section-link">Lihat Semua →</a>
+    </div>
 
-        <div class="kelas-grid">
-            @foreach($kelasAktifList as $kelas)
+    <div class="kelas-grid">
+        @foreach($kelasAktifList as $item)
             <div class="kelas-card">
-                <div class="kelas-thumbnail">
-                    @if(isset($kelas->thumbnail))
-                        <img src="{{ $kelas->thumbnail }}" alt="{{ $kelas->nama }}">
-                    @else
-                        <div class="kelas-thumbnail-placeholder"></div>
-                    @endif
-                    @if(isset($kelas->kategori))
-                    <span class="kelas-badge">{{ $kelas->kategori }}</span>
-                    @endif
+                <div class="kelas-header">
+                    <div class="kelas-color-bar"></div>
+                    <div class="kelas-info-top">
+                        <div class="guru-profile">
+                            <div class="guru-avatar">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                </svg>
+                            </div>
+                            <span class="guru-name">{{ $item->guru->name ?? 'Guru' }}</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="kelas-body">
-                    <h3 class="kelas-title">{{ $kelas->nama ?? 'Nama Kelas' }}</h3>
+                    <h3 class="kelas-title">{{ $item->nama ?? 'Nama Kelas' }}</h3>
                     
-                    <div class="kelas-guru">
+                    {{-- Jenjang --}}
+                    @if(isset($item->jenjang))
+                    <div class="kelas-jenjang">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                         </svg>
-                        {{ $kelas->guru->name ?? 'Guru' }}
+                        <span>{{ $item->jenjang }}</span>
                     </div>
-
+                    @endif
+                    
                     {{-- Progress Bar --}}
                     <div class="kelas-progress">
                         <div class="progress-label">
                             <span>Progress</span>
-                            <span class="progress-value">{{ $kelas->progress ?? 0 }}%</span>
+                            <span class="progress-value">{{ $item->progress ?? 0 }}%</span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: {{ $kelas->progress ?? 0 }}%"></div>
+                            <div class="progress-fill" style="width: {{ $item->progress ?? 0 }}%"></div>
                         </div>
                     </div>
 
@@ -163,23 +162,22 @@
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                             </svg>
-                            {{ $kelas->total_materi ?? 0 }} Materi
+                            {{ $item->total_materi ?? 0 }} Materi
                         </div>
                         <div class="meta-item">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                             </svg>
-                            {{ $kelas->total_tugas ?? 0 }} Tugas
+                            {{ $item->total_tugas ?? 0 }} Tugas
                         </div>
                     </div>
 
-                    <a href="{{ route('siswa.kelas.read', $kelas->id) }}" class="kelas-btn">
+                    <a href="{{ route('siswa.kelas.read', $item->id) }}" class="kelas-btn">
                         Lanjutkan Belajar
                     </a>
                 </div>
             </div>
-            @endforeach
-        </div>
+        @endforeach
     </div>
     @else
     <div class="empty-state">
@@ -195,10 +193,10 @@
 </div>
 
 <style>
-/* Container */
+/* Container - background putih kebiruan */
 .dashboard-container {
-    padding: 24px;
-    background: linear-gradient(135deg, #F9FAFB 0%, #EFF6FF 100%);
+    padding: 10px 24px 24px;
+    background: #F0F4F8;
     min-height: 100vh;
     animation: fadeIn 0.6s ease-out;
 }
@@ -224,7 +222,7 @@
     gap: 18px;
     color: white;
     box-shadow: 0 10px 32px rgba(14, 165, 233, 0.35);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
 }
 
 .welcome-main h2 {
@@ -258,19 +256,25 @@
     opacity: 0.95;
 }
 
-/* Stats Grid */
+/* Stats Grid - 4 kolom laptop, 2 kolom mobile */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
-    margin-bottom: 24px;
+    margin-bottom: 28px;
+}
+
+@media (min-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
 .stat-card {
     background: white;
     border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     transition: all 0.3s ease;
 }
 
@@ -282,10 +286,7 @@
 .stat-blue { border-left: 4px solid #0EA5E9; }
 .stat-orange { border-left: 4px solid #F97316; }
 .stat-green { border-left: 4px solid #22C55E; }
-.stat-blue-dark { border-left: 4px solid #1E40AF; }  /* Biru gelap */
-.bg-blue-dark { background: #DBEAFE; color: #1E40AF; }
-.stat-blue-dark .stat-link { color: #1E40AF; }
-
+.stat-blue-dark { border-left: 4px solid #1E40AF; }
 
 .stat-header {
     display: flex;
@@ -322,6 +323,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .stat-icon svg {
@@ -332,7 +334,7 @@
 .bg-blue { background: #DBEAFE; color: #0EA5E9; }
 .bg-orange { background: #FFEDD5; color: #F97316; }
 .bg-green { background: #DCFCE7; color: #22C55E; }
-.bg-purple { background: #F3E8FF; color: #A855F7; }
+.bg-blue-dark { background: #DBEAFE; color: #1E40AF; }
 
 .stat-link {
     display: inline-flex;
@@ -347,7 +349,7 @@
 .stat-blue .stat-link { color: #0EA5E9; }
 .stat-orange .stat-link { color: #F97316; }
 .stat-green .stat-link { color: #22C55E; }
-.stat-purple .stat-link { color: #A855F7; }
+.stat-link-dark { color: #1E40AF; }
 
 .arrow-icon {
     width: 16px;
@@ -359,51 +361,60 @@
     transform: translateX(4px);
 }
 
-/* Content Panel */
-.content-panel {
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.panel-header {
+/* Section Header */
+.section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
-.panel-header h2 {
+.section-header h2 {
     font-size: 1.25rem;
     font-weight: 700;
     color: #0F172A;
 }
 
-.panel-link-header {
+.section-link {
     font-size: 0.9rem;
     font-weight: 600;
     color: #0EA5E9;
     text-decoration: none;
+    transition: all 0.3s ease;
 }
 
-.panel-link-header:hover {
+.section-link:hover {
     text-decoration: underline;
 }
 
-/* Kelas Grid */
+/* Kelas Grid - ukuran card lebih besar dan panjang */
 .kelas-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: 1fr;
     gap: 20px;
 }
 
+@media (min-width: 768px) {
+    .kelas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .kelas-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 .kelas-card {
-    background: linear-gradient(135deg, #EFF6FF 0%, white 100%);
+    background: white;
     border-radius: 16px;
     overflow: hidden;
-    border: 1px solid #E5E7EB;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    min-height: 320px;
 }
 
 .kelas-card:hover {
@@ -411,44 +422,69 @@
     transform: translateY(-4px);
 }
 
-.kelas-thumbnail {
-    height: 160px;
-    background: linear-gradient(135deg, #0EA5E9, #A855F7);
+/* Header dengan color bar dan profile guru */
+.kelas-header {
     position: relative;
-    overflow: hidden;
+    padding: 18px;
+    background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
 }
 
-.kelas-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.kelas-thumbnail-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #0EA5E9, #A855F7);
-}
-
-.kelas-badge {
+.kelas-color-bar {
     position: absolute;
-    top: 12px;
-    right: 12px;
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(8px);
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.75rem;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #0EA5E9, #38BDF8);
+}
+
+.kelas-info-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.guru-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.guru-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+}
+
+.guru-avatar svg {
+    width: 20px;
+    height: 20px;
+    color: #0EA5E9;
+}
+
+.guru-name {
+    font-size: 0.9rem;
     font-weight: 600;
     color: #0F172A;
 }
 
+/* Kelas Body */
 .kelas-body {
     padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
 }
 
 .kelas-title {
-    font-size: 1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #0F172A;
     margin-bottom: 12px;
@@ -456,41 +492,50 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    min-height: 56px;
+    line-height: 1.4;
 }
 
-.kelas-guru {
+/* Jenjang */
+.kelas-jenjang {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: #64748B;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
+    padding: 7px 12px;
+    background: #F8FAFC;
+    border-radius: 8px;
+    width: fit-content;
 }
 
-.kelas-guru svg {
-    width: 16px;
-    height: 16px;
+.kelas-jenjang svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
 }
 
 .kelas-progress {
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 
 .progress-label {
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: #64748B;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .progress-value {
     font-weight: 700;
+    color: #0EA5E9;
 }
 
 .progress-bar {
     width: 100%;
-    height: 8px;
+    height: 9px;
     background: #E5E7EB;
     border-radius: 999px;
     overflow: hidden;
@@ -498,7 +543,7 @@
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #0EA5E9, #A855F7);
+    background: linear-gradient(90deg, #0EA5E9, #38BDF8);
     border-radius: 999px;
     transition: width 1s ease;
 }
@@ -506,34 +551,38 @@
 .kelas-meta {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+    padding-top: 14px;
+    border-top: 1px solid #F1F5F9;
 }
 
 .meta-item {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 0.75rem;
+    gap: 6px;
+    font-size: 0.85rem;
     color: #64748B;
 }
 
 .meta-item svg {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
 }
 
 .kelas-btn {
     display: block;
     width: 100%;
     text-align: center;
-    background: linear-gradient(135deg, #0EA5E9, #0EA5E9);
+    background: linear-gradient(135deg, #0EA5E9, #0284C7);
     color: white;
-    padding: 10px;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 10px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     text-decoration: none;
     transition: all 0.3s ease;
+    margin-top: auto;
 }
 
 .kelas-btn:hover {
@@ -547,7 +596,7 @@
     padding: 60px 24px;
     background: white;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .empty-state svg {
@@ -584,35 +633,40 @@
     background: #0284C7;
 }
 
-/* Responsive */
-@media (max-width: 1199px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 991px) {
+/* Responsive Mobile */
+@media (max-width: 767px) {
     .welcome-banner-siswa {
         flex-direction: column;
         text-align: left;
+        padding: 20px;
     }
     
     .welcome-extra {
         text-align: left;
     }
-    
-    .kelas-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    }
-}
 
-@media (max-width: 767px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
+    .welcome-main h2 {
+        font-size: 1.4rem;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+    }
+
+    .dashboard-container {
+        padding: 8px 16px 24px;
     }
     
-    .kelas-grid {
-        grid-template-columns: 1fr;
+    .kelas-body {
+        padding: 16px;
+    }
+    
+    .kelas-header {
+        padding: 16px;
     }
 }
 </style>

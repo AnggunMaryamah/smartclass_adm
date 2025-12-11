@@ -1,116 +1,94 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+// ==================== IMPORT KAMU (LENGKAP) + TAMBAH TIM ====================
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\Guru\TugasController;
 use App\Http\Controllers\MateriPembelajaranController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\TinyMceUploadController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiswaKelasController;
-use App\Http\Controllers\Auth\SiswaAuthController;
-use App\Http\Controllers\Auth\SocialAuthController;
-use App\Http\Controllers\Auth\GeneralLoginController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\KelasController;
+use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes (final, rapi)
-|--------------------------------------------------------------------------
-|
-| Menjaga semua route dan nama route yang sudah ada — hanya merapikan
-| serta memastikan tidak ada duplikasi / route yang hilang.
-|
-*/
+// TAMBAH DARI TIM (TIDAK BENTROK)
+use App\Http\Controllers\DataKelasController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JenjangController;
+use App\Http\Controllers\SdController;
 
-/* ------------------ Public / Auth ------------------ */
-
-// Halaman welcome (opsional)
+// ===================== AUTH & DASHBOARD BAWAAN (KAMU) =====================
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Profile (bawaan, but auth)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Include auth scaffolding (login/register/etc)
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
-// General login (custom)
-Route::get('/login', [GeneralLoginController::class, 'showLogin'])->name('login');
-Route::post('/login', [GeneralLoginController::class, 'login'])->name('login.submit');
-Route::post('/logout', [GeneralLoginController::class, 'logout'])->name('logout');
+// ===================== ADMIN (KAMU + TAMBAH FITUR TIM) =====================
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
 
-// Google OAuth
-Route::get('/auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
-Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('google.callback');
+        // Dashboard admin
+        Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
-// Register pending info
-Route::get('/register/pending', function () {
-    return view('auth.register-pending');
-})->name('register.pending');
+        // User management (KAMU)
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/{id}', [UserController::class, 'show'])->name('show');
+            Route::patch('/{id}/verifikasi', [UserController::class, 'verifikasi'])->name('verifikasi');
+            Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
+        });
 
-/* ------------------ Admin ------------------ */
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+        // Halaman utama pembayaran admin + pengaturan QRIS admin
+        Route::get('/pembayaran', [PaymentController::class, 'index'])->name('pembayaran.index');
+        Route::post('/pembayaran/qris', [PaymentController::class, 'updateQris'])->name('pembayaran.qris.update');
 
-    // Dashboard
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+        // Payment (KAMU) - manajemen pembayaran per transaksi
+        Route::prefix('payments')->name('payments.')->group(function () {
+            Route::get('/', [PaymentController::class, 'index'])->name('index');
+            Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
+            Route::post('/{id}/verify', [PaymentController::class, 'verify'])->name('verify');
+        });
 
-    // Users management (named admin.users)
-    // kept as single route for listing (other user routes already exist under users.* inside admin)
-    Route::get('/users', [AdminUserController::class, 'index'])->name('users');
+        // TAMBAH DARI TIM: Data Kelas
+        Route::get('/data-kelas', [DataKelasController::class, 'index'])->name('data_kelas');
+        Route::patch('/data-kelas/{id}/toggle', [DataKelasController::class, 'toggleStatus'])->name('data_kelas.toggle');
 
-    // More user actions (show/verifikasi/destroy) under admin.users.* as nested routes
-    Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/{id}', [UserController::class, 'show'])->name('show');
-        Route::patch('/{id}/verifikasi', [UserController::class, 'verifikasi'])->name('verifikasi');
-        Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
+        // TAMBAH DARI TIM: Laporan Admin
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+        Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
     });
 
-    // Payments
-    Route::prefix('payments')->name('payments.')->group(function () {
-        Route::get('/', [PaymentController::class, 'index'])->name('index');
-        Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
-        Route::post('/{id}/verify', [PaymentController::class, 'verify'])->name('verify');
-    });
-});
+// ===================== GURU (KAMU 100% - SUDAH LENGKAP) =====================
+Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(function () {
+    Route::get('/dashboard', [GuruController::class, 'index'])->name('dashboard');
 
-/* ------------------ Guru ------------------ */
-/*
-  Single guru group: semua route guru berada di bawah prefix 'guru'
-  Dengan middleware: auth, role:guru, check.active (so guru pending tidak bisa akses)
-*/
-Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru', 'check.active'])->group(function () {
-
-    // Dashboard
-    Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
-
-    // Kelas CRUD & related actions
     Route::prefix('kelas')->name('kelas.')->group(function () {
-        Route::get('/', [GuruController::class, 'indexKelas'])->name('index');
-        Route::get('/tambah', [GuruController::class, 'createKelas'])->name('create');
-        Route::post('/', [GuruController::class, 'storeKelas'])->name('store');
-        Route::get('/{id}', [GuruController::class, 'showKelas'])->name('show');
-        Route::get('/{id}/edit', [GuruController::class, 'editKelas'])->name('edit');
-        Route::put('/{id}', [GuruController::class, 'updateKelas'])->name('update');
-        Route::delete('/{id}', [GuruController::class, 'destroyKelas'])->name('destroy');
-        Route::patch('/{id}/toggle-status', [GuruController::class, 'toggleStatusKelas'])->name('toggle-status');
+    Route::get('/', [GuruController::class, 'kelas'])->name('index');
+    Route::get('/tambah', [GuruController::class, 'kelasCreate'])->name('create');
+    Route::post('/', [GuruController::class, 'kelasStore'])->name('store');
+    Route::get('/{id}', [GuruController::class, 'kelasDetail'])->name('show');
+    Route::get('/{id}/edit', [GuruController::class, 'kelasEdit'])->name('edit');
+    Route::put('/{id}', [GuruController::class, 'kelasUpdate'])->name('update');
+    Route::delete('/{id}', [GuruController::class, 'kelasDestroy'])->name('destroy');
+    Route::patch('/{id}/toggle-status', [GuruController::class, 'toggleStatusKelas'])->name('toggle-status');
 
-        // siswa in class management (controller SiswaKelasController)
-        Route::post('/kelas/tambah-siswa', [SiswaKelasController::class, 'tambahSiswaKeKelas'])->name('kelas.tambah-siswa');
-        Route::delete('/kelas/{kelasId}/siswa/{siswaId}', [SiswaKelasController::class, 'hapusSiswaDariKelas'])->name('kelas.hapus-siswa');
-        Route::get('/kelas/{kelasId}/siswa', [SiswaKelasController::class, 'daftarSiswaKelas'])->name('kelas.daftar-siswa');
+        Route::post('/kelas/tambah-siswa', [\App\Http\Controllers\SiswaKelasController::class, 'tambahSiswaKeKelas'])->name('kelas.tambah-siswa');
+        Route::delete('/kelas/{kelasId}/siswa/{siswaId}', [\App\Http\Controllers\SiswaKelasController::class, 'hapusSiswaDariKelas'])->name('kelas.hapus-siswa');
+        Route::get('/kelas/{kelasId}/siswa', [\App\Http\Controllers\SiswaKelasController::class, 'daftarSiswaKelas'])->name('kelas.daftar-siswa');
     });
 
-    // Materi pembelajaran
     Route::prefix('kelas/{kelasId}/materi')->name('materi_pembelajaran.')->group(function () {
         Route::get('/', [MateriPembelajaranController::class, 'index'])->name('index');
         Route::get('/create', [MateriPembelajaranController::class, 'create'])->name('create');
@@ -120,9 +98,9 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru', 'check.ac
         Route::put('/{materiId}', [MateriPembelajaranController::class, 'update'])->name('update');
         Route::delete('/{materiId}', [MateriPembelajaranController::class, 'destroy'])->name('destroy');
     });
-
-    // Reports & other guru features
+    Route::get('/pembayaran', [GuruController::class, 'pembayaran'])->name('pembayaran.index');  
     Route::get('/laporan-siswa', [GuruController::class, 'laporanSiswa'])->name('laporan_siswa.index');
+    Route::get('/laporan-siswa', [GuruController::class, 'laporan'])->name('laporan_siswa.index');
     Route::get('/laporan-siswa/kelas/{kelasId}', [GuruController::class, 'laporanSiswaDaftarKelas'])->name('laporan_siswa.daftar');
     Route::get('/laporan-siswa/detail/{siswa_id}', [GuruController::class, 'laporanSiswaDetailSatuan'])->name('laporan_siswa.detail');
 
@@ -136,74 +114,65 @@ Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru', 'check.ac
     Route::get('/laporan-siswa/edit/{laporan_id}', [GuruController::class, 'editLaporanSiswa'])->name('laporan_siswa.edit');
     Route::put('/laporan-siswa/update/{laporan_id}', [GuruController::class, 'updateLaporanSiswa'])->name('laporan_siswa.update');
     Route::delete('/laporan-siswa/hapus/{laporan_id}', [GuruController::class, 'destroyLaporanSiswa'])->name('laporan_siswa.destroy');
+    // kuis dan tugas siswa
+Route::prefix('kelas/{kelasId}/tugas')->name('tugas.')->group(function () {
+    Route::get('/', [TugasController::class, 'index'])->name('index');
+    Route::get('/create', [TugasController::class, 'create'])->name('create');
+    Route::post('/', [TugasController::class, 'store'])->name('store');
 
-    // Pembayaran & other actions
-    Route::get('/pembayaran', [GuruController::class, 'pembayaran'])->name('pembayaran.index');
-    Route::post('/pembayaran/upload-qris', [GuruController::class, 'uploadQris'])->name('pembayaran.upload_qris');
-    Route::put('/pembayaran/{id}/verify', [GuruController::class, 'verifyPembayaran'])->name('pembayaran.verify');
+    // kelola soal
+    Route::get('/{tugas}/soal', [TugasController::class, 'editSoal'])->name('soal.edit');
+    Route::post('/{tugas}/soal', [TugasController::class, 'storeSoal'])->name('soal.store');
+}); // <-- PASTIKAN INI ADA
 
-    Route::post('/upload-image', [TinyMceUploadController::class, 'upload'])->name('upload.image');
-    Route::get('/siswa', [GuruController::class, 'siswa'])->name('siswa.index');
-    Route::get('/laporan', [GuruController::class, 'laporan'])->name('laporan.index');
-    Route::get('/transaksi', [GuruController::class, 'transaksi'])->name('transaksi.index');
-    Route::get('/profil', [GuruController::class, 'profil'])->name('profil.index');
-    Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
-});
+// route hapus tugas (DI LUAR grup di atas)
+Route::delete('/kelas/{kelasId}/tugas/{tugas}', [TugasController::class, 'destroy'])
+    ->name('tugas.destroy');
 
-/* ------------------ Siswa ------------------ */
-Route::prefix('siswa')->name('siswa.')->middleware(['auth', 'role:siswa'])->group(function () {
+Route::post('/upload-image', [TinyMceUploadController::class, 'upload'])->name('upload.image');
+Route::get('/siswa', [GuruController::class, 'siswa'])->name('siswa.index');
+Route::get('/laporan', [GuruController::class, 'laporan'])->name('laporan.index');
+Route::get('/transaksi', [GuruController::class, 'transaksi'])->name('transaksi.index');
+Route::get('/profil', [GuruController::class, 'profil'])->name('profil.index');
+Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
+}); // <-- kurung tutup grup guru
+
+// ===================== SISWA (KAMU 100% - SUDAH LENGKAP) =====================
+Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group(function () {
     Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/kelas', [SiswaController::class, 'kelas'])->name('kelas.index');
-    Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])->name('kelas.riwayat');
-    Route::get('/kelas/{kelas}/materi/{materi?}', [SiswaKelasController::class, 'read'])->name('kelas.read');
-    Route::post('/kelas/{kelas}/materi/{materi}/complete', [SiswaKelasController::class, 'markComplete'])->name('kelas.materi.complete');
-
+    Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])->name('kelas.riwayat'); 
+    Route::get('/kelas/{kelas}/materi/{materi?}', [SiswaKelasController::class, 'read'])->name('kelas.read'); 
+    Route::post('/kelas/{kelas}/materi/{materi}/complete',[SiswaKelasController::class, 'markComplete'])->name('kelas.materi.complete');
+    
     Route::get('/tugas', [SiswaController::class, 'tugas'])->name('tugas.index');
 
     Route::get('/pembayaran', [SiswaController::class, 'pembayaran'])->name('pembayaran.index');
     Route::post('/pembayaran', [SiswaController::class, 'storePembayaran'])->name('pembayaran.store');
+    Route::get('/pembayaran/{pembayaran}', [SiswaController::class, 'showPembayaran'])->name('pembayaran.show');
 
     Route::get('/transaksi', [SiswaController::class, 'transaksi'])->name('transaksi.index');
 
     Route::get('/profil', [SiswaController::class, 'profil'])->name('profil.index');
     Route::put('/profil', [SiswaController::class, 'updateProfil'])->name('profil.update');
-
     Route::post('/catatan', [SiswaController::class, 'storeCatatan'])->name('catatan.store');
 });
+// Kuis & Ujian Routes
+    Route::prefix('kuis')->name('kuis.')->group(function () {
+        Route::get('/{tugas}', [App\Http\Controllers\Siswa\KuisController::class, 'show'])->name('show');
+        Route::post('/{tugas}/start', [App\Http\Controllers\Siswa\KuisController::class, 'start'])->name('start');
+        Route::get('/attempt/{attempt}', [App\Http\Controllers\Siswa\KuisController::class, 'attempt'])->name('attempt');
+        Route::post('/attempt/{attempt}/submit', [App\Http\Controllers\Siswa\KuisController::class, 'submit'])->name('submit');
+        Route::get('/result/{attempt}', [App\Http\Controllers\Siswa\KuisController::class, 'result'])->name('result');
+        Route::get('/{tugas}/riwayat', [App\Http\Controllers\Siswa\KuisController::class, 'riwayat'])->name('riwayat');
+    });
 
-/* ------------------ Public pages ------------------ */
+// ===================== TAMBAHAN DARI TIM (TIDAK BENTROK) =====================
+Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/sd', [SdController::class, 'index'])->name('sd.index');
 
-// public jenjang (sd, smp, sma)
-Route::get('/jenjang/{jenjang}', [KelasController::class, 'publicByJenjang'])->name('jenjang.index');
-
-// guru daftar page (public)
-Route::get('/guru/Daftar', function () {
-    return view('guru.index');
-})->name('guru.index');
-
-// contact
-Route::get('/kontak', [ContactController::class, 'page'])->name('kontak');
-Route::post('/kontak', [ContactController::class, 'send'])->name('kontak.kirim');
-
-// helper dashboard redirects (keperluan debug / sample)
-Route::get('/dashboard/siswa', function () {
-    return 'Dashboard Siswa';
-})->name('dashboard.siswa')->middleware('auth');
-
-Route::get('/dashboard/guru', function () {
-    return 'Dashboard Guru';
-})->name('dashboard.guru')->middleware('auth');
-
-Route::get('/dashboard/admin', function () {
-    return 'Dashboard Admin';
-})->name('dashboard.admin')->middleware('auth');
-
-Route::get('/dashboard/pengunjung', function () {
-    return 'Dashboard Pengunjung';
-})->name('dashboard.pengunjung')->middleware('auth');
-
-// halaman daftar (public)
-Route::get('/daftar', function () {
-    return view('daftar');
-})->name('daftar');
+// Test route dari tim (opsional)
+Route::get('/jenjang/test-route', function () {
+    return 'OK ROUTE';
+});

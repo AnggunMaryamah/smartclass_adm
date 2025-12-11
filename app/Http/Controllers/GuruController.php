@@ -5,200 +5,166 @@ namespace App\Http\Controllers;
 use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\Siswa;
+use App\Models\SiswaKelas;
 use App\Models\Pembayaran;
+use App\Models\LaporanHasilBelajar;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class GuruController extends Controller
 {
-    public function dashboard()
+    // ================= DASHBOARD =================
+    public function index()
+{
+    $guru = Guru::first();
+    if (!$guru) return 'Tidak ada data guru.';
+
+    $totalKelas = Kelas::where('guru_id', $guru->id)->count();
+
+    $totalSiswa = SiswaKelas::where('status', 'aktif')
+        ->whereHas('kelas', function ($q) use ($guru) {
+            $q->where('guru_id', $guru->id);
+        })
+        ->distinct('siswa_id')
+        ->count('siswa_id');
+
+    // total laporan
+    $jumlahLaporan = LaporanHasilBelajar::count();
+
+    // ambil semua id kelas milik guru
+$kelasIds = Kelas::where('guru_id', $guru->id)->pluck('id');
+
+// total pemasukan pembayaran lunas untuk kelas-kelas guru
+$totalPembayaran = Pembayaran::where('status_pembayaran', 'lunas')
+    ->whereIn('kelas_id', $kelasIds)
+    ->sum('nominal_pembayaran');
+
+    return view('guru.dashboard', compact(
+        'guru',
+        'totalKelas',
+        'totalSiswa',
+        'jumlahLaporan',
+        'totalPembayaran'
+    ));
+}
+    // ================= PEMBAYARAN (READ ONLY) =================
+    public function pembayaran()
     {
         $guru = Guru::first();
-        if (!$guru) {
-            return 'Tidak ada data guru, silakan insert minimal 1.';
-        }
+        if (!$guru) return back()->with('error', 'Data guru tidak ditemukan');
 
-        $jumlahKelas  = Kelas::where('guru_id', $guru->id)->count();
-        $kelasAktif   = Kelas::where('guru_id', $guru->id)->where('status', 'aktif')->count();
-        $jumlahSiswa  = Kelas::where('guru_id', $guru->id)->sum('jumlah_siswa');
-        $kelasPopular = Kelas::where('guru_id', $guru->id)
-            ->orderBy('jumlah_siswa', 'desc')
-            ->take(5)
+        // Ambil semua kelas yang diampu guru
+        $kelasIds = Kelas::where('guru_id', $guru->id)->pluck('id');
+
+        // Ambil pembayaran dari siswa di kelas-kelas itu
+        $pembayarans = Pembayaran::with(['siswa', 'kelas'])
+            ->whereIn('kelas_id', $kelasIds)
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        // Data tambahan (dummy)
-        $jumlahLaporan    = 0;
-        $totalPembayaran  = 0;
-        $totalTransaksi   = 0;
-        $persentaseTarget = 0;
-        $chartData        = [16, 24, 20, 27, 31, 22];
+        // Hitung statistik sederhana
+        $total    = $pembayarans->count();
+        $menunggu = $pembayarans->where('status_pembayaran', 'menunggu')->count();
+        $lunas    = $pembayarans->where('status_pembayaran', 'lunas')->count();
+        $gagal    = $pembayarans->where('status_pembayaran', 'gagal')->count();
 
-        return view('guru.dashboard', compact(
-            'jumlahKelas','kelasAktif','jumlahSiswa','kelasPopular',
-            'jumlahLaporan','totalPembayaran','totalTransaksi','persentaseTarget','chartData'
+        return view('guru.pembayaran.index', compact(
+            'pembayarans',
+            'total',
+            'menunggu',
+            'lunas',
+            'gagal'
         ));
     }
 
     // ================= KELAS =================
-    public function indexKelas(Request $request)
-    {
-        $guru = Guru::first();
-        if (!$guru) return 'Tidak ada data guru.';
+    public function kelas()
+{
+    $guru = Guru::first();
+    if (!$guru) return 'Tidak ada data guru.';
 
-        $query = Kelas::where('guru_id', $guru->id);
+    // ganti nama variabel jadi $daftarKelas
+    $daftarKelas = Kelas::where('guru_id', $guru->id)
+        ->withCount(['siswas as total_siswa' => function ($q) {
+            $q->where('siswa_kelas.status', 'aktif');
+        }])
+        ->paginate(10); // boleh pakai get() kalau tidak butuh pagination
 
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('nama_kelas', 'like', '%'.$request->search.'%')
-                  ->orWhere('deskripsi', 'like', '%'.$request->search.'%');
-            });
-        }
+    return view('guru.kelas.index', compact('daftarKelas'));
+}
 
-        if ($request->filled('jenjang')) {
-            $query->where('jenjang_pendidikan', $request->jenjang);
-        }
-
-        $daftarKelas = $query->latest()->paginate(10);
-
-        return view('guru.kelas.index', compact('daftarKelas'));
-    }
-
-    public function createKelas()
+    public function kelasCreate()
     {
         return view('guru.kelas.create');
     }
 
-    public function storeKelas(Request $request)
+    public function kelasStore(Request $request)
     {
-        Log::info('=== STORE KELAS CALLED ===', $request->all());
-
         $guru = Guru::first();
-        if (!$guru) {
-            return back()->with('error', 'Tidak ada data guru. Silakan hubungi administrator.');
-        }
+        if (!$guru) return back()->with('error', 'Guru tidak ditemukan.');
 
         $validated = $request->validate([
-            'nama_kelas'         => 'required|string|max:255',
-            'jenjang_pendidikan' => 'required|in:SD,SMP,SMA',
-            'harga'              => 'required|integer|min:0',
-            'durasi'             => 'required|string',
-            'durasi_custom'      => 'nullable|string|max:100',
-            'deskripsi'          => 'nullable|string',
+            'nama_kelas'     => 'required|string|max:100',
+            'deskripsi'      => 'nullable|string',
+            'tahun_ajaran'   => 'required|string|max:20',
+            'harga'          => 'required|numeric|min:0',
+            'foto_kelas'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        try {
-            $durasi = $validated['durasi'];
-            if ($durasi === 'custom' && !empty($validated['durasi_custom'])) {
-                $durasi = $validated['durasi_custom'];
-            }
+        $validated['guru_id'] = $guru->id;
 
-            $kelas = Kelas::create([
-                'guru_id'            => $guru->id,
-                'nama_kelas'         => $validated['nama_kelas'],
-                'jenjang_pendidikan' => $validated['jenjang_pendidikan'],
-                'harga'              => $validated['harga'],
-                'durasi'             => $durasi,
-                'deskripsi'          => $validated['deskripsi'] ?? null,
-                'status'             => 'aktif',
-                'jumlah_siswa'       => 0,
-            ]);
-
-            Log::info('Kelas created successfully', $kelas->toArray());
-
-            return redirect()->route('guru.kelas.index')
-                ->with('success', 'Kelas berhasil ditambahkan!');
-        } catch (\Exception $e) {
-            Log::error('Error creating kelas', [
-                'message' => $e->getMessage(),
-                'line'    => $e->getLine(),
-                'file'    => $e->getFile(),
-            ]);
-
-            return back()->withInput()
-                ->with('error', 'Gagal menambahkan kelas: ' . $e->getMessage());
+        if ($request->hasFile('foto_kelas')) {
+            $validated['foto_kelas'] = $request->file('foto_kelas')
+                ->store('kelas', 'public');
         }
+
+        Kelas::create($validated);
+
+        return redirect()->route('guru.kelas.index')
+            ->with('success', 'Kelas berhasil ditambahkan!');
     }
 
-    public function showKelas($id)
+    public function kelasEdit($id)
     {
-        $guru = Guru::first();
-        if (!$guru) abort(404, 'Belum ada data guru di database. Silakan buat guru dulu.');
-
-        $kelas = Kelas::where('id', $id)
-            ->where('guru_id', $guru->id)
-            ->firstOrFail();
-
-        $siswas      = collect();
-        $totalSiswa  = 0;
-        $totalMateri = 0;
-
-        try { $siswas = $kelas->siswas; $totalSiswa = $siswas->count(); } catch (\Exception $e) {}
-        try { $totalMateri = $kelas->materiPembelajarans()->count(); } catch (\Exception $e) {}
-
-        return view('guru.kelas.show', compact('kelas', 'siswas', 'totalSiswa', 'totalMateri'));
-    }
-
-    public function editKelas($id)
-    {
-        $guru = Guru::first();
-        if (!$guru) return 'Tidak ada data guru.';
-
-        $kelas = Kelas::where('id', $id)->where('guru_id', $guru->id)->firstOrFail();
-
+        $kelas = Kelas::findOrFail($id);
         return view('guru.kelas.edit', compact('kelas'));
     }
 
-    public function updateKelas(Request $request, $id)
+    public function kelasUpdate(Request $request, $id)
     {
-        $guru = Guru::first();
-        if (!$guru) return 'Tidak ada data guru.';
-
-        $kelas = Kelas::where('id', $id)->where('guru_id', $guru->id)->firstOrFail();
+        $kelas = Kelas::findOrFail($id);
 
         $validated = $request->validate([
-            'nama_kelas'         => 'required|string|max:255',
-            'jenjang_pendidikan' => 'required|in:SD,SMP,SMA',
-            'harga'              => 'required|integer|min:0',
-            'durasi'             => 'required|string',
-            'durasi_custom'      => 'nullable|string|max:100',
-            'deskripsi'          => 'nullable|string',
-            'status'             => 'nullable|in:aktif,nonaktif',
+            'nama_kelas'   => 'required|string|max:100',
+            'deskripsi'    => 'nullable|string',
+            'tahun_ajaran' => 'required|string|max:20',
+            'harga'        => 'required|numeric|min:0',
+            'foto_kelas'   => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        try {
-            $durasi = $validated['durasi'];
-            if ($durasi === 'custom' && !empty($validated['durasi_custom'])) {
-                $durasi = $validated['durasi_custom'];
+        if ($request->hasFile('foto_kelas')) {
+            if ($kelas->foto_kelas && Storage::disk('public')->exists($kelas->foto_kelas)) {
+                Storage::disk('public')->delete($kelas->foto_kelas);
             }
-
-            $kelas->update([
-                'nama_kelas'         => $validated['nama_kelas'],
-                'jenjang_pendidikan' => $validated['jenjang_pendidikan'],
-                'harga'              => $validated['harga'],
-                'durasi'             => $durasi,
-                'deskripsi'          => $validated['deskripsi'] ?? null,
-                'status'             => $validated['status'] ?? $kelas->status,
-            ]);
-
-            return redirect()->route('guru.kelas.index')
-                ->with('success', 'Kelas berhasil diperbarui!');
-        } catch (\Exception $e) {
-            return back()->withInput()
-                ->with('error', 'Gagal memperbarui kelas: ' . $e->getMessage());
+            $validated['foto_kelas'] = $request->file('foto_kelas')
+                ->store('kelas', 'public');
         }
+
+        $kelas->update($validated);
+
+        return redirect()->route('guru.kelas.index')
+            ->with('success', 'Kelas berhasil diperbarui!');
     }
 
-    public function destroyKelas($id)
+    public function kelasDestroy($id)
     {
-        $guru = Guru::first();
-        if (!$guru) return 'Tidak ada data guru.';
+        $kelas = Kelas::findOrFail($id);
 
-        $kelas = Kelas::where('id', $id)->where('guru_id', $guru->id)->firstOrFail();
-
-        if ($kelas->jumlah_siswa > 0) {
-            return back()->with('error', 'Tidak dapat menghapus kelas yang masih memiliki siswa aktif!');
+        if ($kelas->foto_kelas && Storage::disk('public')->exists($kelas->foto_kelas)) {
+            Storage::disk('public')->delete($kelas->foto_kelas);
         }
 
         $kelas->delete();
@@ -207,133 +173,59 @@ class GuruController extends Controller
             ->with('success', 'Kelas berhasil dihapus!');
     }
 
-    public function toggleStatusKelas($id)
+    public function kelasDetail($id)
+    {
+        $kelas = Kelas::with('siswas')->findOrFail($id);
+
+        $daftarSiswa = $kelas->siswas()
+            ->wherePivot('status', 'aktif')
+            ->get();
+
+        return view('guru.kelas.detail', compact('kelas', 'daftarSiswa'));
+    }
+
+    // ================= SISWA =================
+    public function siswa()
     {
         $guru = Guru::first();
         if (!$guru) return 'Tidak ada data guru.';
 
-        $kelas = Kelas::where('id', $id)->where('guru_id', $guru->id)->firstOrFail();
-        $kelas->status = $kelas->status === 'aktif' ? 'nonaktif' : 'aktif';
-        $kelas->save();
-
-        return back()->with('success', 'Status kelas berhasil diubah!');
-    }
-
-    // ================= PEMBAYARAN =================
-    public function pembayaran()
-    {
-        $guru = Guru::first();
-        if (!$guru) return back()->with('error', 'Data guru tidak ditemukan');
-
-        $pembayarans = Pembayaran::with(['pemesanan.siswa', 'pemesanan.kelas'])
-            ->whereHas('pemesanan.kelas', function ($q) use ($guru) {
+        $pivot = SiswaKelas::with(['siswa', 'kelas'])
+            ->where('status', 'aktif')
+            ->whereHas('kelas', function ($q) use ($guru) {
                 $q->where('guru_id', $guru->id);
             })
-            ->orderBy('created_at', 'desc')
             ->get();
 
-        $totalPembayaran = $pembayarans->count();
-        $menunggu        = $pembayarans->where('status_pembayaran', 'menunggu')->count();
-        $lunas           = $pembayarans->where('status_pembayaran', 'lunas')->count();
-        $totalPemasukan  = $pembayarans->where('status_pembayaran', 'lunas')->sum('nominal_pembayaran');
+        $daftarSiswa = $pivot->groupBy('siswa_id')->map(function ($rows) {
+            $row = $rows->first();
+            $siswa = $row->siswa;
+            $siswa->total_kelas = $rows->count();
+            return $siswa;
+        })->values();
 
-        return view('guru.pembayaran.index', compact(
-            'guru','pembayarans','totalPembayaran','menunggu','lunas','totalPemasukan'
+        $totalSiswa = $daftarSiswa->count();
+        $siswaAktif = $totalSiswa;
+        $totalKelas = Kelas::where('guru_id', $guru->id)->count();
+
+        return view('guru.siswa.index', compact(
+            'daftarSiswa',
+            'totalSiswa',
+            'siswaAktif',
+            'totalKelas'
         ));
     }
 
-    // Upload / update QRIS guru
-    public function uploadQris(Request $request)
-    {
-        $guru = Guru::first();
-        if (!$guru) return back()->with('error', 'Guru tidak ditemukan');
-
-        $request->validate([
-            'qris_image'     => $guru->qris_image ? 'nullable|image|mimes:jpg,jpeg,png|max:2048' : 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'qris_nama_bank' => 'required|string|max:100',
-            'qris_catatan'   => 'nullable|string|max:500',
-        ]);
-
-        if ($request->hasFile('qris_image')) {
-            if ($guru->qris_image && Storage::disk('public')->exists($guru->qris_image)) {
-                Storage::disk('public')->delete($guru->qris_image);
-            }
-            $guru->qris_image = $request->file('qris_image')->store('qris', 'public');
-        }
-
-        $guru->qris_nama_bank = $request->qris_nama_bank;
-        $guru->qris_catatan   = $request->qris_catatan;
-        $guru->save();
-
-        return redirect()->route('guru.pembayaran.index')->with('success', 'QRIS berhasil diperbarui.');
-    }
-
-    // Verifikasi pembayaran (lunas / gagal)
-    public function verifyPembayaran(Request $request, $id)
-    {
-        $guru = Guru::first();
-        if (!$guru) return back()->with('error', 'Guru tidak ditemukan');
-
-        $request->validate([
-            'status' => 'required|in:lunas,gagal',
-        ]);
-
-        $pembayaran = Pembayaran::with('pemesanan.kelas')->findOrFail($id);
-
-        // pastikan pembayaran milik kelas guru ini
-        if (optional(optional($pembayaran->pemesanan)->kelas)->guru_id !== $guru->id) {
-            return back()->with('error', 'Anda tidak berhak memverifikasi pembayaran ini.');
-        }
-
-        $pembayaran->status_pembayaran = $request->status;
-        $pembayaran->verified_by       = $guru->id;
-        $pembayaran->verified_at       = now();
-        if ($request->status === 'lunas') {
-            $pembayaran->tanggal_pembayaran = now();
-        }
-        $pembayaran->save();
-
-        return back()->with('success', $request->status === 'lunas'
-            ? 'Pembayaran ditandai LUNAS.'
-            : 'Pembayaran ditolak.');
-    }
-
-    // ================= LAINNYA =================
-    public function transaksi()
-    {
-        return view('guru.transaksi.index');
-    }
-
-    public function profil()
-    {
-        $guru = Guru::first();
-        return view('guru.profil.index', compact('guru'));
-    }
-
-    public function updateProfil(Request $request)
-    {
-        $guru = Guru::first();
-
-        $validated = $request->validate([
-            'nama_lengkap'   => 'required|string|max:255',
-            'email'          => 'required|email|unique:gurus,email,' . $guru->id,
-            'no_hp'          => 'nullable|string|max:20',
-            'mata_pelajaran' => 'nullable|string|max:255',
-        ]);
-
-        $guru->update($validated);
-
-        return back()->with('success', 'Profil berhasil diperbarui!');
-    }
-
-    // ========== LAPORAN SISWA ==========
-    public function laporanSiswa()
+    // ================= LAPORAN SISWA =================
+    public function laporan()
     {
         $guru = Guru::first();
         if (!$guru) return 'Tidak ada data guru. Silakan tambahkan minimal 1 guru di database.';
 
         $kelasList = Kelas::where('guru_id', $guru->id)
-            ->withCount('siswas')
+            ->withCount(['siswas as total_siswa' => function ($q) {
+                $q->where('siswa_kelas.status', 'aktif');
+            }])
             ->get();
 
         return view('guru.laporan_siswa.index', compact('kelasList'));
@@ -350,7 +242,8 @@ class GuruController extends Controller
             ->firstOrFail();
 
         $daftarSiswa = Siswa::whereHas('kelas', function ($q) use ($kelasId) {
-                $q->where('kelas.id', $kelasId);
+                $q->where('kelas.id', $kelasId)
+                  ->where('siswa_kelas.status', 'aktif');
             })
             ->paginate(10);
 
@@ -361,7 +254,7 @@ class GuruController extends Controller
     {
         $siswa = Siswa::findOrFail($siswa_id);
 
-        $laporan = \App\Models\LaporanHasilBelajar::where('siswa_id', $siswa_id)->get();
+        $laporan = LaporanHasilBelajar::where('siswa_id', $siswa_id)->get();
 
         $totalKuis       = $laporan->where('jenis_penilaian', 'kuis')->count();
         $kuisDikerjakan  = $laporan->where('jenis_penilaian', 'kuis')->where('nilai', '!=', null)->count();
@@ -369,13 +262,20 @@ class GuruController extends Controller
         $totalUjian      = $laporan->where('jenis_penilaian', 'ujian')->count();
         $ujianDikerjakan = $laporan->where('jenis_penilaian', 'ujian')->where('nilai', '!=', null)->count();
 
-        $totalMateri   = $laporan->groupBy('materi_pembelajaran')->count();
-        $materiSelesai = $laporan->where('nilai', '!=', null)->groupBy('materi_pembelajaran')->count();
+        $totalMateri    = $laporan->groupBy('materi_pembelajaran')->count();
+        $materiSelesai  = $laporan->where('nilai', '!=', null)->groupBy('materi_pembelajaran')->count();
         $progressMateri = $totalMateri > 0 ? round(($materiSelesai / $totalMateri) * 100) : 0;
 
         return view('guru.laporan_siswa.detail', compact(
-            'siswa','laporan','totalKuis','kuisDikerjakan',
-            'totalUjian','ujianDikerjakan','progressMateri','materiSelesai','totalMateri'
+            'siswa',
+            'laporan',
+            'totalKuis',
+            'kuisDikerjakan',
+            'totalUjian',
+            'ujianDikerjakan',
+            'progressMateri',
+            'materiSelesai',
+            'totalMateri'
         ));
     }
 
@@ -400,10 +300,10 @@ class GuruController extends Controller
 
     public function exportLaporanSiswaPdf($kelas_id, $siswa_id)
     {
-        $kelas = \App\Models\Kelas::findOrFail($kelas_id);
-        $siswa = \App\Models\Siswa::findOrFail($siswa_id);
+        $kelas = Kelas::findOrFail($kelas_id);
+        $siswa = Siswa::findOrFail($siswa_id);
 
-        $laporan = \App\Models\LaporanHasilBelajar::where('siswa_id', $siswa_id)
+        $laporan = LaporanHasilBelajar::where('siswa_id', $siswa_id)
             ->where('kelas_id', $kelas_id)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -417,9 +317,9 @@ class GuruController extends Controller
 
     public function exportLaporanSiswaPdfSimple($siswa_id)
     {
-        $siswa = \App\Models\Siswa::findOrFail($siswa_id);
+        $siswa = Siswa::findOrFail($siswa_id);
 
-        $laporan = \App\Models\LaporanHasilBelajar::where('siswa_id', $siswa_id)
+        $laporan = LaporanHasilBelajar::where('siswa_id', $siswa_id)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -451,14 +351,14 @@ class GuruController extends Controller
         try {
             if (empty($validated['predikat'])) {
                 $nilai = $validated['nilai'];
-                if     ($nilai >= 90) $validated['predikat'] = 'A';
-                elseif ($nilai >= 80) $validated['predikat'] = 'B';
-                elseif ($nilai >= 70) $validated['predikat'] = 'C';
-                elseif ($nilai >= 60) $validated['predikat'] = 'D';
-                else                   $validated['predikat'] = 'E';
+                if      ($nilai >= 90) $validated['predikat'] = 'A';
+                elseif  ($nilai >= 80) $validated['predikat'] = 'B';
+                elseif  ($nilai >= 70) $validated['predikat'] = 'C';
+                elseif  ($nilai >= 60) $validated['predikat'] = 'D';
+                else                    $validated['predikat'] = 'E';
             }
 
-            \App\Models\LaporanHasilBelajar::create($validated);
+            LaporanHasilBelajar::create($validated);
 
             return redirect()
                 ->route('guru.laporan_siswa.detail', $validated['siswa_id'])
@@ -471,7 +371,7 @@ class GuruController extends Controller
 
     public function editLaporanSiswa($laporan_id)
     {
-        $laporan = \App\Models\LaporanHasilBelajar::findOrFail($laporan_id);
+        $laporan = LaporanHasilBelajar::findOrFail($laporan_id);
         $siswa   = $laporan->siswa;
 
         return view('guru.laporan_siswa.edit', compact('laporan', 'siswa'));
@@ -479,7 +379,7 @@ class GuruController extends Controller
 
     public function updateLaporanSiswa(Request $request, $laporan_id)
     {
-        $laporan = \App\Models\LaporanHasilBelajar::findOrFail($laporan_id);
+        $laporan = LaporanHasilBelajar::findOrFail($laporan_id);
 
         $validated = $request->validate([
             'jenis_penilaian'     => 'required|in:kuis,ujian',
@@ -493,11 +393,11 @@ class GuruController extends Controller
         try {
             if (empty($validated['predikat'])) {
                 $nilai = $validated['nilai'];
-                if     ($nilai >= 90) $validated['predikat'] = 'A';
-                elseif ($nilai >= 80) $validated['predikat'] = 'B';
-                elseif ($nilai >= 70) $validated['predikat'] = 'C';
-                elseif ($nilai >= 60) $validated['predikat'] = 'D';
-                else                   $validated['predikat'] = 'E';
+                if      ($nilai >= 90) $validated['predikat'] = 'A';
+                elseif  ($nilai >= 80) $validated['predikat'] = 'B';
+                elseif  ($nilai >= 70) $validated['predikat'] = 'C';
+                elseif  ($nilai >= 60) $validated['predikat'] = 'D';
+                else                    $validated['predikat'] = 'E';
             }
 
             $laporan->update($validated);
@@ -514,7 +414,7 @@ class GuruController extends Controller
     public function destroyLaporanSiswa($laporan_id)
     {
         try {
-            $laporan  = \App\Models\LaporanHasilBelajar::findOrFail($laporan_id);
+            $laporan  = LaporanHasilBelajar::findOrFail($laporan_id);
             $siswa_id = $laporan->siswa_id;
             $laporan->delete();
 
@@ -526,7 +426,32 @@ class GuruController extends Controller
         }
     }
 
-    // Stub agar route 'guru.siswa.index' dan 'guru.laporan.index' tidak error
-    public function siswa()   { return view('guru.siswa.index'); }
-    public function laporan() { return view('guru.laporan.index'); }
+    // ================= PROFIL =================
+    public function profil()
+    {
+        $guru = Guru::first();
+        return view('guru.profil.index', compact('guru'));
+    }
+
+    public function updateProfil(Request $request)
+    {
+        $guru = Guru::first();
+
+        $validated = $request->validate([
+            'nama_lengkap'   => 'required|string|max:255',
+            'email'          => 'required|email|unique:gurus,email,' . $guru->id,
+            'no_hp'          => 'nullable|string|max:20',
+            'mata_pelajaran' => 'nullable|string|max:255',
+        ]);
+
+        $guru->update($validated);
+
+        return back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    // ================= TRANSAKSI (placeholder) =================
+    public function transaksi()
+    {
+        return view('guru.transaksi.index');
+    }
 }

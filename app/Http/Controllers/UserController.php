@@ -44,7 +44,7 @@ class UserController extends Controller
 
         $user->save();
 
-        return redirect()->route('admin.users')->with('success', 'Status akun berhasil diperbarui.');
+        return redirect()->route('admin.users.index')->with('success', 'Status akun berhasil diperbarui.');
     }
     
     // TAMBAHAN: Hapus user

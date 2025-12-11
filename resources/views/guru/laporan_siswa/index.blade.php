@@ -27,7 +27,7 @@
                         <div class="kelas-title">{{ $kelas->nama_kelas }}</div>
                         <div class="kelas-meta">
                             <span class="kelas-badge">Kelas</span>
-                            <span class="kelas-stats"><i class="fas fa-users me-1"></i>{{ $kelas->siswas_count ?? 0 }} Siswa</span>
+                            <span class="kelas-stats"><i class="fas fa-users me-1"></i>{{ $kelas->total_siswa ?? 0 }} Siswa</span>
                         </div>
                     </div>
                 </div>

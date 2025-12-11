@@ -83,11 +83,12 @@
 
     <!-- TAMBAHAN 4: Script untuk Filter -->
     <script>
-        function applyFilter() {
-            const role = document.getElementById('filterRole').value;
-            window.location.href = '{{ route("admin.users") }}?role=' + role;
-        }
-    </script>
+    function applyFilter() {
+        const role = document.getElementById('filterRole').value;
+        window.location.href = '{{ route("admin.users.index") }}?role=' + role;
+    }
+</script>
+
 
     <style>
         .table {

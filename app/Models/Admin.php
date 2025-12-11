@@ -12,7 +12,15 @@ class Admin extends Model
 
     protected $keyType = 'string';
     public $incrementing = false;
-    protected $fillable = ['username', 'email', 'password'];
+    protected $fillable = [
+    'username',
+    'email',
+    'password',
+    'qris_image',
+    'qris_nama_bank',
+    'qris_nama_rekening',
+    'no_wa',
+];
 
     protected static function boot()
     {

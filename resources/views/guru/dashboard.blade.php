@@ -7,7 +7,7 @@
         {{-- Welcome Banner --}}
         <div class="welcome-banner-rainbow">
             <div class="welcome-content">
-                <h2>Selamat Datang, {{ optional(Auth::user())->name ?? 'Guru' }}!</h2>
+                <h2>Selamat Datang, {{ optional(Auth::user())->name ?? 'Guru' }}! 👋</h2>
                 <p>Pantau aktivitas kelas, laporan, dan transaksi di sini.</p>
             </div>
             <div class="welcome-decoration">
@@ -16,18 +16,21 @@
                 <div class="deco-circle deco-3"></div>
             </div>
         </div>
+
         {{-- Stats Cards REAL DATA --}}
         <div class="stats-grid-four">
             {{-- Kelas Aktif --}}
             <div class="stat-card stat-blue">
                 <div class="stat-content">
                     <h3>KELAS SAYA</h3>
-                    <p class="stat-number">{{ $jumlahKelas }}</p>
+                    <p class="stat-number">{{ $totalKelas }}</p>
                     <p class="stat-label">kelas aktif</p>
                 </div>
                 <a href="{{ route('guru.kelas.index') }}" class="stat-link">
-                    Lihat Detail
-                    <span class="link-arrow">→</span>
+                    <span>Lihat Detail</span>
+                    <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                 </a>
             </div>
 
@@ -35,12 +38,14 @@
             <div class="stat-card stat-green">
                 <div class="stat-content">
                     <h3>SISWA SAYA</h3>
-                    <p class="stat-number">{{ $jumlahSiswa }}</p>
+                    <p class="stat-number">{{ $totalSiswa }}</p>
                     <p class="stat-label">siswa aktif</p>
                 </div>
                 <a href="{{ route('guru.siswa.index') }}" class="stat-link">
-                    Lihat Detail
-                    <span class="link-arrow">→</span>
+                    <span>Lihat Detail</span>
+                    <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                 </a>
             </div>
 
@@ -51,9 +56,11 @@
                     <p class="stat-number">{{ $jumlahLaporan }}</p>
                     <p class="stat-label">laporan baru</p>
                 </div>
-                <a href="{{ route('guru.laporan.index') }}" class="stat-link">
-                    Lihat Detail
-                    <span class="link-arrow">→</span>
+                <a href="{{ route('guru.laporan_siswa.index') }}" class="stat-link">
+                    <span>Lihat Detail</span>
+                    <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                 </a>
             </div>
 
@@ -65,67 +72,60 @@
                     <p class="stat-label">bulan ini</p>
                 </div>
                 <a href="{{ route('guru.pembayaran.index') }}" class="stat-link">
-                    Lihat Detail
-                    <span class="link-arrow">→</span>
+                    <span>Lihat Detail</span>
+                    <svg class="arrow-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
                 </a>
             </div>
         </div>
-{{-- Charts --}}
+
+        {{-- Grafik & Aktivitas Sejajar --}}
         <div class="chart-section-equal">
+            {{-- KIRI: Grafik Aktivitas Siswa Bulanan --}}
             <div class="chart-card-glass">
                 <div class="chart-header">
-                    <h3>📊 Aktivitas Bulanan</h3>
+                    <h3>📊 Aktivitas Siswa Bulanan</h3>
+                    <p class="chart-subtitle">Jumlah siswa yang bergabung per bulan</p>
                 </div>
                 <div class="chart-body">
                     <canvas id="guruChart"></canvas>
                 </div>
             </div>
 
+            {{-- KANAN: Aktivitas Terbaru --}}
             <div class="chart-card-glass">
                 <div class="chart-header">
-                    <h3>🎯 Target Mengajar</h3>
+                    <h3>🕐 Aktivitas Terbaru</h3>
+                    <p class="chart-subtitle">Aktivitas kelas dan siswa terkini</p>
                 </div>
-                <div class="target-container">
-                    <div class="target-circle">
-                        <svg viewBox="0 0 36 36">
-                            <defs>
-                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#0EA5E9;stop-opacity:1" />
-                                    <stop offset="50%" style="stop-color:#06B6D4;stop-opacity:1" />
-                                    <stop offset="100%" style="stop-color:#14B8A6;stop-opacity:1" />
-                                </linearGradient>
-                            </defs>
-                            <path class="circle-bg"
-                                d="M18 2.0845 a15.9155 15.9155 0 0 1 0 31.831 a15.9155 15.9155 0 0 1 0 -31.831" />
-                            <path class="circle" stroke-dasharray="{{ $persentaseTarget ?? 0 }}, 100"
-                                d="M18 2.0845 a15.9155 15.9155 0 0 1 0 31.831 a15.9155 15.9155 0 0 1 0 -31.831" />
-                        </svg>
-                        <div class="circle-text">{{ $persentaseTarget ?? 0 }}%</div>
-                    </div>
-                    <div class="target-info">
-                        <h4>Rp {{ number_format($totalTransaksi ?? 0, 0, ',', '.') }}</h4>
-                        <p>Pendapatan Bulan ini</p>
-                    </div>
+                <div class="activity-list">
+                    @if(isset($aktivitasTerbaru) && count($aktivitasTerbaru) > 0)
+                        @foreach($aktivitasTerbaru as $aktivitas)
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-{{ $aktivitas['icon'] ?? 'circle' }}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h5>{{ $aktivitas['title'] ?? 'Aktivitas' }}</h5>
+                                <p>{{ $aktivitas['description'] ?? '-' }}</p>
+                                <span class="activity-time">{{ $aktivitas['time'] ?? '' }}</span>
+                            </div>
+                        </div>
+                        @endforeach
+                    @else
+                        <div class="empty-state-small">
+                            <div class="empty-icon-small">📦</div>
+                            <h4>Belum Ada Aktivitas</h4>
+                            <p>Aktivitas kelas dan siswa akan muncul di sini</p>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
 
-        {{-- Activity --}}
-        <div class="activity-section">
-            <h3 class="section-title">
-                🕐 Aktivitas Terbaru
-            </h3>
-            <div class="activity-card-glass">
-                <div class="empty-state">
-                    <div class="empty-icon">
-                        📦
-                    </div>
-                    <h4>Belum Ada Aktivitas</h4>
-                    <p>Aktivitas kelas dan siswa akan muncul di sini</p>
-                </div>
-            </div>
-        </div>
     </div>
+
     <style>
         :root {
             --sky-blue: #0EA5E9;
@@ -227,7 +227,6 @@
         }
 
         @keyframes float {
-
             0%,
             100% {
                 transform: translateY(0) rotate(0deg);
@@ -281,7 +280,7 @@
             justify-content: space-between;
         }
 
-        /* Garis Warna di KIRI (FIXED) */
+        /* Garis Warna di KIRI */
         .stat-card::before {
             content: '';
             position: absolute;
@@ -358,17 +357,15 @@
             margin: 0;
         }
 
-        /* Tombol Lihat Detail - TANPA BORDER */
+        /* Tombol Lihat Detail - TANPA BACKGROUND, HANYA IKON YANG GESER */
         .stat-link {
             display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            margin-top: 16px;
-            padding: 10px 18px;
-            background: rgba(0, 0, 0, 0.04);
+            gap: 6px;
+            margin-top: 14px;
+            padding: 0;
+            background: transparent;
             border: none;
-            border-radius: var(--radius-sm);
             font-size: 0.85rem;
             font-weight: 600;
             color: currentColor;
@@ -376,32 +373,17 @@
             transition: all 0.3s ease;
         }
 
-        /* Hover: Background Lebih Gelap */
         .stat-link:hover {
-            background: rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            color: currentColor;
         }
 
-        /* Active/Click: Sedikit Lebih Gelap */
-        .stat-link:active {
-            background: rgba(0, 0, 0, 0.1);
-            transform: translateY(0);
-        }
-
-        /* Focus (Tab Keyboard) */
-        .stat-link:focus {
-            outline: 2px solid currentColor;
-            outline-offset: 2px;
-        }
-
-        /* Arrow Animation */
-        .link-arrow {
-            font-size: 1.1rem;
+        .arrow-icon {
+            width: 16px;
+            height: 16px;
             transition: transform 0.3s ease;
         }
 
-        .stat-link:hover .link-arrow {
+        .stat-link:hover .arrow-icon {
             transform: translateX(4px);
         }
 
@@ -416,85 +398,7 @@
             gap: 10px;
         }
 
-        /* Quick Actions */
-        .quick-actions-section {
-            margin-bottom: 28px;
-        }
-
-        .quick-actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 14px;
-        }
-
-        .action-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: var(--radius-md);
-            padding: 20px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .action-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: currentColor;
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .action-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-card:hover::before {
-            transform: scaleY(1);
-        }
-
-        .action-blue {
-            color: var(--sky-blue);
-            background: linear-gradient(135deg, var(--bg-blue), rgba(255, 255, 255, 0.95));
-        }
-
-        .action-teal {
-            color: var(--teal);
-            background: linear-gradient(135deg, var(--bg-teal), rgba(255, 255, 255, 0.95));
-        }
-
-        .action-purple {
-            color: var(--purple);
-            background: linear-gradient(135deg, var(--bg-purple), rgba(255, 255, 255, 0.95));
-        }
-
-        .action-pink {
-            color: var(--pink);
-            background: linear-gradient(135deg, var(--bg-pink), rgba(255, 255, 255, 0.95));
-        }
-
-        .action-content h4 {
-            font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin: 0 0 6px 0;
-        }
-
-        .action-content p {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin: 0;
-        }
-
-        /* Charts */
+        /* Charts & Activity Sejajar */
         .chart-section-equal {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -510,6 +414,8 @@
             padding: 24px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .chart-card-glass:hover {
@@ -527,115 +433,126 @@
             font-size: 1.05rem;
             font-weight: 600;
             color: var(--text-primary);
+            margin: 0 0 4px 0;
+        }
+
+        .chart-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
             margin: 0;
         }
 
         .chart-body {
             position: relative;
-            height: 280px;
+            height: 320px;
+            flex: 1;
         }
 
         .chart-body canvas {
-            max-height: 280px !important;
+            max-height: 320px !important;
         }
 
-        .target-container {
+        /* Activity List */
+        .activity-list {
             display: flex;
             flex-direction: column;
+            gap: 14px;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .activity-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .activity-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+        }
+
+        .activity-list::-webkit-scrollbar-thumb {
+            background: rgba(14, 165, 233, 0.3);
+            border-radius: 10px;
+        }
+
+        .activity-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(14, 165, 233, 0.5);
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 14px;
+            padding: 14px;
+            background: rgba(14, 165, 233, 0.03);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--sky-blue);
+            transition: all 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: rgba(14, 165, 233, 0.08);
+            transform: translateX(4px);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--sky-blue), var(--cyan));
+            display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px 0;
-            height: 280px;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
         }
 
-        .target-circle {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            margin-bottom: 18px;
+        .activity-content {
+            flex: 1;
         }
 
-        .target-circle svg {
-            transform: rotate(-90deg);
-            width: 100%;
-            height: 100%;
-        }
-
-        .circle-bg {
-            fill: none;
-            stroke: rgba(14, 165, 233, 0.1);
-            stroke-width: 3.8;
-        }
-
-        .circle {
-            fill: none;
-            stroke: url(#gradient);
-            stroke-width: 3.8;
-            stroke-linecap: round;
-            stroke-dasharray: 0, 100;
-            transition: stroke-dasharray 1.5s ease-in-out;
-        }
-
-        .circle-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.9rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .target-info {
-            text-align: center;
-        }
-
-        .target-info h4 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin: 0 0 6px 0;
-        }
-
-        .target-info p {
+        .activity-content h5 {
             font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0 0 4px 0;
+        }
+
+        .activity-content p {
+            font-size: 0.8rem;
             color: var(--text-secondary);
-            margin: 0;
+            margin: 0 0 6px 0;
+            line-height: 1.4;
         }
 
-        /* Activity */
-        .activity-section {
-            margin-bottom: 28px;
+        .activity-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .activity-card-glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: var(--radius-lg);
-            padding: 36px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-        }
-
-        .empty-state {
+        /* Empty State Small */
+        .empty-state-small {
             text-align: center;
-            padding: 30px 20px;
+            padding: 50px 20px;
         }
 
-        .empty-icon {
-            font-size: 3.5rem;
-            margin-bottom: 16px;
+        .empty-icon-small {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+            opacity: 0.6;
         }
 
-        .empty-state h4 {
-            font-size: 1.05rem;
+        .empty-state-small h4 {
+            font-size: 1rem;
             font-weight: 600;
             color: var(--text-primary);
             margin: 0 0 6px 0;
         }
 
-        .empty-state p {
-            font-size: 0.9rem;
+        .empty-state-small p {
+            font-size: 0.85rem;
             color: var(--text-secondary);
             margin: 0;
         }
@@ -664,13 +581,10 @@
         }
 
         @media (max-width: 767px) {
+            /* Tetap 2 kolom di mobile untuk card agar sejajar */
             .stats-grid-four {
-                grid-template-columns: 1fr;
-                gap: 14px;
-            }
-
-            .quick-actions-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
             }
 
             .stat-number {
@@ -679,6 +593,22 @@
 
             .stat-number-small {
                 font-size: 1.5rem;
+            }
+
+            .chart-card-glass {
+                padding: 18px;
+            }
+
+            .chart-body {
+                height: 260px;
+            }
+
+            .chart-body canvas {
+                max-height: 260px !important;
+            }
+
+            .activity-list {
+                max-height: 260px;
             }
         }
 
@@ -699,21 +629,12 @@
                 height: 240px;
             }
 
-            .target-container {
-                height: 240px;
+            .chart-body canvas {
+                max-height: 240px !important;
             }
 
-            .target-circle {
-                width: 130px;
-                height: 130px;
-            }
-
-            .circle-text {
-                font-size: 1.6rem;
-            }
-
-            .target-info h4 {
-                font-size: 1.4rem;
+            .activity-list {
+                max-height: 240px;
             }
         }
     </style>
@@ -723,26 +644,26 @@
     <script>
         const ctx = document.getElementById('guruChart');
         if (ctx) {
-            // Data REAL dari database
-            const chartData = {!! json_encode($chartData ?? [0, 0, 0, 0, 0, 0]) !!};
+            // Data REAL dari database (bisa siswa masuk per bulan atau transaksi)
+            const chartData = {!! json_encode($chartData ?? [0,0,0,0,0,0,0,0,0,0,0,0]) !!};
 
             new Chart(ctx, {
-                type: 'bar',
+                type: 'line',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
                     datasets: [{
-                        label: 'Aktivitas',
+                        label: 'Jumlah Siswa',
                         data: chartData,
-                        backgroundColor: [
-                            '#1E3A8A',
-                            '#2563EB',
-                            '#84CC16',
-                            '#22C55E',
-                            '#14B8A6',
-                            '#F97316'
-                        ],
-                        borderRadius: 8,
-                        barThickness: 30
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        borderColor: '#0EA5E9',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#0EA5E9',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }]
                 },
                 options: {
@@ -751,37 +672,48 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            padding: 12,
+                            borderRadius: 8,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                },
+                                color: '#64748B'
                             }
                         },
                         x: {
                             grid: {
                                 display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                },
+                                color: '#64748B'
                             }
                         }
                     }
                 }
             });
         }
-
-        // Animasi Circle Progress
-        window.addEventListener('load', function() {
-            const circle = document.querySelector('.circle');
-            if (circle) {
-                setTimeout(() => {
-                    const dashArray = circle.getAttribute('stroke-dasharray');
-                    if (dashArray) {
-                        const value = dashArray.split(',')[0];
-                        circle.style.strokeDasharray = value + ', 100';
-                    }
-                }, 300);
-            }
-        });
     </script>
 @endsection

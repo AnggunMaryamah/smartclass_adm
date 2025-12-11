@@ -116,175 +116,195 @@
                         @enderror
                     </div>
                 </div>
+{{-- Jenis Materi - CUSTOM DROPDOWN (SAMA DENGAN TAMBAH KELAS) --}}
+<div class="form-group">
+    <label class="form-label">
+        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+        </svg>
+        Jenis Materi <span class="required">*</span>
+    </label>
 
-                {{-- Jenis Materi - CUSTOM DROPDOWN (SAMA DENGAN TAMBAH KELAS) --}}
-                <div class="form-group">
-                    <label class="form-label">
-                        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                        </svg>
-                        Jenis Materi <span class="required">*</span>
-                    </label>
+    {{-- Hidden Input --}}
+    <input type="hidden" id="tipe" name="tipe" value="{{ old('tipe') }}" required>
 
-                    {{-- Hidden Input --}}
-                    <input type="hidden" id="tipe" name="tipe" value="{{ old('tipe') }}" required>
+    {{-- Custom Dropdown --}}
+    <div class="custom-select" id="tipeSelect">
+        <div class="select-trigger">
+            <span class="select-value">
+                @if(old('tipe') === 'bacaan')
+                    Materi Bacaan
+                @elseif(old('tipe') === 'kuis')
+                    Kuis
+                @elseif(old('tipe') === 'ujian')
+                    Ujian
+                @else
+                    Pilih Jenis Materi
+                @endif
+            </span>
+            <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
+        <div class="select-options">
+            <div class="select-option" data-value="">Pilih Jenis Materi</div>
+            <div class="select-option" data-value="bacaan">Materi Bacaan</div>
+            <div class="select-option" data-value="kuis">Kuis</div>
+            <div class="select-option" data-value="ujian">Ujian</div>
+        </div>
+    </div>
+    @error('tipe')
+        <span class="error-message">{{ $message }}</span>
+    @enderror
+</div>
 
-                    {{-- Custom Dropdown --}}
-                    <div class="custom-select" id="tipeSelect">
-                        <div class="select-trigger">
-                            <span class="select-value">{{ old('tipe') ? ucfirst(old('tipe')) : 'Pilih Jenis Materi' }}</span>
-                            <svg class="select-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </div>
-                        <div class="select-options">
-                            <div class="select-option" data-value="">Pilih Jenis Materi</div>
-                            <div class="select-option" data-value="bacaan">Materi Bacaan</div>
-                            <div class="select-option" data-value="kuis">Kuis</div>
-                            <div class="select-option" data-value="ujian">Ujian</div>
-                        </div>
-                    </div>
-                    @error('tipe')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
+{{-- Judul Materi --}}
+<div class="form-group">
+    <label for="judul" class="form-label">
+        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+        </svg>
+        Judul Materi <span class="required">*</span>
+    </label>
+    <input type="text" 
+           id="judul" 
+           name="judul" 
+           class="form-control @error('judul') is-invalid @enderror" 
+           placeholder="Contoh: Pengenalan HTML"
+           value="{{ old('judul') }}" 
+           required>
+    @error('judul')
+        <span class="error-message">{{ $message }}</span>
+    @enderror
+</div>
+
+{{-- FORM KHUSUS BACAAAN (TinyMCE + PDF) --}}
+<div id="form-bacaan">
+    {{-- Konten Materi --}}
+    <div class="form-group">
+        <label for="kontenMateri" class="form-label">
+            <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Konten Materi
+        </label>
+        <div class="editor-wrapper">
+            <textarea name="konten" 
+                      id="kontenMateri" 
+                      class="form-control">{{ old('konten') }}</textarea>
+        </div>
+        @error('konten')
+            <span class="error-message">{{ $message }}</span>
+        @enderror
+    </div>
+
+    {{-- Upload PDF --}}
+    <div class="form-group">
+        <label class="form-label">
+            <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Upload PDF
+        </label>
+
+        <div class="custom-file-upload">
+            <input type="file" 
+                   name="file_path" 
+                   class="file-input-hidden" 
+                   accept=".pdf"
+                   id="pdfFile">
+            
+            <label for="pdfFile" class="file-upload-label">
+                <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span class="file-upload-text">Pilih File PDF</span>
+                <span class="file-upload-hint">atau drag & drop di sini</span>
+            </label>
+            
+            @error('file_path')
+                <span class="error-message">{{ $message }}</span>
+            @enderror
+        </div>
+        
+        <div id="filePreview" class="file-preview" style="display: none;">
+            <div class="file-preview-content">
+                <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                <div class="file-details">
+                    <span id="fileName" class="file-name"></span>
+                    <span id="fileSize" class="file-size"></span>
                 </div>
+                <button type="button" class="btn-remove-file" onclick="removeFile()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
-                {{-- Judul Materi --}}
-                <div class="form-group">
-                    <label for="judul" class="form-label">
-                        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 20h9"></path>
-                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-                        </svg>
-                        Judul Materi <span class="required">*</span>
-                    </label>
-                    <input type="text" 
-                           id="judul" 
-                           name="judul" 
-                           class="form-control @error('judul') is-invalid @enderror" 
-                           placeholder="Contoh: Pengenalan HTML"
-                           value="{{ old('judul') }}" 
-                           required>
-                    @error('judul')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
-                </div>
+{{-- Catatan --}}
+<div class="form-group">
+    <label for="keterangan" class="form-label">
+        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Catatan
+    </label>
+    <textarea id="keterangan" 
+              name="keterangan" 
+              class="form-control @error('keterangan') is-invalid @enderror"
+              rows="3" 
+              placeholder="Opsional">{{ old('keterangan') }}</textarea>
+    @error('keterangan')
+        <span class="error-message">{{ $message }}</span>
+    @enderror
+</div>
 
-                {{-- Konten Materi --}}
-                <div class="form-group">
-                    <label for="kontenMateri" class="form-label">
-                        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        Konten Materi
-                    </label>
-                    <div class="editor-wrapper">
-                        <textarea name="konten" 
-                                  id="kontenMateri" 
-                                  class="form-control">{{ old('konten') }}</textarea>
-                    </div>
-                    @error('konten')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
-                </div>
-
-                {{-- Upload PDF --}}
-                <div class="form-group">
-                    <label class="form-label">
-                        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        Upload PDF
-                    </label>
-
-                    <div class="custom-file-upload">
-                        <input type="file" 
-                               name="file_path" 
-                               class="file-input-hidden" 
-                               accept=".pdf"
-                               id="pdfFile">
-                        
-                        <label for="pdfFile" class="file-upload-label">
-                            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="17 8 12 3 7 8"></polyline>
-                                <line x1="12" y1="3" x2="12" y2="15"></line>
-                            </svg>
-                            <span class="file-upload-text">Pilih File PDF</span>
-                            <span class="file-upload-hint">atau drag & drop di sini</span>
-                        </label>
-                        
-                        @error('file_path')
-                            <span class="error-message">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    
-                    <div id="filePreview" class="file-preview" style="display: none;">
-                        <div class="file-preview-content">
-                            <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                            </svg>
-                            <div class="file-details">
-                                <span id="fileName" class="file-name"></span>
-                                <span id="fileSize" class="file-size"></span>
-                            </div>
-                            <button type="button" class="btn-remove-file" onclick="removeFile()">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- Catatan --}}
-                <div class="form-group">
-                    <label for="keterangan" class="form-label">
-                        <svg class="label-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                        Catatan
-                    </label>
-                    <textarea id="keterangan" 
-                              name="keterangan" 
-                              class="form-control @error('keterangan') is-invalid @enderror"
-                              rows="3" 
-                              placeholder="Opsional">{{ old('keterangan') }}</textarea>
-                    @error('keterangan')
-                        <span class="error-message">{{ $message }}</span>
-                    @enderror
-                </div>
+{{-- Info jika tipe = kuis / ujian --}}
+<div id="info-tugas" style="display: none; margin-top: -8px; margin-bottom: 16px;">
+    <p style="font-size: 0.8rem; color: #6B7280; line-height: 1.5;">
+        Setelah menyimpan, Anda akan diarahkan ke halaman untuk mengisi soal 
+        <strong>kuis/ujian</strong>. Konten teks panjang dan upload PDF tidak perlu diisi di sini.
+    </p>
+</div>
 
                 {{-- Buttons (HORIZONTAL DI KANAN) --}}
                 <div class="form-actions">
@@ -1160,6 +1180,9 @@
                     this.classList.add('selected');
 
                     customSelect.classList.remove('active');
+
+                    // update tampilan form sesuai jenis
+                    toggleFormJenis();
                 });
             });
 
@@ -1169,6 +1192,25 @@
         }
 
         initCustomSelect('tipeSelect', 'tipe');
+
+// Toggle form bacaan vs info tugas
+function toggleFormJenis() {
+    const tipe = document.getElementById('tipe').value;
+    const formBacaan = document.getElementById('form-bacaan');
+    const infoTugas  = document.getElementById('info-tugas');
+
+    if (tipe === 'bacaan' || tipe === '') {
+        formBacaan.style.display = 'block';
+        infoTugas.style.display  = 'none';
+    } else {
+        formBacaan.style.display = 'none';
+        infoTugas.style.display  = 'block';
+    }
+}
+
+// panggil sekali saat halaman selesai load
+document.addEventListener('DOMContentLoaded', toggleFormJenis);
+
 
         // File Upload Handler
         const fileInput = document.getElementById('pdfFile');

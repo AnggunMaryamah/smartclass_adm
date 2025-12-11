@@ -14,12 +14,20 @@ class Pembayaran extends Model
     public $incrementing = false;
     
     protected $fillable = [
+        'siswa_id',
+        'kelas_id',
         'pemesanan_id', 
-        'tanggal_pembayaran', 
+        'tanggal_pembayaran',
+        'qris_reference',
         'metode_pembayaran', 
         'nominal_pembayaran', 
         'bukti_pembayaran', 
-        'status_pembayaran'
+        'status_pembayaran',
+        'verified_by'
+    ];
+
+    protected $casts = [
+        'tanggal_pembayaran' => 'date',
     ];
 
     protected static function boot()
@@ -32,9 +40,21 @@ class Pembayaran extends Model
         });
     }
 
-    // Relasi dengan Pemesanan
+    // Relasi ke Pemesanan
     public function pemesanan()
     {
-        return $this->belongsTo(Pemesanan::class);
+        return $this->belongsTo(Pemesanan::class, 'pemesanan_id');
+    }
+
+    // Relasi ke Siswa
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class, 'siswa_id');
+    }
+
+    // Relasi ke Kelas
+    public function kelas()
+    {
+        return $this->belongsTo(Kelas::class, 'kelas_id');
     }
 }

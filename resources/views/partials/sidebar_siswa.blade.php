@@ -103,6 +103,7 @@
         font-weight: 600;
     }
 
+    /* ========== FOOTER LOGOUT (SAMA SEPERTI GURU) ========== */
     .sidebar-siswa .sidebar-footer {
         position: absolute;
         bottom: 0;
@@ -115,27 +116,27 @@
     .sidebar-siswa .logout-btn {
         display: flex;
         align-items: center;
-        gap: 12px;
-        width: 100%;
+        justify-content: center;
         padding: 12px 16px;
-        background: rgba(239, 68, 68, 0.2);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        border-radius: 10px;
+        margin-bottom: 0;
         color: white;
+        text-decoration: none;
+        border-radius: 10px;
         font-size: 15px;
         font-weight: 600;
-        cursor: pointer;
         transition: all 0.2s ease;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        background: transparent;
+        width: 100%;
+        cursor: pointer;
         font-family: 'Inter', sans-serif;
-    }
-
-    .sidebar-siswa .logout-btn i {
-        font-size: 1.1rem;
+        text-align: center;
     }
 
     .sidebar-siswa .logout-btn:hover {
-        background: rgba(239, 68, 68, 0.35);
-        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.8);
+        color: white;
     }
 
     /* ========== RESPONSIVE MOBILE ========== */
@@ -222,14 +223,12 @@
             <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                 @csrf
                 <button type="submit" class="logout-btn" onclick="return confirm('Yakin ingin logout?')">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
+                    Logout
                 </button>
             </form>
         @else
             <button class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
+                Logout
             </button>
         @endif
     </div>
