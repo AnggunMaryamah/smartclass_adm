@@ -202,10 +202,17 @@
         </a>
 
         <!-- Users - PAKAI ROUTE -->
-        <a href="{{ route('admin.users') }}"
-            style="{{ request()->routeIs('admin.users*') ? 'background-color: #1A3E78;' : '' }}">
-            👥 Users
-        </a>
+        {{-- Users - tampilkan hanya kalau route ada --}}
+        @if (Route::has('admin.users'))
+            <a href="{{ route('admin.users') }}"
+                style="{{ request()->routeIs('admin.users*') ? 'background-color: #1A3E78;' : '' }}">
+                👥 Users
+            </a>
+        @else
+            {{-- Jika mau, tampilkan teks statis tanpa link agar UI tetap rapi --}}
+            <span class="text-gray-400 cursor-not-allowed">👥 Users</span>
+        @endif
+
 
         <!-- Data Kelas - BELUM ADA ROUTE  -->
         <a href="#">🏫 Data Kelas</a>
@@ -222,52 +229,63 @@
         <div class="logout-section">
             <a href="#" class="logout-btn">Logout</a>
         </div>
-    <h2>SmartClass</h2>
-    
-    <!-- Dashboard - PAKAI ROUTE -->
-    <a href="{{ route('admin.dashboard') }}" 
-       style="{{ request()->routeIs('admin.dashboard') ? 'background-color: #1A3E78;' : '' }}">
-        🏠 Dashboard
-    </a>
-    
-    <!-- Users - PAKAI ROUTE -->
-    <a href="{{ route('admin.users') }}" 
-       style="{{ request()->routeIs('admin.users*') ? 'background-color: #1A3E78;' : '' }}">
-        👥 Users
-    </a>
-    
-    <!-- Data Kelas - BELUM ADA ROUTE (nanti dibuat) -->
-    <a href="#">🏫 Data Kelas</a>
-    
-    <!-- Laporan - BELUM ADA ROUTE (nanti dibuat) -->
-    <a href="#">📊 Laporan</a>
-    
-    <!-- Pembayaran - BELUM ADA ROUTE (nanti dibuat) -->
-   <a href="{{ route('admin.payments.index') }}" 
-   style="{{ request()->routeIs('admin.payments*') ? 'background-color: #1A3E78;' : '' }}">
-    💳 Pembayaran
-</a>
-    <!-- Settings - BELUM ADA ROUTE (nanti dibuat) -->
-    <a href="#">⚙️ Settings</a>
-    
-    <div class="logout-section">
-        <a href="#" class="logout-btn">Logout</a>
-    </div>
+        <h2>SmartClass</h2>
+
+        <!-- Dashboard - PAKAI ROUTE -->
+        <a href="{{ route('admin.dashboard') }}"
+            style="{{ request()->routeIs('admin.dashboard') ? 'background-color: #1A3E78;' : '' }}">
+            🏠 Dashboard
+        </a>
+
+        <!-- Users - PAKAI ROUTE -->
+        {{-- Users - tampilkan hanya kalau route ada --}}
+        @if (Route::has('admin.users'))
+            <a href="{{ route('admin.users') }}"
+                style="{{ request()->routeIs('admin.users*') ? 'background-color: #1A3E78;' : '' }}">
+                👥 Users
+            </a>
+        @else
+            {{-- Jika mau, tampilkan teks statis tanpa link agar UI tetap rapi --}}
+            <span class="text-gray-400 cursor-not-allowed">👥 Users</span>
+        @endif
 
 
-    <div class="main">
-        <div class="header">
-            <div class="header-left">
-                <h2>Dashoard Admin</h2>
+        <!-- Data Kelas - BELUM ADA ROUTE (nanti dibuat) -->
+        <a href="#">🏫 Data Kelas</a>
+
+        <!-- Laporan - BELUM ADA ROUTE (nanti dibuat) -->
+        <a href="#">📊 Laporan</a>
+
+        <!-- Pembayaran - BELUM ADA ROUTE (nanti dibuat) -->
+        <a href="{{ route('admin.payments.index') }}"
+            style="{{ request()->routeIs('admin.payments*') ? 'background-color: #1A3E78;' : '' }}">
+            💳 Pembayaran
+        </a>
+        <!-- Settings - BELUM ADA ROUTE (nanti dibuat) -->
+        <a href="#">⚙️ Settings</a>
+
+        <form method="POST" action="{{ route('logout') }}" role="none" style="margin:0;">
+            @csrf
+            <button type="submit" role="menuitem"
+                style="width:100%;text-align:left;padding:10px;border-radius:8px;border:none;background:transparent;font-weight:700;color:var(--text);cursor:pointer;">
+                Keluar
+            </button>
+        </form>
+
+
+        <div class="main">
+            <div class="header">
+                <div class="header-left">
+                    <h2>Dashoard Admin</h2>
+                </div>
+                <div class="header-right">
+                    <p>Hello, Admin</p>
+                    <div class="avatar">AD</div>
+                </div>
             </div>
-            <div class="header-right">
-                <p>Hello, Admin</p>
-                <div class="avatar">AD</div>
-            </div>
+
+            @yield('content')
         </div>
-
-        @yield('content')
-    </div>
 </body>
 
 </html>

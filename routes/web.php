@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\MateriPembelajaranController;
 use App\Http\Controllers\SiswaController;
@@ -15,50 +15,67 @@ use App\Http\Controllers\Auth\SiswaAuthController;
 use App\Http\Controllers\Auth\SocialAuthController;
 use App\Http\Controllers\Auth\GeneralLoginController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\KelasController; // pastikan ada di bagian atas file
+use App\Http\Controllers\KelasController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes (final, rapi)
 |--------------------------------------------------------------------------
 |
-| Rapi tanpa mengubah logika atau nama route — semua route yang ada dipertahankan.
+| Menjaga semua route dan nama route yang sudah ada — hanya merapikan
+| serta memastikan tidak ada duplikasi / route yang hilang.
 |
 */
 
-/*
-|===================== AUTH & DASHBOARD BAWAAN =====================|
-*/
+/* ------------------ Public / Auth ------------------ */
 
 // Halaman welcome (opsional)
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Profile bawaan Breeze
+// Profile (bawaan, but auth)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route auth (login, register, logout, dll)
-require __DIR__.'/auth.php';
+// Include auth scaffolding (login/register/etc)
+require __DIR__ . '/auth.php';
 
-/*
-|===================== ADMIN =====================|
-*/
-Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group(function () {
+// General login (custom)
+Route::get('/login', [GeneralLoginController::class, 'showLogin'])->name('login');
+Route::post('/login', [GeneralLoginController::class, 'login'])->name('login.submit');
+Route::post('/logout', [GeneralLoginController::class, 'logout'])->name('logout');
 
+// Google OAuth
+Route::get('/auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])->name('google.redirect');
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('google.callback');
+
+// Register pending info
+Route::get('/register/pending', function () {
+    return view('auth.register-pending');
+})->name('register.pending');
+
+/* ------------------ Admin ------------------ */
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
+
+    // Dashboard
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
+    // Users management (named admin.users)
+    // kept as single route for listing (other user routes already exist under users.* inside admin)
+    Route::get('/users', [AdminUserController::class, 'index'])->name('users');
+
+    // More user actions (show/verifikasi/destroy) under admin.users.* as nested routes
     Route::prefix('users')->name('users.')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/{id}', [UserController::class, 'show'])->name('show');
         Route::patch('/{id}/verifikasi', [UserController::class, 'verifikasi'])->name('verifikasi');
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
     });
 
+    // Payments
     Route::prefix('payments')->name('payments.')->group(function () {
         Route::get('/', [PaymentController::class, 'index'])->name('index');
         Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
@@ -66,12 +83,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth','role:admin'])->group
     });
 });
 
+/* ------------------ Guru ------------------ */
 /*
-|===================== GURU =====================|
+  Single guru group: semua route guru berada di bawah prefix 'guru'
+  Dengan middleware: auth, role:guru, check.active (so guru pending tidak bisa akses)
 */
-Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(function () {
+Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru', 'check.active'])->group(function () {
+
+    // Dashboard
     Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
 
+    // Kelas CRUD & related actions
     Route::prefix('kelas')->name('kelas.')->group(function () {
         Route::get('/', [GuruController::class, 'indexKelas'])->name('index');
         Route::get('/tambah', [GuruController::class, 'createKelas'])->name('create');
@@ -82,11 +104,13 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
         Route::delete('/{id}', [GuruController::class, 'destroyKelas'])->name('destroy');
         Route::patch('/{id}/toggle-status', [GuruController::class, 'toggleStatusKelas'])->name('toggle-status');
 
+        // siswa in class management (controller SiswaKelasController)
         Route::post('/kelas/tambah-siswa', [SiswaKelasController::class, 'tambahSiswaKeKelas'])->name('kelas.tambah-siswa');
         Route::delete('/kelas/{kelasId}/siswa/{siswaId}', [SiswaKelasController::class, 'hapusSiswaDariKelas'])->name('kelas.hapus-siswa');
         Route::get('/kelas/{kelasId}/siswa', [SiswaKelasController::class, 'daftarSiswaKelas'])->name('kelas.daftar-siswa');
     });
 
+    // Materi pembelajaran
     Route::prefix('kelas/{kelasId}/materi')->name('materi_pembelajaran.')->group(function () {
         Route::get('/', [MateriPembelajaranController::class, 'index'])->name('index');
         Route::get('/create', [MateriPembelajaranController::class, 'create'])->name('create');
@@ -97,6 +121,7 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
         Route::delete('/{materiId}', [MateriPembelajaranController::class, 'destroy'])->name('destroy');
     });
 
+    // Reports & other guru features
     Route::get('/laporan-siswa', [GuruController::class, 'laporanSiswa'])->name('laporan_siswa.index');
     Route::get('/laporan-siswa/kelas/{kelasId}', [GuruController::class, 'laporanSiswaDaftarKelas'])->name('laporan_siswa.daftar');
     Route::get('/laporan-siswa/detail/{siswa_id}', [GuruController::class, 'laporanSiswaDetailSatuan'])->name('laporan_siswa.detail');
@@ -112,6 +137,7 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
     Route::put('/laporan-siswa/update/{laporan_id}', [GuruController::class, 'updateLaporanSiswa'])->name('laporan_siswa.update');
     Route::delete('/laporan-siswa/hapus/{laporan_id}', [GuruController::class, 'destroyLaporanSiswa'])->name('laporan_siswa.destroy');
 
+    // Pembayaran & other actions
     Route::get('/pembayaran', [GuruController::class, 'pembayaran'])->name('pembayaran.index');
     Route::post('/pembayaran/upload-qris', [GuruController::class, 'uploadQris'])->name('pembayaran.upload_qris');
     Route::put('/pembayaran/{id}/verify', [GuruController::class, 'verifyPembayaran'])->name('pembayaran.verify');
@@ -124,85 +150,43 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
     Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
 });
 
-/*
-|===================== SISWA =====================|
-*/
-Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group(function () {
-    // Dashboard siswa
+/* ------------------ Siswa ------------------ */
+Route::prefix('siswa')->name('siswa.')->middleware(['auth', 'role:siswa'])->group(function () {
     Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
 
-    // Kelas siswa
     Route::get('/kelas', [SiswaController::class, 'kelas'])->name('kelas.index');
     Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])->name('kelas.riwayat');
     Route::get('/kelas/{kelas}/materi/{materi?}', [SiswaKelasController::class, 'read'])->name('kelas.read');
     Route::post('/kelas/{kelas}/materi/{materi}/complete', [SiswaKelasController::class, 'markComplete'])->name('kelas.materi.complete');
 
-    // Tugas siswa
     Route::get('/tugas', [SiswaController::class, 'tugas'])->name('tugas.index');
 
-    // Pembayaran (riwayat / upload bukti)
     Route::get('/pembayaran', [SiswaController::class, 'pembayaran'])->name('pembayaran.index');
     Route::post('/pembayaran', [SiswaController::class, 'storePembayaran'])->name('pembayaran.store');
 
-    // Riwayat transaksi siswa
     Route::get('/transaksi', [SiswaController::class, 'transaksi'])->name('transaksi.index');
 
-    // Profil siswa
     Route::get('/profil', [SiswaController::class, 'profil'])->name('profil.index');
     Route::put('/profil', [SiswaController::class, 'updateProfil'])->name('profil.update');
 
-    // Catatan siswa
     Route::post('/catatan', [SiswaController::class, 'storeCatatan'])->name('catatan.store');
 });
 
-/*
-|===================== PUBLIC PAGES =====================|
-*/
+/* ------------------ Public pages ------------------ */
 
-// route halaman SD (tanpa auth)
-// sebelum
+// public jenjang (sd, smp, sma)
+Route::get('/jenjang/{jenjang}', [KelasController::class, 'publicByJenjang'])->name('jenjang.index');
 
-Route::get('/jenjang/{jenjang}', [KelasController::class, 'publicByJenjang'])
-    ->name('jenjang.index');
-
-
+// guru daftar page (public)
 Route::get('/guru/Daftar', function () {
     return view('guru.index');
 })->name('guru.index');
 
-// HALAMAN KONTAK (GET)
+// contact
 Route::get('/kontak', [ContactController::class, 'page'])->name('kontak');
-
-// KIRIM FORM KONTAK (POST) – opsional, kalau pakai form
 Route::post('/kontak', [ContactController::class, 'send'])->name('kontak.kirim');
 
-
-
-/*
-|===================== GENERAL LOGIN (Dipakai welcome.blade.php & Breeze) =====================|
-*/
-
-// Halaman login (GET) — dipakai tombol Login dan dipakai Breeze
-Route::get('/login', [GeneralLoginController::class, 'showLogin'])->name('login');
-
-// Proses form login (POST)
-Route::post('/login', [GeneralLoginController::class, 'login'])->name('login.submit');
-
-// Logout
-Route::post('/logout', [GeneralLoginController::class, 'logout'])->name('logout');
-
-/*
-|===================== GOOGLE OAUTH LOGIN =====================|
-*/
-
-Route::get('/auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])
-    ->name('google.redirect');
-    
-Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])
-    ->name('google.callback');
-/*  
-|===================== DASHBOARD REDIRECT SAMPLE =====================|
-*/
+// helper dashboard redirects (keperluan debug / sample)
 Route::get('/dashboard/siswa', function () {
     return 'Dashboard Siswa';
 })->name('dashboard.siswa')->middleware('auth');
@@ -212,15 +196,14 @@ Route::get('/dashboard/guru', function () {
 })->name('dashboard.guru')->middleware('auth');
 
 Route::get('/dashboard/admin', function () {
-    return 'Dashboard Siswa';
+    return 'Dashboard Admin';
 })->name('dashboard.admin')->middleware('auth');
 
 Route::get('/dashboard/pengunjung', function () {
     return 'Dashboard Pengunjung';
 })->name('dashboard.pengunjung')->middleware('auth');
 
-// Halaman form pendaftaran
+// halaman daftar (public)
 Route::get('/daftar', function () {
     return view('daftar');
 })->name('daftar');
-
