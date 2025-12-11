@@ -9,6 +9,7 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\Pemesanan;
 use App\Models\Pembayaran;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -75,5 +76,15 @@ class AdminController extends Controller
             'statSMP',
             'statSMA'
         ));
+    }
+
+    /**
+     * ✅ TAMBAHAN: Method untuk route admin.users jika UserController belum ada
+     * Gunakan ini jika UserController belum dibuat atau ingin sementara pakai AdminController
+     */
+    public function users()
+    {
+        $users = User::orderBy('created_at', 'desc')->paginate(20);
+        return view('admin.users.index', compact('users'));
     }
 }

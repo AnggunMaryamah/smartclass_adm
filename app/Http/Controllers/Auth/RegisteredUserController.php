@@ -14,52 +14,40 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
-{
-    $request->validate([
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        'role' => ['required', 'in:admin,guru,siswa'],
-    ]);
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:guru,siswa'],
+        ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => $request->role,
-    ]);
+        $role = strtolower($request->role);
+        $status = $role === 'guru' ? 'pending' : 'active';
 
-    event(new Registered($user));
-    Auth::login($user);
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $role,
+            'status_akun' => $status,
+        ]);
 
-    $role = strtolower(trim($user->role));
+        event(new Registered($user));
 
-    if ($role === 'admin') {
-        return redirect('/admin/dashboard');
+        // siswa → login langsung
+        if ($status === 'active') {
+            Auth::login($user);
+            return redirect('/siswa/dashboard');
+        }
+
+        // guru → TIDAK login, diarahkan ke pending
+        return redirect()->route('register.pending');
     }
-
-    if ($role === 'guru') {
-        return redirect('/guru/dashboard');
-    }
-
-    if ($role === 'siswa') {
-        return redirect('/siswa/dashboard');
-    }
-
-    return redirect('/dashboard');
-}
 }
