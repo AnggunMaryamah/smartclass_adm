@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiswaKelasController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
 
 // TAMBAH DARI TIM (TIDAK BENTROK)
 use App\Http\Controllers\DataKelasController;
@@ -189,10 +190,11 @@ Route::get('/guru/Daftar', function () {
 })->name('guru.index');
 
 // HALAMAN KONTAK (GET)
-Route::get('/kontak', [ContactController::class, 'page'])->name('kontak');
+Route::get('/kontak', [ContactController::class, 'index'])
+    ->name('kontak');
 
-// KIRIM FORM KONTAK (POST) – opsional, kalau pakai form
-Route::post('/kontak', [ContactController::class, 'send'])->name('kontak.kirim');
+Route::post('/kontak/kirim', [ContactController::class, 'kirim'])
+    ->name('kontak.kirim');
 
 
 // Test route dari tim (opsional)
