@@ -170,7 +170,30 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group
 
 // ===================== TAMBAHAN DARI TIM (TIDAK BENTROK) =====================
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-Route::get('/sd', [SdController::class, 'index'])->name('sd.index');
+
+Route::get('/jenjang/sd', function () {
+    return view('sd.index'); // resources/views/sd/index.blade.php
+});
+
+// route untuk halaman SMP (konsisten dengan route SD)
+Route::get('/jenjang/smp', function () {
+    return view('smp.index'); // resources/views/smp/index.blade.php
+});
+
+Route::get('/jenjang/sma', function () {
+    return view('sma.index'); // resources/views/smp/index.blade.php
+});
+
+Route::get('/guru/Daftar', function () {
+    return view('guru.index');
+})->name('guru.index');
+
+// HALAMAN KONTAK (GET)
+Route::get('/kontak', [ContactController::class, 'page'])->name('kontak');
+
+// KIRIM FORM KONTAK (POST) – opsional, kalau pakai form
+Route::post('/kontak', [ContactController::class, 'send'])->name('kontak.kirim');
+
 
 // Test route dari tim (opsional)
 Route::get('/jenjang/test-route', function () {
