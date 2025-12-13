@@ -952,7 +952,8 @@
                 </div>
 
                 <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
-                <a href="#tentang" class="nav-link">Tentang SmartClass</a>
+                <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
+                <a href="{{ route('kontak') }}" class="nav-link">Tim SmartClass</a>
             </nav>
 
             <div class="nav-actions" role="group" aria-label="Actions">
@@ -1028,7 +1029,7 @@
                                     style="width:100%;text-align:left;display:block;padding:10px 12px;border-radius:8px;background:none;border:none;color:var(--text);font-weight:700;cursor:pointer;transition:background 0.2s;"
                                     onmouseover="this.style.background='rgba(14,165,233,0.06)'"
                                     onmouseout="this.style.background='transparent'" role="menuitem">
-                                    🚪 Logout
+                                    Logout
                                 </button>
                             </form>
                         </div>
@@ -1086,9 +1087,8 @@
                 <li>
                 <li><a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
                 </li>
-                <li><a href="#tentang"
-                        style="display:block;padding:12px;text-decoration:none;color:var(--text);font-weight:700;border-radius:8px;">Tentang
-                        SmartClass</a></li>
+                <li>
+                    <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
             </ul>
         </div>
     </div>
@@ -1103,10 +1103,6 @@
                         berpengalaman, metode pembelajaran modern, dan hasil terbukti.</p>
                     <div class="hero-cta">
                         <button class="btn-cta" style="padding:12px 20px;">Daftar Sekarang</button>
-                        <a href="{{ route('kontak') }}"
-                            style="padding:12px 20px;border-radius:999px;border:2px solid var(--primary);background:transparent;color:var(--text);font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;">
-                            Kontak Kami
-                        </a>
                     </div>
                     <div class="stats-card">
                         <div class="stat-item">
@@ -1348,7 +1344,7 @@
                     <li><a href="#home">Beranda</a></li>
                     <li><a href="#program">Program</a></li>
                     <li><a href="#paket">Paket</a></li>
-                    <a href="{{ route('kontak') }}">Tanya</a>
+                    <a href="{{ route('kontak') }}">kontak</a>
                 </ul>
             </div>
             <div>
@@ -1506,71 +1502,71 @@
     </script>
 </body>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleBtn = document.getElementById('avatar-toggle-btn');
-    const menu = document.getElementById('avatar-dropdown-menu');
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.getElementById('avatar-toggle-btn');
+        const menu = document.getElementById('avatar-dropdown-menu');
 
-    if (!toggleBtn || !menu) {
-        console.error('❌ Avatar dropdown elements not found');
-        return;
-    }
-
-    console.log('✅ Avatar dropdown elements found');
-
-    function openMenu() {
-        menu.style.display = 'block';  // ✅ Pakai style.display
-        toggleBtn.setAttribute('aria-expanded', 'true');
-        console.log('✅ Dropdown opened');
-        
-        // Optional: focus first focusable in menu
-        const first = menu.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
-        if (first) first.focus();
-    }
-
-    function closeMenu() {
-        menu.style.display = 'none';  // ✅ Pakai style.display
-        toggleBtn.setAttribute('aria-expanded', 'false');
-        toggleBtn.focus();
-        console.log('❌ Dropdown closed');
-    }
-
-    toggleBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
-        if (expanded) {
-            closeMenu();
-        } else {
-            openMenu();
+        if (!toggleBtn || !menu) {
+            console.error('❌ Avatar dropdown elements not found');
+            return;
         }
-    });
 
-    // Close on click outside
-    document.addEventListener('click', function(e) {
-        if (menu.style.display === 'block') {  // ✅ Cek style.display
-            const isInside = menu.contains(e.target) || toggleBtn.contains(e.target);
-            if (!isInside) closeMenu();
+        console.log('✅ Avatar dropdown elements found');
+
+        function openMenu() {
+            menu.style.display = 'block'; // ✅ Pakai style.display
+            toggleBtn.setAttribute('aria-expanded', 'true');
+            console.log('✅ Dropdown opened');
+
+            // Optional: focus first focusable in menu
+            const first = menu.querySelector('a, button, [tabindex]:not([tabindex="-1"])');
+            if (first) first.focus();
         }
-    });
 
-    // Close on Esc
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && menu.style.display === 'block') {  // ✅ Cek style.display
-            closeMenu();
+        function closeMenu() {
+            menu.style.display = 'none'; // ✅ Pakai style.display
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            toggleBtn.focus();
+            console.log('❌ Dropdown closed');
         }
-    });
 
-    // Optional: close on focusout if focus goes outside
-    menu.addEventListener('focusout', function(e) {
-        setTimeout(() => {
-            const active = document.activeElement;
-            if (!menu.contains(active) && active !== toggleBtn) {
+        toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const expanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+            if (expanded) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        });
+
+        // Close on click outside
+        document.addEventListener('click', function(e) {
+            if (menu.style.display === 'block') { // ✅ Cek style.display
+                const isInside = menu.contains(e.target) || toggleBtn.contains(e.target);
+                if (!isInside) closeMenu();
+            }
+        });
+
+        // Close on Esc
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && menu.style.display === 'block') { // ✅ Cek style.display
                 closeMenu();
             }
-        }, 10);
+        });
+
+        // Optional: close on focusout if focus goes outside
+        menu.addEventListener('focusout', function(e) {
+            setTimeout(() => {
+                const active = document.activeElement;
+                if (!menu.contains(active) && active !== toggleBtn) {
+                    closeMenu();
+                }
+            }, 10);
+        });
     });
-});
 </script>
 
 </html>

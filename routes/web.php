@@ -12,6 +12,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiswaKelasController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Auth\SocialAuthController;
 
 // TAMBAH DARI TIM (TIDAK BENTROK)
 use App\Http\Controllers\DataKelasController;
@@ -137,6 +139,11 @@ Route::get('/profil', [GuruController::class, 'profil'])->name('profil.index');
 Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
 }); // <-- kurung tutup grup guru
 
+Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');
+Route::get('/guru', [App\Http\Controllers\GuruController::class, 'index'])->name('guru.index');
+
+
+
 // ===================== SISWA (KAMU 100% - SUDAH LENGKAP) =====================
 Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group(function () {
     Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
@@ -168,6 +175,20 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group
         Route::get('/{tugas}/riwayat', [App\Http\Controllers\Siswa\KuisController::class, 'riwayat'])->name('riwayat');
     });
 
+// routes/web.php
+Route::view('/jenjang/sd', 'sd.index')->name('jenjang.sd');
+Route::view('/jenjang/smp', 'smp.index')->name('jenjang.smp');
+Route::view('/jenjang/sma', 'sma.index')->name('jenjang.sma');
+// Halaman daftar guru (bukan dashboard guru)
+// Halaman GURU publik — menuju resources/views/guru/index.blade.php
+Route::view('/guru', 'guru.index')->name('guru.index');
+
+
+Route::get('/tes-sd', function () {
+    return view('jenjang.sd.index'); // ubah sesuai path view-mu
+});
+
+
 // ===================== TAMBAHAN DARI TIM (TIDAK BENTROK) =====================
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/sd', [SdController::class, 'index'])->name('sd.index');
@@ -176,3 +197,20 @@ Route::get('/sd', [SdController::class, 'index'])->name('sd.index');
 Route::get('/jenjang/test-route', function () {
     return 'OK ROUTE';
 });
+
+// buat file resources/views/kontak.blade.php lalu:
+Route::view('/kontak', 'kontak')->name('kontak');
+
+Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
+
+// ➕ TAMBAHKAN ROUTE INI:
+Route::post('/kontak/kirim', [ContactController::class, 'kirim'])->name('kontak.kirim');
+
+// AUTH
+// Redirect ke Google
+Route::get('auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])
+    ->name('auth.google.redirect');
+
+// Callback dari Google
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])
+    ->name('auth.google.callback');

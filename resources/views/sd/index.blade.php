@@ -1,123 +1,97 @@
 <!DOCTYPE html>
-<html lang="id" class="theme-light">
+<html lang="id">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover" />
-    <title>Kelas SD - SmartClass</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>SmartClass - Les Private & Bimbel Online Terpercaya</title>
+    <meta name="description" content="SmartClass — Les private & bimbel online dengan guru berpengalaman." />
 
-    <meta name="description" content="Les private & bimbel SD dengan guru berpengalaman. Program khusus kelas 1-6 SD." />
-    <meta property="og:title" content="Kelas SD - SmartClass" />
-    <meta property="og:description" content="Les private & bimbel SD dengan guru berpengalaman." />
-    <meta property="og:type" content="website" />
+    <!-- Apply saved theme ASAP to avoid flash (single shared key) -->
+    <script>
+        (function() {
+            try {
+                const key = 'smartclass-theme';
+                const saved = localStorage.getItem(key);
+                if (saved === 'dark') document.documentElement.classList.add('theme-dark');
+                else document.documentElement.classList.add('theme-light');
+            } catch (e) {
+                document.documentElement.classList.add('theme-light');
+            }
+        })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
-
+        /* ---------- THEME & BASE ---------- */
         :root {
-            --bg: #f0f9ff;
-            --nav-bg: rgba(255, 255, 255, 0.95);
-            --text: #0f172a;
-            --muted: #475569;
+            --bg: #f6fbff;
+            --nav-bg: rgba(255, 255, 255, 0.96);
+            --text: #0b1a2b;
+            --muted: #58636f;
             --accent-from: #0ea5e9;
             --accent-to: #2dd4bf;
-            --primary: #0ea5e9;
-            --secondary: #2dd4bf;
             --card-bg: #ffffff;
-            --panel: rgba(14, 165, 233, 0.05);
-            --floating-shadow: 0 25px 50px rgba(14, 165, 233, 0.15);
             --glass-border: rgba(2, 6, 23, 0.04);
-            --transition-fast: 180ms;
+            --shadow-soft: 0 20px 50px rgba(2, 6, 23, 0.06);
+            --transition: 200ms;
+            --footer-text: var(--muted);
         }
 
         .theme-dark {
             --bg: #071426;
-            --nav-bg: rgba(6, 12, 20, 0.85);
+            --nav-bg: rgba(6, 12, 20, 0.92);
             --text: #e6eef7;
-            --muted: #96a6b8;
+            --muted: #9fb2c6;
+            --card-bg: #071224;
+            --glass-border: rgba(255, 255, 255, 0.06);
             --accent-from: #2dd4bf;
             --accent-to: #1e3a5f;
-            --primary: #2dd4bf;
-            --secondary: #1e3a5f;
-            --card-bg: #071224;
-            --panel: rgba(45, 212, 191, 0.06);
-            --floating-shadow: 0 30px 60px rgba(45, 212, 191, 0.12);
-            --glass-border: rgba(255, 255, 255, 0.04);
+            --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --footer-text: var(--muted);
         }
 
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            box-sizing: border-box
         }
 
         html,
         body {
             height: 100%;
-        }
-
-        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
             background: var(--bg);
             color: var(--text);
-            font-family: 'Poppins', sans-serif;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-            transition: background var(--transition-fast) ease, color var(--transition-fast) ease;
+            scroll-behavior: smooth;
+            transition: background var(--transition), color var(--transition);
         }
 
-        /* Particles */
-        .particles {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 1;
-            overflow: hidden;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px
         }
 
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--accent-from), transparent);
-            opacity: 0.10;
-            animation: float-particle 20s infinite ease-in-out;
-            will-change: transform, opacity;
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent
         }
 
-        @keyframes float-particle {
-            0%,
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-
-            25% {
-                transform: translate(80px, -80px) scale(1.05);
-            }
-
-            50% {
-                transform: translate(-50px, -160px) scale(.9);
-            }
-
-            75% {
-                transform: translate(-120px, -90px) scale(1.03);
-            }
-        }
-
-        /* Nav */
+        /* ---------- NAV ---------- */
         .site-nav {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 60;
+            z-index: 990;
             background: var(--nav-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border)
         }
 
         .nav-inner {
@@ -127,7 +101,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 12px
         }
 
         .brand {
@@ -135,8 +109,8 @@
             gap: .75rem;
             align-items: center;
             font-weight: 800;
-            color: var(--text);
             text-decoration: none;
+            color: var(--text);
         }
 
         .brand-logo {
@@ -149,64 +123,78 @@
             color: #fff;
             font-weight: 900;
             font-size: 1.2rem;
-            box-shadow: var(--floating-shadow);
+        }
+
+        .brand-text {
+            font-weight: 800;
+            font-size: 1.02rem
         }
 
         .nav-links {
             display: flex;
             gap: 14px;
             align-items: center;
+            position: relative
         }
 
-        .nav-link {
+        .nav-link,
+        .nav-btn {
             color: var(--text);
-            font-weight: 600;
+            font-weight: 700;
             font-size: .95rem;
-            text-decoration: none;
             padding: 8px 12px;
-            border-radius: 8px;
-            transition: background var(--transition-fast);
+            border-radius: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background var(--transition), transform var(--transition);
         }
 
         .nav-link:hover,
-        .nav-link:focus {
-            background: var(--panel);
-            outline: none;
+        .nav-btn:hover {
+            background: rgba(14, 165, 233, 0.06);
+            transform: translateY(-2px)
         }
 
         .nav-actions {
             display: flex;
             gap: 10px;
-            align-items: center;
-        }
-
-        .btn-cta {
-            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
-            color: white;
-            padding: .7rem 1.2rem;
-            border-radius: 999px;
-            font-weight: 800;
-            border: none;
-            cursor: pointer;
-            transition: transform .2s;
-            box-shadow: 0 10px 30px rgba(14, 165, 233, .12);
-        }
-
-        .btn-cta:hover {
-            transform: translateY(-2px);
+            align-items: center
         }
 
         .theme-toggle {
             width: 44px;
             height: 44px;
             border-radius: 999px;
-            border: 1px solid rgba(14, 165, 233, .10);
+            border: 1px solid rgba(14, 165, 233, 0.10);
             background: var(--card-bg);
             display: grid;
             place-items: center;
             cursor: pointer;
-            font-size: 1.2rem;
-            transition: transform 120ms ease;
+            font-size: 1.1rem;
+            transition: transform 200ms;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-cta {
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            color: #fff;
+            padding: .7rem 1.1rem;
+            border-radius: 999px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform var(--transition);
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
         }
 
         .hamburger {
@@ -221,854 +209,1105 @@
             align-items: center;
             gap: 4px;
             cursor: pointer;
+            padding: 6px;
+            transition: all var(--transition);
         }
 
-        .hamburger span {
+        .hamburger .line {
             width: 20px;
             height: 2px;
             background: var(--text);
             border-radius: 2px;
-            transition: transform .18s ease, opacity .18s ease;
+            transition: transform var(--transition), opacity var(--transition);
         }
 
-        /* mobile nav overlay (renamed to avoid conflict with inner list) */
+        .hamburger.open .line.top {
+            transform: translateY(6px) rotate(45deg)
+        }
+
+        .hamburger.open .line.mid {
+            opacity: 0
+        }
+
+        .hamburger.open .line.bot {
+            transform: translateY(-6px) rotate(-45deg)
+        }
+
+        /* dropdown */
+        .nav-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            min-width: 220px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 8px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-soft);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-8px);
+            transition: all 160ms ease;
+            z-index: 120
+        }
+
+        .nav-dropdown.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0)
+        }
+
+        .nav-dropdown a {
+            display: block;
+            padding: 10px;
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 700;
+            transition: background var(--transition);
+        }
+
+        .nav-dropdown a:hover {
+            background: rgba(14, 165, 233, 0.06)
+        }
+
+        /* ---------- MOBILE DRAWER ---------- */
         .mobile-drawer {
-            display: none;
             position: fixed;
             inset: 0;
-            z-index: 200;
-            background: rgba(0, 0, 0, 0.35);
-            align-items: center;
-            justify-content: center;
+            background: rgba(2, 6, 23, 0.45);
+            display: none;
+            z-index: 900;
+            backdrop-filter: blur(4px);
+            animation: fadeInDrawer 180ms ease;
+        }
+
+        .mobile-drawer.show {
+            display: block
         }
 
         .mobile-drawer .panel {
-            width: 100%;
-            max-width: 420px;
-            margin: 0 20px;
-            border-radius: 14px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 86%;
+            max-width: 380px;
             background: var(--card-bg);
-            padding: 28px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.18);
-            border: 1px solid var(--glass-border);
+            padding: 18px;
+            overflow: auto;
+            border-left: 1px solid var(--glass-border);
+            box-shadow: -20px 0 60px rgba(2, 6, 23, 0.25);
+            animation: slideInRightDrawer 220ms ease;
         }
 
-        .drawer-nav {
-            list-style: none;
-            padding-left: 0;
+        @keyframes fadeInDrawer {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
-        .drawer-nav li + li {
-            margin-top: 8px;
+        @keyframes slideInRightDrawer {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
         }
 
-        .drawer-nav a,
-        .drawer-nav button {
-            display: block;
-            padding: 12px 8px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: var(--text);
-            font-weight: 700;
-            font-size: 1.05rem;
-            background: transparent;
-            border: none;
-            text-align: left;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        /* rest (hero, grid, cards, footer) - kept concise and similar to original */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        /* ---------- HERO ---------- */
         .hero-section {
-            position: relative;
-            z-index: 2;
-            padding-top: 120px;
-            padding-bottom: 60px;
-            text-align: center;
+            min-height: 32vh;
+            display: flex;
+            align-items: center;
+            padding-top: 96px;
+            padding-bottom: 28px;
+            text-align: center
         }
 
-        .hero-section h1 {
-            font-size: clamp(2rem, 6vw, 3.5rem);
+        .hero-title {
+            font-size: clamp(1.8rem, 4.5vw, 3.2rem);
             font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 16px;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-section p {
+        .hero-desc {
             color: var(--muted);
-            font-size: 1.1rem;
-            max-width: 800px;
-            margin: 0 auto 32px;
+            font-size: 1.02rem;
             line-height: 1.7;
+            margin: 0 auto 18px;
+            max-width: 820px
         }
 
+        /* ---------- KELAS ---------- */
         .section {
-            padding: 60px 0;
-            position: relative;
-            z-index: 2;
+            padding: 48px 0
         }
 
         .section-title {
-            margin-bottom: 40px;
+            text-align: center;
+            margin-bottom: 28px
         }
 
         .section-title h2 {
             font-size: 2rem;
             font-weight: 900;
-            margin-bottom: 12px;
+            margin: 0 0 8px 0;
         }
 
         .section-title p {
             color: var(--muted);
-            font-size: 1.05rem;
+            font-size: 1.02rem;
+            margin: 0;
         }
 
-        .grid {
+        .cards-grid {
             display: grid;
-            gap: 24px;
-        }
-
-        .grid-3 {
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        }
-
-        .grid-4 {
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        }
-
-        .grid-2 {
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px
         }
 
         .content-card {
-            padding: 28px;
-            border-radius: 16px;
             background: var(--card-bg);
-            border: 1px solid rgba(14, 165, 233, .06);
-            box-shadow: 0 18px 40px rgba(0, 0, 0, .06);
-            transition: transform .3s, box-shadow .3s;
+            padding: 24px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 230px;
+            transition: transform var(--transition), box-shadow var(--transition);
         }
 
         .content-card:hover {
             transform: translateY(-6px);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, .12);
+            box-shadow: 0 25px 60px rgba(2, 6, 23, 0.12);
         }
 
-        .content-card .icon {
-            font-size: 2.8rem;
-            margin-bottom: 16px;
-            display: block;
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            color: #fff;
+            font-weight: 900;
+            font-size: 1.8rem;
+            margin-bottom: 8px;
         }
 
         .content-card h3 {
-            font-size: 1.25rem;
+            margin: 0 0 8px 0;
             font-weight: 800;
-            margin-bottom: 12px;
+            font-size: 1.1rem;
         }
 
         .content-card p {
             color: var(--muted);
             line-height: 1.6;
-            margin-bottom: 16px;
+            margin: 0 0 12px 0;
+            font-size: 0.98rem;
         }
 
-        .testimonial-card {
-            padding: 24px;
-        }
-
-        .rating {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 12px;
-        }
-
-        .rating span {
-            color: #f59e0b;
-            font-size: 1.1rem;
-        }
-
-        .testimonial-text {
+        .content-card ul {
             color: var(--muted);
-            font-style: italic;
-            margin-bottom: 16px;
+            margin: 12px 0 14px 18px;
             line-height: 1.6;
+            font-size: 0.95rem;
+            padding: 0;
         }
 
-        .testimonial-author {
+        .content-card ul li {
+            margin-bottom: 4px;
+        }
+
+        .card-actions {
             display: flex;
             gap: 12px;
             align-items: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
         }
 
-        .author-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+        /* Buttons inside cards */
+        .card-cta {
+            padding: .6rem .9rem;
+            border-radius: 10px;
+            border: none;
             background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            color: #fff;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: transform var(--transition);
+        }
+
+        .card-cta:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-link {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 0.95rem;
+            margin-left: 12px !important;
+        }
+
+        .card-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ---------- PRICING ---------- */
+        .pricing-wrap {
+            max-width: 1100px;
+            margin: 24px auto
+        }
+
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.03), transparent);
+            padding: 6px;
+            border-radius: 999px;
+            border: 1px solid rgba(14, 165, 233, 0.04)
+        }
+
+        .toggle-switch button {
+            background: transparent;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all var(--transition);
+        }
+
+        .toggle-switch button.active {
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            color: white
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 18px
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 25px 60px rgba(2, 6, 23, 0.12);
+        }
+
+        .price-badge {
+            display: inline-flex;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 800;
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.06), transparent);
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+
+        .price {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin: 6px 0;
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .price-sub {
+            color: var(--muted);
+            font-size: .95rem;
+            margin-bottom: 12px
+        }
+
+        .price-features {
+            color: var(--muted);
+            line-height: 1.8;
+            margin-bottom: 14px;
+            font-size: 0.95rem;
+        }
+
+        .price-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* ---------- GURU ---------- */
+        .guru-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .guru-card {
+            background: var(--card-bg);
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+
+        .guru-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 50px rgba(2, 6, 23, 0.12);
+        }
+
+        .guru-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
             display: grid;
             place-items: center;
+            margin: 0 auto 10px;
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
             color: white;
-            font-weight: 800;
-            font-size: 1.2rem;
+            font-weight: 900;
+            font-size: 1.6rem;
         }
 
+        .guru-card strong {
+            display: block;
+            margin: 0 0 6px 0;
+            font-size: 1rem;
+        }
+
+        .guru-card p {
+            color: var(--muted);
+            font-size: .95rem;
+            margin: 0;
+        }
+
+        /* ---------- FOOTER ---------- */
         .footer {
             background: var(--card-bg);
-            padding: 60px 20px 20px;
-            margin-top: 60px;
-            border-top: 2px solid rgba(14, 165, 233, 0.08);
+            padding: 48px 20px 28px;
+            margin-top: 40px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--footer-text)
         }
 
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1.5fr;
-            gap: 30px;
+            gap: 20px;
             max-width: 1200px;
-            margin: 0 auto 30px;
+            margin: 0 auto 20px;
         }
 
-        .footer-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .footer-col h5 {
             font-weight: 800;
-            font-size: 1.1rem;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            color: var(--text);
         }
 
-        .footer-links {
+        .footer-col ul {
             list-style: none;
+            padding: 0;
+            margin: 0;
         }
 
-        .footer-links li {
-            margin-bottom: 8px;
+        .footer-col ul li {
+            margin-bottom: 6px;
         }
 
-        .footer-links a {
+        .footer-col a {
             color: var(--muted);
             text-decoration: none;
-            font-weight: 600;
-            transition: color .2s;
+            font-size: 0.95rem;
+            transition: color var(--transition);
         }
 
-        .footer-links a:hover {
-            color: var(--primary);
+        .footer-col a:hover {
+            color: var(--accent-from);
+        }
+
+        .newsletter-input {
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(14, 165, 233, 0.08);
+            width: 100%;
+            margin-bottom: 10px;
+            background: transparent;
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
         }
 
         .footer-bottom {
             text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(14, 165, 233, .06);
+            padding-top: 18px;
+            border-top: 1px solid rgba(14, 165, 233, 0.06);
             color: var(--muted);
-            font-size: .9rem;
+            margin-top: 18px;
+            font-size: .95rem;
         }
 
-        .social-row {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .social-link {
-            display: inline-grid;
-            place-items: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
-            background: linear-gradient(180deg, rgba(0, 0, 0, .02), transparent);
-            text-decoration: none;
-            color: var(--text);
-            border: 1px solid var(--glass-border);
-            transition: transform 140ms ease;
-        }
-
-        .social-link:hover {
-            transform: translateY(-4px);
-        }
-
-        .contact-form input[type="email"] {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--glass-border);
-            background: transparent;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .contact-form button {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
+        /* back to top */
+        .back-to-top {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
             background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
-            color: white;
+            color: #fff;
+            border: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 60;
+            font-size: 1.2rem;
+            font-weight: 900;
+            transition: transform var(--transition);
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 880px) {
+        .back-to-top:hover {
+            transform: translateY(-3px);
+        }
+
+        /* responsive */
+        @media (max-width:880px) {
             .nav-links {
                 display: none !important;
             }
 
             .hamburger {
                 display: flex !important;
-                z-index: 120;
             }
 
-            .footer-grid {
-                grid-template-columns: 1fr 1fr;
+            .cards-grid {
+                grid-template-columns: 1fr
             }
-        }
 
-        @media (max-width: 640px) {
-            .particle {
-                display: none;
+            .pricing-grid {
+                grid-template-columns: 1fr
+            }
+
+            .guru-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .section {
+                padding: 34px 0
             }
 
             .hero-section {
-                padding-top: 90px;
-            }
-
-            .grid-3,
-            .grid-4,
-            .grid-2 {
-                grid-template-columns: 1fr;
+                padding-top: 84px
             }
 
             .footer-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr
             }
         }
 
-        /* hamburger open animation */
-        .hamburger.open span:nth-child(1) {
-            transform: translateY(6px) rotate(45deg);
+        @media (max-width:640px) {
+            .footer-grid {
+                grid-template-columns: 1fr
+            }
+
+            .guru-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.5rem;
+            }
         }
 
-        .hamburger.open span:nth-child(2) {
-            opacity: 0;
-            transform: scaleX(0);
-        }
-
-        .hamburger.open span:nth-child(3) {
-            transform: translateY(-6px) rotate(-45deg);
+        /* focus */
+        .nav-btn:focus,
+        .theme-toggle:focus,
+        .btn-cta:focus,
+        .hamburger:focus {
+            outline: 3px solid rgba(14, 165, 233, 0.14);
+            outline-offset: 3px;
+            border-radius: 10px
         }
     </style>
 </head>
 
 <body>
-    <!-- Particles -->
-    <div class="particles" id="particles" aria-hidden="true"></div>
+    <!-- decorative particles -->
+    <div id="particles" aria-hidden="true" style="position:fixed;inset:0;pointer-events:none;z-index:0"></div>
 
-    <!-- Navigation -->
+    <!-- NAV -->
+    <!-- NAVIGATION (REPLACE ONLY THIS HEADER) -->
     <header class="site-nav" role="navigation" aria-label="Main Navigation">
         <div class="nav-inner">
-            <a href="#" class="brand" aria-label="Bimbel Cerdas">
-                <div class="brand-logo">📚</div>
+            <a href="{{ url('/') }}" class="brand" aria-label="SmartClass">
+                <div class="brand-logo">
+                    <img src="{{ asset('images/smartclass-logo.png') }}" alt="Logo" style="width:28px;height:28px;">
+                </div>
                 <span class="brand-text">SmartClass</span>
             </a>
 
             <nav class="nav-links" aria-label="Primary Links">
-                <a href="#" class="nav-link">Beranda</a>
-                <div style="position:relative;">
-                    <button class="nav-btn nav-link" id="jenjangBtn" aria-expanded="false" aria-haspopup="true">Pilih Jenjang ▾</button>
-                    <div class="nav-dropdown" id="jenjangDropdown" role="menu" aria-hidden="true" style="position:absolute; top:40px; left:0; background:var(--card-bg); border-radius:10px; padding:8px; box-shadow:0 10px 30px rgba(0,0,0,.08); display:none; border:1px solid var(--glass-border);">
-                        <a href="/jenjang/sd" style="display:block;padding:8px 12px;text-decoration:none;color:var(--text);">SD</a>
-                        <a href="/jenjang/smp" style="display:block;padding:8px 12px;text-decoration:none;color:var(--text);">SMP</a>
-                        <a href="/jenjang/sma" style="display:block;padding:8px 12px;text-decoration:none;color:var(--text);">SMK/SMA</a>
-                        <a href="/jenjang/utbk" style="display:block;padding:8px 12px;text-decoration:none;color:var(--text);">Utbk</a>
-                        <a href="/jenjang/umum" style="display:block;padding:8px 12px;text-decoration:none;color:var(--text);">Umum</a>
+                <a href="{{ url('/') }}" class="nav-link">Beranda</a>
+
+               <div style="position:relative;">
+                    <button class="nav-btn" id="jenjangBtn" aria-expanded="false" aria-haspopup="true"
+                        aria-controls="jenjangDropdown">Pilih Jenjang ▾</button>
+                    <div class="nav-dropdown" id="jenjangDropdown" role="menu" aria-hidden="true">
+                        <a href="/jenjang/sd" role="menuitem">SD</a>
+                        <a href="/jenjang/smp" role="menuitem">SMP</a>
+                        <a href="/jenjang/sma" role="menuitem">SMK/SMA</a>
                     </div>
                 </div>
-                <a href="#guru" class="nav-link">Guru</a>
-                <a href="#kontak" class="nav-link">Tentang Kami</a>
+
+                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
             </nav>
 
             <div class="nav-actions" role="group" aria-label="Actions">
-                <button class="theme-toggle" id="themeToggle" aria-pressed="false" title="Toggle gelap/terang" aria-label="Toggle tema gelap-terang">🌙</button>
-                <a href="{{ route('siswa.login') }}" class="btn-cta">Login / Sign Up</a>
-                <button class="hamburger" id="hamburger" aria-controls="mobileDrawer" aria-expanded="false" aria-label="Buka menu">
-                    <span></span><span></span><span></span>
+                <button class="theme-toggle" id="themeToggle" aria-pressed="false" title="Toggle gelap/terang"
+                    aria-label="Toggle tema gelap-terang">🌙</button>
+
+                {{-- AUTH: tampilkan avatar/inisial + nama ketika login, jika tidak tampil Login --}}
+                @if (auth()->check())
+                    @php
+                        $user = auth()->user();
+                        // pilih nama tampilan fallback ke email bila kosong
+                        $displayName = $user->name ?? ($user->username ?? $user->email);
+                        // jika ada field avatar/photo gunakan itu, atau null
+                        $avatar = $user->avatar ?? ($user->photo ?? null);
+                        // buat inisial (maks 2 huruf)
+                        $initials = collect(explode(' ', trim($displayName)))
+                            ->filter()
+                            ->map(fn($s) => strtoupper(substr($s, 0, 1)))
+                            ->slice(0, 2)
+                            ->join('');
+                    @endphp
+
+                    <div class="auth-user" style="display:flex;gap:10px;align-items:center;">
+                        @if ($avatar)
+                            <img src="{{ $avatar }}" alt="avatar" class="auth-avatar"
+                                style="width:44px;height:44px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,0.06);">
+                        @else
+                            <div class="auth-initial"
+                                style="width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-weight:900;color:#fff;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));box-shadow:0 8px 20px rgba(14,165,233,0.12);font-size:1rem;">
+                                {{ $initials ?: 'U' }}
+                            </div>
+                        @endif
+
+                        <form method="POST" action="{{ route('logout') }}" style="display:inline;margin-left:6px;">
+                            @csrf
+                            <button type="submit" class="btn-cta"
+                                style="background:transparent;color:var(--text);border:1px solid rgba(14,165,233,0.08);padding:.5rem .75rem;border-radius:10px;font-weight:700;">Keluar</button>
+                        </form>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="btn-cta" id="loginBtnHeader">Login</a>
+                @endif
+
+                <button class="hamburger" id="hamburger" aria-controls="mobileDrawer" aria-expanded="false"
+                    aria-label="Buka menu">
+                    <span class="line top"></span>
+                    <span class="line mid"></span>
+                    <span class="line bot"></span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Drawer (overlay) -->
-    <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true" role="dialog" aria-modal="true">
-        <div class="panel" role="document">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <!-- MOBILE DRAWER -->
+    <div class="mobile-drawer" id="mobileDrawer" aria-hidden="true">
+        <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
                 <div class="brand">
-                    <div class="brand-logo">📚</div>
+                    <div class="brand-logo"> <img src="{{ asset('images/smartclass-logo.png') }}" alt="Logo"
+                            style="width:28px;height:28px;"></div>
                     <strong>SmartClass</strong>
                 </div>
-                <button id="closeDrawer" style="font-size:1.5rem;background:none;border:none;cursor:pointer;color:var(--text);" aria-label="Tutup menu">✕</button>
+                <button id="closeDrawer"
+                    style="font-size:1.4rem;background:none;border:none;cursor:pointer;color:var(--text)">✕</button>
             </div>
 
-            <ul class="drawer-nav">
-                <li><a href="#">Beranda</a></li>
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+                <li><a href="/"
+                        style="display:block;padding:12px;text-decoration:none;color:var(--text);font-weight:800;border-radius:8px">Beranda</a>
+                </li>
                 <li>
-                    <button id="mobileJenjangBtn" aria-expanded="false">Pilih Jenjang ▾</button>
-                    <div id="mobileJenjang" style="display:none;padding-left:12px;margin-top:6px;">
-                        <a href="/jenjang/sd">SD</a>
-                        <a href="/jenjang/smp">SMP</a>
-                        <a href="/jenjang/smk">SMK/SMA</a>
-                        <a href="/jenjang/umum">UMUM</a>
+                    <button id="mobileJenjangBtn"
+                        style="width:100%;text-align:left;background:none;border:none;padding:12px;font-weight:800;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;border-radius:8px">Pilih
+                        Jenjang ▾</button>
+                    <div id="mobileJenjang" style="display:none;padding-left:8px;margin-top:6px">
+                        <a href="/jenjang/sd"
+                            style="display:block;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700">🎓
+                            SD</a>
+                        <a href="/jenjang/smp"
+                            style="display:block;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700">📖
+                            SMP</a>
+                        <a href="/jenjang/sma"
+                            style="display:block;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700">🎯
+                            SMA</a>
                     </div>
                 </li>
-                <li><a href="#guru">Guru</a></li>
-                <li><a href="#kontak">Tentang Kami</a></li>
+                <li><a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                </li>
+                <li><a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
+                </li>
             </ul>
-
-            <button class="btn-cta" style="width:100%;margin-top:20px;">Login</button>
+            <a href="{{ route('login') }}" class="btn-cta" id="loginBtnHeader">Login</a>
         </div>
     </div>
 
-    <!-- Hero -->
-    <main role="main">
-        <section class="hero-section">
-            <div class="container">
-                <h1>Les Private <span class="gradient-text">Kelas SD</span></h1>
-                <p>SmartClass menyediakan bimbel tatap muka & online untuk siswa SD dengan materi terstruktur dan pengajar berpengalaman.</p>
-                <button class="btn-cta">Coba Kelas Gratis</button>
-            </div>
-        </section>
-
-        <!-- Kelas Tersedia -->
-        <section class="section">
-            <div class="container">
-                <div class="section-title">
-                    <h2>📚 Kelas yang Tersedia</h2>
-                    <p>Pilih kelas sesuai kebutuhan anak</p>
-                </div>
-
-                <div class="grid grid-3">
-                    <div class="content-card">
-                        <span class="icon">📖</span>
-                        <h3>Kelas 1-2 SD</h3>
-                        <p>Pengenalan dasar membaca, menulis, dan berhitung dengan metode fun learning.</p>
-                        <button class="btn-cta">Daftar Sekarang</button>
-                    </div>
-
-                    <div class="content-card">
-                        <span class="icon">✏️</span>
-                        <h3>Kelas 3-4 SD</h3>
-                        <p>Penguatan konsep matematika, IPA, dan bahasa Indonesia dengan latihan soal.</p>
-                        <button class="btn-cta">Daftar Sekarang</button>
-                    </div>
-
-                    <div class="content-card">
-                        <span class="icon">🎓</span>
-                        <h3>Kelas 5-6 SD</h3>
-                        <p>Persiapan ujian sekolah dan pendalaman materi untuk masuk SMP favorit.</p>
-                        <button class="btn-cta">Daftar Sekarang</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Mata Pelajaran -->
-        <section class="section" style="background: var(--panel);">
-            <div class="container">
-                <div class="section-title" style="text-align:center;">
-                    <h2>📖 Mata Pelajaran</h2>
-                    <p>Bimbingan belajar untuk mapel SD</p>
-                </div>
-
-                <div class="grid grid-4">
-                    <div class="content-card" style="text-align:center;"><span class="icon">🔢</span>
-                        <h3>Matematika</h3>
-                    </div>
-                    <div class="content-card" style="text-align:center;"><span class="icon">🇮🇩</span>
-                        <h3>Bahasa Indonesia</h3>
-                    </div>
-                    <div class="content-card" style="text-align:center;"><span class="icon">🔬</span>
-                        <h3>IPA</h3>
-                    </div>
-                    <div class="content-card" style="text-align:center;"><span class="icon">🌍</span>
-                        <h3>IPS</h3>
-                    </div>
-                    <div class="content-card" style="text-align:center;"><span class="icon">🇬🇧</span>
-                        <h3>Bahasa Inggris</h3>
-                    </div>
-                    <div class="content-card" style="text-align:center;"><span class="icon">🎨</span>
-                        <h3>Seni Budaya</h3>
-                    </div>
-                    <div class="content-card" style="text-align:center;"><span class="icon">⚽</span>
-                        <h3>Penjaskes</h3>
-                    </div>
-                    <div class="content-card" style="text-align:center;"><span class="icon">📚</span>
-                        <h3>Tematik</h3>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Keunggulan -->
-        <section class="section">
-            <div class="container">
-                <div class="section-title" style="text-align:center;">
-                    <h2>⭐ Keunggulan Kami</h2>
-                    <p>Mengapa memilih SmartClass untuk anak Anda?</p>
-                </div>
-
-                <div class="grid grid-3">
-                    <div class="content-card" style="text-align:center;">
-                        <span class="icon">👨‍🏫</span>
-                        <h3>Guru Berpengalaman</h3>
-                        <p>Pengajar lulusan pendidikan terbaik dengan pengalaman mengajar SD lebih dari 5 tahun.</p>
-                    </div>
-                    <div class="content-card" style="text-align:center;">
-                        <span class="icon">📱</span>
-                        <h3>Metode Interaktif</h3>
-                        <p>Pembelajaran dengan media digital, games edukatif, dan praktik langsung yang menyenangkan.
-                        </p>
-                    </div>
-                    <div class="content-card" style="text-align:center;">
-                        <span class="icon">📊</span>
-                        <h3>Laporan Berkala</h3>
-                        <p>Orang tua mendapat laporan perkembangan belajar anak setiap minggu secara detail.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Testimoni -->
-        <section class="section" style="background: var(--panel);">
-            <div class="container">
-                <div class="section-title" style="text-align:center;">
-                    <h2>💬 Testimoni Orang Tua</h2>
-                    <p>Pendapat orang tua siswa SmartClass</p>
-                </div>
-
-                <div class="grid grid-2" style="max-width:1000px; margin:0 auto;">
-                    <div class="content-card testimonial-card">
-                        <div class="rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                        </div>
-                        <p class="testimonial-text">Anak saya yang tadinya kesulitan matematika, sekarang jadi lebih
-                            percaya diri. Gurunya sabar dan metodenya mudah dipahami!</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">B</div>
-                            <div class="author-info">
-                                <div class="name">Ibu Budi</div>
-                                <div class="grade">Orang Tua Siswa Kelas 4 SD</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content-card testimonial-card">
-                        <div class="rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                        </div>
-                        <p class="testimonial-text">Sistem laporannya bagus, saya bisa pantau perkembangan anak tiap
-                            minggu. Harga juga terjangkau untuk kualitas sebagus ini.</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">S</div>
-                            <div class="author-info">
-                                <div class="name">Ibu Siti</div>
-                                <div class="grade">Orang Tua Siswa Kelas 5 SD</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content-card testimonial-card">
-                        <div class="rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                        </div>
-                        <p class="testimonial-text">Anaknya senang belajar karena tidak membosankan. Guru-gurunya ramah
-                            dan cara mengajarnya kreatif!</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">A</div>
-                            <div class="author-info">
-                                <div class="name">Bapak Ahmad</div>
-                                <div class="grade">Orang Tua Siswa Kelas 3 SD</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="content-card testimonial-card">
-                        <div class="rating"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-                        </div>
-                        <p class="testimonial-text">Nilai anak saya meningkat drastis setelah ikut les di sini. Terima
-                            kasih SmartClass!</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">R</div>
-                            <div class="author-info">
-                                <div class="name">Ibu Rina</div>
-                                <div class="grade">Orang Tua Siswa Kelas 6 SD</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <!-- HERO -->
+    <main class="hero-section" id="home" role="main">
+        <div class="container">
+            <h1 class="hero-title">Les Private <span class="gradient-text">Kelas SD</span></h1>
+            <p class="hero-desc">SmartClass menyediakan bimbel tatap muka & online untuk siswa SD dengan materi
+                terstruktur dan pengajar berpengalaman — membangun fondasi belajar yang kuat dan menyenangkan.</p>
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer" id="kontak" role="contentinfo">
-        <div class="footer-grid">
-            <div>
-                <div class="footer-brand">
-                    <div class="brand-logo">📚</div>
-                    <div>SmartClass<div style="font-size:.9rem;color:var(--muted);font-weight:600;">Les Private & Bimbel Online</div>
+    <!-- KELAS -->
+    <section class="section" id="kelas">
+        <div class="container">
+            <div class="section-title">
+                <h2>📚 <span class="gradient-text">Kelas yang Tersedia</span></h2>
+                <p>Paket dirancang sesuai level: 1–3 (pemula) dan 4–6 (menengah). Pilih jadwal & durasi yang kamu mau.
+                </p>
+            </div>
+
+            <div class="cards-grid" role="list">
+                <article class="content-card" role="listitem">
+                    <div>
+                        <div class="card-icon">🌱</div>
+                        <h3>Kelas 1–3 (Pemula)</h3>
+                        <p>Dasar: membaca, menulis, berhitung, aktivitas interaktif. Pendekatan ramah anak untuk
+                            membangun rasa percaya diri belajar.</p>
+                        <ul>
+                            <li><strong>Kurikulum:</strong> Literasi & numerasi dasar</li>
+                            <li><strong>Metode:</strong> Game edukasi & praktik interaktif</li>
+                            <li><strong>Durasi:</strong> Fleksibel — mingguan / bulanan</li>
+                        </ul>
+                    </div>
+                    <div class="card-actions">
+                        <a class="card-cta" href="/daftar?paket=1-3">Daftar Paket 1–3</a>
+                        <a class="card-link" href="/detail?paket=1-3">Lihat Detail</a>
+                    </div>
+                </article>
+
+                <article class="content-card" role="listitem">
+                    <div>
+                        <div class="card-icon">🚀</div>
+                        <h3>Kelas 4–6 (Menengah)</h3>
+                        <p>Pendalaman konsep, problem solving, soal tematik dan persiapan naik kelas/ujian sekolah.</p>
+                        <ul>
+                            <li><strong>Kurikulum:</strong> Soal tematik, sains dasar</li>
+                            <li><strong>Metode:</strong> Latihan & pembahasan strategi</li>
+                            <li><strong>Bonus:</strong> Konsultasi jenjang berikutnya</li>
+                        </ul>
+                    </div>
+                    <div class="card-actions">
+                        <a class="card-cta" href="/daftar?paket=4-6">Daftar Paket 4–6</a>
+                        <a class="card-link" href="/detail?paket=4-6">Lihat Detail</a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="section" id="paket-harga">
+        <div class="container pricing-wrap">
+            <div class="section-title">
+                <h2>💼 <span class="gradient-text">Paket & Harga</span></h2>
+                <p>Pilih model pembayaran — Bulanan atau Semester. Harga contoh bisa disesuaikan.</p>
+            </div>
+
+            <div style="display:flex;justify-content:center;margin-bottom:18px">
+                <div class="toggle-switch" role="tablist">
+                    <button id="toggleMonthly" class="active" role="tab">Bulanan</button>
+                    <button id="toggleSemester" role="tab">Semester</button>
+                </div>
+            </div>
+
+            <div class="pricing-grid" id="pricingGrid">
+                <div class="pricing-card" data-plan="1-3">
+                    <div>
+                        <div class="price-badge">Kelas 1–3</div>
+                        <div class="price" data-price-month="Rp 250.000" data-price-sem="Rp 1.350.000">Rp 250.000
+                        </div>
+                        <div class="price-sub">per bulan</div>
+                        <div class="price-features">
+                            • 4 sesi / bulan<br />
+                            • Materi + modul + tugas mingguan<br />
+                            • Laporan perkembangan
+                        </div>
+                    </div>
+                    <div class="price-actions">
+                        <button class="btn-cta" onclick="location.href='/daftar?paket=1-3'">Pilih Paket</button>
+                        <a href="{{ route('kontak') }}"
+                            style="padding:12px 20px;border-radius:999px;border:2px solid var(--primary);background:transparent;color:var(--text);font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;">
+                            Tanya
+                        </a>
                     </div>
                 </div>
-                <p style="color:var(--muted);">Misi kami membantu setiap siswa mencapai potensinya lewat metode
-                    pengajaran yang terukur dan dukungan tutor profesional.</p>
 
-                <div class="social-row" aria-label="Tautan sosial">
-                    <a class="social-link" href="https://www.instagram.com/zzz.official.en?igsh=MW96MHQyb2o0eXh0aQ==" target="_blank" rel="noopener" aria-label="Instagram">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                            <circle cx="12" cy="12" r="3.2" stroke="currentColor" stroke-width="1.4" />
-                            <path d="M17.5 6.5h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </a>
-                    <a class="social-link" href="https://www.facebook.com/share/1FqWhwHNQS/" target="_blank" rel="noopener" aria-label="Facebook">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M18 2h-3a4 4 0 00-4 4v3H8v4h3v8h4v-8h3l1-4h-4V6a1 1 0 011-1h3z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </a>
-                    <a class="social-link" href="https://wa.me/6285831250257" target="_blank" rel="noopener" aria-label="WhatsApp">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-3.1-11.4 8.38 8.38 0 013.9.9L21 3l-1.3 2.6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </a>
+                <div class="pricing-card" data-plan="4-6">
+                    <div>
+                        <div class="price-badge">Kelas 4–6</div>
+                        <div class="price" data-price-month="Rp 300.000" data-price-sem="Rp 1.650.000">Rp 300.000
+                        </div>
+                        <div class="price-sub">per bulan</div>
+                        <div class="price-features">
+                            • 4 sesi / bulan<br />
+                            • Latihan + simulasi ujian<br />
+                            • Konsultasi naik jenjang
+                        </div>
+                    </div>
+                    <div class="price-actions">
+                        <button class="btn-cta" onclick="location.href='/daftar?paket=4-6'">Pilih Paket</button>
+                        <a href="{{ route('kontak') }}"
+                            style="padding:12px 20px;border-radius:999px;border:2px solid var(--primary);background:transparent;color:var(--text);font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;">
+                            Tanya
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-            <div>
-                <h4 style="margin-bottom:8px;font-weight:800;">Tautan</h4>
-                <ul class="footer-links">
-                    <li><a href="/">Beranda</a></li>
-                    <li><a href="/sd">SD</a></li>
-                    <li><a href="/smp">SMP</a></li>
-                    <li><a href="/sma">SMA</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 style="margin-bottom:8px;font-weight:800;">Pilih Jenjang</h4>
-                <ul class="footer-links">
-                    <li><a href="/sd">SD</a></li>
-                    <li><a href="/smp">SMP</a></li>
-                    <li><a href="/sma">SMK/SMA</a></li>
-                    <li><a href="/utbk">UTBK</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 style="margin-bottom:8px;font-weight:800;">Kontak & Daftar</h4>
-                <p style="color:var(--muted); margin-bottom:8px;">Hubungi kami untuk paket & jadwal. Atau tinggalkan email, kami akan hubungi Anda.</p>
-
-                <form class="contact-form" onsubmit="event.preventDefault(); alert('Terima kasih — formulir demo!');" aria-label="Form kontak singkat">
-                    <label for="emailFooter" style="display:block; font-size:.9rem; margin-bottom:6px; font-weight:700;">Email Anda</label>
-                    <input id="emailFooter" type="email" placeholder="nama@contoh.com" aria-label="Email" required />
-                    <button type="submit">Kirim & Hubungi</button>
-                </form>
-
-                <div style="margin-top:12px; color:var(--muted); font-size:.95rem;">
-                    <div><strong>WA:</strong> <a href="https://wa.me/6285831250257" target="_blank" rel="noopener">+62 858-3125-0257</a></div>
-                    <div style="margin-top:6px;"><strong>Email:</strong> <a href="mailto:info@smartclass.example">info@smartclass.example</a></div>
+                <div class="pricing-card" data-plan="privat">
+                    <div>
+                        <div class="price-badge">Privat Intensif</div>
+                        <div class="price" data-price-month="Rp 550.000" data-price-sem="Rp 3.000.000">Rp 550.000
+                        </div>
+                        <div class="price-sub">per bulan</div>
+                        <div class="price-features">
+                            • 8 sesi / bulan (1:1)<br />
+                            • Modul personal + monitoring<br />
+                            • Review nilai & strategi
+                        </div>
+                    </div>
+                    <div class="price-actions">
+                        <button class="btn-cta" onclick="location.href='/daftar?paket=privat'">Pilih Paket</button>
+                        <a href="{{ route('kontak') }}"
+                            style="padding:12px 20px;border-radius:999px;border:2px solid var(--primary);background:transparent;color:var(--text);font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;">
+                            Tanya
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="footer-bottom">
-            © <span id="year"></span> SmartClass — All rights reserved.<br />
-            Dikelola oleh windaa dan ye shungguang — Responsive & aksesibel
+    <!-- GURU -->
+    <section class="section" id="guru">
+        <div class="container">
+            <div class="section-title">
+                <h2>👩‍🏫 <span class="gradient-text">Guru Profesional</span></h2>
+                <p>Tim pengajar berpengalaman dan peduli perkembangan anak.</p>
+            </div>
+            <div class="guru-grid">
+                <div class="guru-card">
+                    <div class="guru-avatar">A</div>
+                    <strong>Bu shizuku</strong>
+                    <p>Spesialis literasi & anak usia dini</p>
+                </div>
+                <div class="guru-card">
+                    <div class="guru-avatar">B</div>
+                    <strong>bu kafka</strong>
+                    <p>Matematika dasar</p>
+                </div>
+                <div class="guru-card">
+                    <div class="guru-avatar">S</div>
+                    <strong>Bu camellya</strong>
+                    <p>Pendampingan PR & bahan ajar interaktif</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer" id="kontak" role="contentinfo">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div
+                        style="display:flex;align-items:center;gap:10px;font-weight:800;color:var(--text);margin-bottom:8px">
+                        <div class="brand-logo"> <img src="{{ asset('images/smartclass-logo.png') }}" alt="Logo"
+                                style="width:28px;height:28px;"></div>
+                        <div>
+                            <div>SmartClass</div>
+                            <div style="color:var(--muted);font-size:0.95rem">Bimbel & Les Privat untuk SD</div>
+                        </div>
+                    </div>
+                    <p style="color:var(--muted);max-width:360px;margin:8px 0 0 0">Materi terstruktur, guru
+                        bersertifikat, dan pendekatan yang menyenangkan untuk anak. Fokus pada hasil & perkembangan
+                        jangka panjang.</p>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Produk</h5>
+                    <ul>
+                        <li><a href="/jenjang/sd">Kelas SD</a></li>
+                        <li><a href="/jenjang/smp">Kelas SMP</a></li>
+                        <li><a href="/jenjang/utbk">UTBK</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Perusahaan</h5>
+                    <ul>
+                        <a href="{{ route('kontak') }}">Kontak</a>
+                        <li><a href="/karir">Karir</a></li>
+                        <li><a href="/blog">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Newsletter</h5>
+                    <p style="color:var(--muted);font-size:0.95rem;margin:0 0 8px 0">Dapatkan update kelas & promo.</p>
+                    <input class="newsletter-input" id="footerEmail" placeholder="Email Anda"
+                        aria-label="Email untuk newsletter" />
+                    <button class="btn-cta" id="footerSubscribe" style="width:100%;margin-top:8px">Langganan</button>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div>© <span id="year"></span> SmartClas. Semua hak dilindungi.</div>
+                <div style="font-size:0.85rem;color:var(--muted);margin-top:6px;">Dikelola oleh tim SmartClass —
+                    Responsive & aksesibel</div>
+            </div>
         </div>
     </footer>
 
+    <button class="back-to-top" id="backToTop" aria-label="Kembali ke atas">↑</button>
+
     <script>
-        // ====== Theme init + toggle handler ======
+        /* Year */
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        /* Particles */
         (function() {
-            const THEME_KEY = 'smartclass-theme';
-            const btn = document.getElementById('themeToggle');
-
-            function readSaved() {
-                try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; }
-            }
-
-            function saveTheme(t) {
-                try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* ignore */ }
-            }
-
-            function applyTheme(theme) {
-                if (theme === 'dark') {
-                    document.documentElement.classList.add('theme-dark');
-                    document.documentElement.classList.remove('theme-light');
-                } else {
-                    document.documentElement.classList.remove('theme-dark');
-                    document.documentElement.classList.add('theme-light');
-                }
-                if (btn) setButtonState(theme === 'dark');
-            }
-
-            function setButtonState(isDark) {
-                if (!btn) return;
-                btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
-                btn.title = isDark ? 'Mode terang' : 'Mode gelap';
-                btn.textContent = isDark ? '🌞' : '🌙';
-            }
-
-            // determine initial theme: saved -> prefers-color-scheme -> light
-            let saved = readSaved();
-            if (!saved) {
-                try {
-                    saved = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-                } catch (e) { saved = 'light'; }
-            }
-            applyTheme(saved);
-
-            // attach click handler
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    const isDark = document.documentElement.classList.contains('theme-dark');
-                    const next = isDark ? 'light' : 'dark';
-                    applyTheme(next);
-                    saveTheme(next);
-                });
-            }
-        })();
-
-        // ====== Mobile hamburger & nav drawer ======
-        (function() {
-            const btn = document.getElementById('hamburger');
-            const drawer = document.getElementById('mobileDrawer');
-            const closeBtn = document.getElementById('closeDrawer');
-
-            function openDrawer() {
-                btn.classList.add('open');
-                btn.setAttribute('aria-expanded', 'true');
-                drawer.style.display = 'flex';
-                drawer.setAttribute('aria-hidden', 'false');
-                document.documentElement.style.overflow = 'hidden';
-            }
-
-            function closeDrawer() {
-                btn.classList.remove('open');
-                btn.setAttribute('aria-expanded', 'false');
-                drawer.style.display = 'none';
-                drawer.setAttribute('aria-hidden', 'true');
-                document.documentElement.style.overflow = '';
-            }
-
-            if (btn) {
-                btn.addEventListener('click', (e) => {
-                    const expanded = btn.getAttribute('aria-expanded') === 'true';
-                    if (expanded) closeDrawer();
-                    else openDrawer();
-                    e.stopPropagation();
-                });
-            }
-
-            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
-
-            // close when clicking outside panel
-            if (drawer) drawer.addEventListener('click', (e) => {
-                if (e.target === drawer) closeDrawer();
-            });
-
-            // close on escape key
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeDrawer();
-            });
-
-            // close on resize to desktop
-            window.addEventListener('resize', () => {
-                if (window.innerWidth > 880) closeDrawer();
-            });
-
-            // init hide
-            if (drawer) {
-                drawer.style.display = 'none';
-                drawer.setAttribute('aria-hidden', 'true');
-            }
-            if (btn) btn.setAttribute('aria-expanded', 'false');
-        })();
-
-        // ====== Mobile "Pilih Jenjang" toggle inside drawer ======
-        (function() {
-            const btn = document.getElementById('mobileJenjangBtn');
-            const panel = document.getElementById('mobileJenjang');
-            if (!btn || !panel) return;
-            btn.addEventListener('click', () => {
-                const open = panel.style.display !== 'none';
-                panel.style.display = open ? 'none' : 'block';
-                btn.setAttribute('aria-expanded', !open ? 'true' : 'false');
-            });
-        })();
-
-        // ====== Desktop "Pilih Jenjang" dropdown ======
-        (function() {
-            const btn = document.getElementById('jenjangBtn');
-            const dd = document.getElementById('jenjangDropdown');
-            if (!btn || !dd) return;
-            btn.addEventListener('click', (e) => {
-                const open = dd.style.display !== 'none';
-                dd.style.display = open ? 'none' : 'block';
-                btn.setAttribute('aria-expanded', !open ? 'true' : 'false');
-                e.stopPropagation();
-            });
-            // close when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!btn.contains(e.target) && !dd.contains(e.target)) {
-                    dd.style.display = 'none';
-                    btn.setAttribute('aria-expanded', 'false');
-                }
-            });
-        })();
-
-        // ====== Particles generator ======
-        (function() {
-            const container = document.getElementById('particles');
-            if (!container) return;
-            const count = Math.min(18, Math.floor(window.innerWidth / 60));
-            for (let i = 0; i < count; i++) {
+            const root = document.getElementById('particles');
+            if (!root || (window.matchMedia && window.matchMedia('(max-width:640px)').matches)) return;
+            for (let i = 0; i < 6; i++) {
                 const el = document.createElement('div');
-                el.className = 'particle';
-                const size = 40 + Math.random() * 160;
+                const size = 40 + Math.random() * 80;
+                el.style.position = 'absolute';
                 el.style.width = size + 'px';
                 el.style.height = size + 'px';
                 el.style.left = Math.random() * 100 + '%';
                 el.style.top = Math.random() * 100 + '%';
-                el.style.animationDelay = (Math.random() * 10) + 's';
-                el.style.opacity = (0.03 + Math.random() * 0.12).toString();
-                container.appendChild(el);
+                el.style.opacity = '0.03';
+                el.style.borderRadius = '50%';
+                el.style.background = 'radial-gradient(circle, var(--accent-from), transparent)';
+                el.style.pointerEvents = 'none';
+                root.appendChild(el);
             }
         })();
 
-        // ====== Footer year & smooth anchors ======
-        document.getElementById('year').textContent = new Date().getFullYear();
+        /* Theme Toggle */
         (function() {
-            document.querySelectorAll('a[href^="#"]').forEach(a => {
-                a.addEventListener('click', function(e) {
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        e.preventDefault();
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
+            const html = document.documentElement;
+            const toggle = document.getElementById('themeToggle');
+            const key = 'smartclass-theme';
+
+            function applyTheme(name) {
+                if (name === 'dark') {
+                    html.classList.add('theme-dark');
+                    toggle.textContent = '☀️';
+                } else {
+                    html.classList.remove('theme-dark');
+                    toggle.textContent = '🌙';
+                }
+            }
+            try {
+                const saved = localStorage.getItem(key);
+                if (saved) applyTheme(saved);
+                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme(
+                    'dark');
+                else applyTheme('light');
+            } catch (e) {
+                applyTheme('light');
+            }
+            toggle.addEventListener('click', () => {
+                const dark = html.classList.toggle('theme-dark');
+                try {
+                    localStorage.setItem(key, dark ? 'dark' : 'light');
+                } catch (e) {}
+                applyTheme(dark ? 'dark' : 'light');
+            });
+        })();
+
+        /* Nav Dropdown */
+        (function() {
+            const jenjangBtn = document.getElementById('jenjangBtn');
+            const jenjangDropdown = document.getElementById('jenjangDropdown');
+            if (!jenjangBtn || !jenjangDropdown) return;
+
+            jenjangBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const opened = jenjangDropdown.classList.toggle('show');
+                jenjangBtn.setAttribute('aria-expanded', opened ? 'true' : 'false');
+                jenjangDropdown.setAttribute('aria-hidden', opened ? 'false' : 'true');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!jenjangBtn.contains(e.target) && !jenjangDropdown.contains(e.target)) {
+                    jenjangDropdown.classList.remove('show');
+                    jenjangBtn.setAttribute('aria-expanded', 'false');
+                    jenjangDropdown.setAttribute('aria-hidden', 'true');
+                }
+            });
+        })();
+
+        /* Mobile Drawer */
+        (function() {
+            const hamburger = document.getElementById('hamburger');
+            const mobileDrawer = document.getElementById('mobileDrawer');
+            const closeDrawer = document.getElementById('closeDrawer');
+
+            function openDrawer() {
+                mobileDrawer.classList.add('show');
+                mobileDrawer.style.display = 'block';
+                hamburger.classList.add('open');
+                hamburger.setAttribute('aria-expanded', 'true');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDrawerFn() {
+                mobileDrawer.classList.remove('show');
+                mobileDrawer.style.display = 'none';
+                hamburger.classList.remove('open');
+                hamburger.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+
+            if (hamburger && mobileDrawer) {
+                hamburger.addEventListener('click', () => {
+                    if (mobileDrawer.classList.contains('show')) closeDrawerFn();
+                    else openDrawer();
+                });
+                closeDrawer.addEventListener('click', closeDrawerFn);
+                mobileDrawer.addEventListener('click', (e) => {
+                    if (e.target === mobileDrawer) closeDrawerFn();
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && mobileDrawer.classList.contains('show')) closeDrawerFn();
+                });
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth > 880) closeDrawerFn();
+                });
+            }
+
+            const mobileJenjangBtn = document.getElementById('mobileJenjangBtn');
+            const mobileJenjang = document.getElementById('mobileJenjang');
+            if (mobileJenjangBtn && mobileJenjang) {
+                mobileJenjangBtn.addEventListener('click', () => {
+                    const is = mobileJenjang.style.display === 'block';
+                    mobileJenjang.style.display = is ? 'none' : 'block';
+                    mobileJenjangBtn.setAttribute('aria-expanded', !is ? 'true' : 'false');
+                });
+            }
+        })();
+
+        /* Pricing Toggle */
+        (function() {
+            const btnMonthly = document.getElementById('toggleMonthly');
+            const btnSemester = document.getElementById('toggleSemester');
+            const priceEls = document.querySelectorAll('.pricing-card .price');
+
+            function setMode(mode) {
+                priceEls.forEach(el => {
+                    const m = el.getAttribute('data-price-month');
+                    const s = el.getAttribute('data-price-sem');
+                    if (mode === 'month') {
+                        el.textContent = m;
+                        el.nextElementSibling && (el.nextElementSibling.textContent = 'per bulan');
+                    } else {
+                        el.textContent = s;
+                        el.nextElementSibling && (el.nextElementSibling.textContent = 'per semester');
                     }
                 });
+                if (mode === 'month') {
+                    btnMonthly.classList.add('active');
+                    btnSemester.classList.remove('active');
+                } else {
+                    btnSemester.classList.add('active');
+                    btnMonthly.classList.remove('active');
+                }
+            }
+
+            if (btnMonthly && btnSemester) {
+                btnMonthly.addEventListener('click', () => setMode('month'));
+                btnSemester.addEventListener('click', () => setMode('sem'));
+                setMode('month');
+            }
+        })();
+
+        /* Back to Top & Footer */
+        (function() {
+            const back = document.getElementById('backToTop');
+            window.addEventListener('scroll', () => {
+                back.style.display = window.scrollY > 320 ? 'flex' : 'none';
             });
+            back.addEventListener('click', () => window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            }));
+
+            const footerSubscribe = document.getElementById('footerSubscribe');
+            if (footerSubscribe) {
+                footerSubscribe.addEventListener('click', function() {
+                    const em = document.getElementById('footerEmail').value.trim();
+                    if (!em || !/.+@.+\..+/.test(em)) {
+                        alert('Masukkan email yang valid');
+                        return;
+                    }
+                    this.textContent = 'Terdaftar ✓';
+                    this.disabled = true;
+                    setTimeout(() => {
+                        this.textContent = 'Langganan';
+                        this.disabled = false;
+                        document.getElementById('footerEmail').value = '';
+                    }, 1500);
+                });
+            }
         })();
     </script>
 </body>
+
 </html>

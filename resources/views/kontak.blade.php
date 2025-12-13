@@ -652,9 +652,9 @@
                         <a href="/jenjang/sma" role="menuitem">SMK/SMA</a>
                     </div>
                 </div>
-
+                
                 <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
-                <a href="#tentang" class="nav-link">Tentang Kami</a>
+                <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
             </div>
 
             <div class="nav-actions" role="group" aria-label="Actions">

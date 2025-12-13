@@ -1,3 +1,36 @@
+/* resources/css/app.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Simple theme tokens (dipakai di layout) */
+:root{
+  --site-bg: #f6fbff;
+  --nav-bg: rgba(255,255,255,0.95);
+  --text: #0b1a2b;
+  --muted: #52606d;
+  --card-bg: #ffffff;
+  --accent-from: #0ea5e9;
+  --accent-to: #2dd4bf;
+  --glass-border: rgba(2,6,23,0.05);
+}
+html.theme-dark{
+  --site-bg:#071426;
+  --nav-bg: rgba(6,12,20,0.96);
+  --text:#e6eef7;
+  --muted:#9fb2c6;
+  --card-bg:#071224;
+  --accent-from:#2dd4bf;
+  --accent-to:#1e3a5f;
+  --glass-border: rgba(255,255,255,0.06);
+}
+
+/* small helpers used by layout */
+body{
+  background:var(--site-bg);
+  color:var(--text);
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+}
+.brand-logo img{ display:block; }
+.btn-cta{ border-radius:999px; font-weight:800; padding:0.5rem 1rem; background: linear-gradient(135deg,var(--accent-from),var(--accent-to)); color:white; }

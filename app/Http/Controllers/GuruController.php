@@ -454,4 +454,5 @@ $totalPembayaran = Pembayaran::where('status_pembayaran', 'lunas')
     {
         return view('guru.transaksi.index');
     }
+    
 }
