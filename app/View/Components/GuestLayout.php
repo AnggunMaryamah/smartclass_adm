@@ -8,10 +8,11 @@ use Illuminate\View\View;
 class GuestLayout extends Component
 {
     /**
-     * Get the view / contents that represents the component.
+     * Get the view / contents that represent the component.
      */
     public function render(): View
     {
-        return view('layouts.guest');
+        // render the component view that exists
+        return view('components.guest-layout');
     }
 }

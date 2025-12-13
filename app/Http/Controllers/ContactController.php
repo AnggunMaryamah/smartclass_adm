@@ -3,39 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ContactReceived;
 
 class ContactController extends Controller
 {
-    // TAMPILKAN HALAMAN KONTAK
-    public function page()
+    public function index()
     {
-        // resources/views/contact.blade.php
-        return view('contact');
+        return view('kontak'); // atau 'contact' jika kamu pakai nama view lain
     }
 
-    // TERIMA FORM KONTAK (kalau kamu pakai form POST)
-    public function send(Request $request)
+    public function kirim(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:150',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:50',
-            'subject' => 'nullable|string|max:150',
-            'message' => 'required|string|max:2000',
+        // validasi sederhana
+        $request->validate([
+            'name' => 'required',
+            'phone' => 'required',
+            'subject' => 'required',
+            'message' => 'required',
         ]);
 
-        // kalau belum mau kirim email, bagian ini bisa kamu comment dulu
-        // Mail::to('windanur337@gmail.com')->send(new ContactReceived($data));
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'ok' => true,
-                'message' => 'Pesan berhasil dikirim. Terima kasih!',
-            ]);
-        }
-
-        return back()->with('success', 'Pesan berhasil dikirim. Terima kasih!');
+        return response()->json([
+            'success' => true,
+            'message' => 'Pesan berhasil dikirim!'
+        ]);
     }
+
 }

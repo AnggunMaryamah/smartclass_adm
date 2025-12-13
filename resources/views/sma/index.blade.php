@@ -709,7 +709,7 @@
                 </div>
 
                 <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
-                <a href="{{ url('/') }}" class="nav-link">Tentang Kami</a>
+                <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
             </nav>
 
             <div class="nav-actions" role="group" aria-label="Actions">
@@ -907,9 +907,7 @@
                 </li>
                 <li> <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
                 </li>
-                <li><a href="#kontak"
-                        style="display:block;padding:12px;text-decoration:none;color:var(--text);font-weight:800;border-radius:8px">Tentang
-                        Kami</a></li>
+                <li><a href="{{ route('kontak') }}">konak</a>
             </ul>
         </div>
     </div>

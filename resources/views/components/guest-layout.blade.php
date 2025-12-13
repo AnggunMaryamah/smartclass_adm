@@ -306,7 +306,8 @@
     <header class="site-nav" role="navigation" aria-label="Main Navigation">
         <div class="nav-inner">
             <a href="{{ url('/') }}" class="brand" aria-label="SmartClass">
-                <div class="brand-logo"> <img src="{{ asset('images/smartclass-logo.png') }}" alt="Logo" style="width:28px;height:28px;"></div>
+                <div class="brand-logo"> <img src="{{ asset('images/smartclass-logo.png') }}" alt="Logo"
+                        style="width:28px;height:28px;"></div>
                 <span class="brand-text">SmartClass</span>
             </a>
 
@@ -384,7 +385,9 @@
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
                 <div style="display:flex;align-items:center;gap:10px">
                     <div class="brand-logo"
-                        style="width:44px;height:44px;border-radius:10px;display:grid;place-items:center"> <img src="{{ asset('images/smartclass-logo.png') }}" alt="Logo" style="width:28px;height:28px;"></div>
+                        style="width:44px;height:44px;border-radius:10px;display:grid;place-items:center"> <img
+                            src="{{ asset('images/smartclass-logo.png') }}" alt="Logo"
+                            style="width:28px;height:28px;"></div>
                     <strong style="font-size:1rem">{{ config('app.name', 'SmartClass') }}</strong>
                 </div>
                 <button class="close-btn" id="closeDrawerBtn" aria-label="Tutup menu">✕</button>
@@ -397,22 +400,13 @@
                         style="width:100%;text-align:left;background:none;border:none;padding:10px 8px;font-weight:700;cursor:pointer">Pilih
                         Jenjang ▾</button>
                     <div id="mobileJenjang" style="display:none;padding-left:8px;margin-bottom:8px">
-                         <a href="/jenjang/sd"
-                            style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
-                                style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SD</span>
-                            SD</a>
-                        <a href="/jenjang/smp"
-                            style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
-                                style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMP</span>
-                            SMP</a>
-                        <a href="/jenjang/sma"
-                            style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
-                                style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMA</span>
-                            SMK/SMA</a>
+                        <a href="/jenjang/sd" onclick="closeDrawer()">SD</a>
+                        <a href="/jenjang/smp" onclick="closeDrawer()">SMP</a>
+                        <a href="/jenjang/sma" onclick="closeDrawer()">SMK/SMA</a>
                     </div>
                 </div>
-                <li><a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
-                <a href="#tentang" onclick="closeDrawer()">kontak</a>
+                <a href="#guru" onclick="closeDrawer()">Guru</a>
+                <a href="#tentang" onclick="closeDrawer()">Tentang Kami</a>
             </nav>
 
             <div style="margin-top:18px;border-top:1px solid var(--glass-border);padding-top:14px">
@@ -437,6 +431,8 @@
                         </div>
                     </div>
                 @else
+                    <a href="{{ route('login') }}" class="btn-cta" style="display:block;text-align:center">Login /
+                        Sign Up</a>
                 @endif
             </div>
         </div>
@@ -490,10 +486,10 @@
             function applyTheme(t) {
                 if (t === 'dark') {
                     document.documentElement.classList.add('theme-dark');
-                    themeBtn.textContent = '🌙';
+                    themeBtn.textContent = '☀️';
                 } else {
                     document.documentElement.classList.remove('theme-dark');
-                    themeBtn.textContent = '☀️';
+                    themeBtn.textContent = '🌙';
                 }
             }
             try {

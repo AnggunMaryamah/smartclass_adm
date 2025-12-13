@@ -833,8 +833,8 @@
                     </div>
                 </div>
 
-                <a href="#guru" class="nav-link">Guru</a>
-                <a href="#tentang" class="nav-link">Tentang Kami</a>
+                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
             <div class="nav-actions" role="group" aria-label="Actions">
@@ -1010,7 +1010,6 @@
                 <li><a href="/"
                         style="display:block;padding:12px;text-decoration:none;color:var(--text);font-weight:800;border-radius:8px">Beranda</a>
                 </li>
-                <li>
                     <button id="mobileJenjangBtn"
                         style="width:100%;text-align:left;background:none;border:none;padding:12px;font-weight:800;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;border-radius:8px">Pilih
                         Jenjang ▾</button>
@@ -1028,13 +1027,8 @@
                                 style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMA</span>
                             SMK/SMA</a>
                     </div>
-                </li>
-                <li><a href="#guru"
-                        style="display:block;padding:12px;text-decoration:none;color:var(--text);font-weight:800;border-radius:8px">Guru</a>
-                </li>
-                <li><a href="#kontak"
-                        style="display:block;padding:12px;text-decoration:none;color:var(--text);font-weight:800;border-radius:8px">Kontak</a>
-                </li>
+                    <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                    <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
             </ul>
         </div>
     </div>
@@ -1350,8 +1344,8 @@
 
     <script>
         /* ===============
-                   NAV & THEME SCRIPTS (from SD page)
-                   =============== */
+                       NAV & THEME SCRIPTS (from SD page)
+                       =============== */
         /* Theme Toggle (uses localStorage 'smartclass-theme') */
         (function() {
             const html = document.documentElement;
