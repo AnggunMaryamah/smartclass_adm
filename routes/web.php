@@ -1,7 +1,7 @@
 <?php
 
 // ==================== IMPORT KAMU (LENGKAP) + TAMBAH TIM ====================
-use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\AdminPembayaranController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\Guru\TugasController;
@@ -15,16 +15,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Auth\SocialAuthController;
 
+
 // TAMBAH DARI TIM (TIDAK BENTROK)
 use App\Http\Controllers\DataKelasController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JenjangController;
-use App\Http\Controllers\SdController;
+
 
 // ===================== AUTH & DASHBOARD BAWAAN (KAMU) =====================
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Route::middleware('auth')->group(function () {
@@ -44,7 +45,7 @@ Route::prefix('admin')
         // Dashboard admin
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
 
-        // User management (KAMU)
+        // User management
         Route::prefix('users')->name('users.')->group(function () {
             Route::get('/', [UserController::class, 'index'])->name('index');
             Route::get('/{id}', [UserController::class, 'show'])->name('show');
@@ -52,25 +53,28 @@ Route::prefix('admin')
             Route::delete('/{id}', [UserController::class, 'destroy'])->name('destroy');
         });
 
-        // Halaman utama pembayaran admin + pengaturan QRIS admin
-        Route::get('/pembayaran', [PaymentController::class, 'index'])->name('pembayaran.index');
-        Route::post('/pembayaran/qris', [PaymentController::class, 'updateQris'])->name('pembayaran.qris.update');
-
-        // Payment (KAMU) - manajemen pembayaran per transaksi
-        Route::prefix('payments')->name('payments.')->group(function () {
-            Route::get('/', [PaymentController::class, 'index'])->name('index');
-            Route::get('/{id}', [PaymentController::class, 'show'])->name('show');
-            Route::post('/{id}/verify', [PaymentController::class, 'verify'])->name('verify');
-        });
-
-        // TAMBAH DARI TIM: Data Kelas
+        // Data Kelas
         Route::get('/data-kelas', [DataKelasController::class, 'index'])->name('data_kelas');
         Route::patch('/data-kelas/{id}/toggle', [DataKelasController::class, 'toggleStatus'])->name('data_kelas.toggle');
 
-        // TAMBAH DARI TIM: Laporan Admin
+        // Laporan Admin
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
         Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
+
+        // ===================== PAYMENT =====================
+        Route::get('/pembayaran', [AdminPembayaranController::class, 'index'])
+            ->name('pembayaran.index');
+
+        Route::post('/qris/update', [AdminPembayaranController::class, 'updateQris'])
+            ->name('qris.update');
+
+        Route::delete('/qris/delete', [AdminPembayaranController::class, 'deleteQris'])
+            ->name('qris.delete');
+
+        Route::post('/payments/{id}/verify', [AdminPembayaranController::class, 'verify'])
+            ->name('payments.verify');
     });
+
 
 // ===================== GURU (KAMU 100% - SUDAH LENGKAP) =====================
 Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(function () {
@@ -172,32 +176,6 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group
 
 // ===================== TAMBAHAN DARI TIM (TIDAK BENTROK) =====================
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-Route::get('/jenjang/sd', function () {
-    return view('sd.index'); // resources/views/sd/index.blade.php
-});
-
-// route untuk halaman SMP (konsisten dengan route SD)
-Route::get('/jenjang/smp', function () {
-    return view('smp.index'); // resources/views/smp/index.blade.php
-});
-
-Route::get('/jenjang/sma', function () {
-    return view('sma.index'); // resources/views/smp/index.blade.php
-});
-
-Route::get('/guru/Daftar', function () {
-    return view('guru.index');
-})->name('guru.index');
-
-// HALAMAN KONTAK (GET)
-Route::get('/kontak', [ContactController::class, 'index'])
-    ->name('kontak');
-
-Route::post('/kontak/kirim', [ContactController::class, 'kirim'])
-    ->name('kontak.kirim');
-
-
 // Test route dari tim (opsional)
 Route::get('/jenjang/test-route', function () {
     return 'OK ROUTE';

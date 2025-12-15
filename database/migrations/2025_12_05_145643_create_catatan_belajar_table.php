@@ -9,19 +9,42 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('catatan_belajar', function (Blueprint $table) {
+<<<<<<< HEAD
+            $table->unsignedBigInteger('materi_id')->nullable();
+=======
+
+            // primary key
             $table->uuid('id')->primary();
+
+            // relasi
+>>>>>>> 340ac98 (ini admin.pembayaran)
             $table->uuid('siswa_id');
             $table->uuid('kelas_id');
-            $table->uuid('materi_id')->nullable();
-            $table->text('body'); // Isi catatan
+
+            // ⬇⬇⬇ INI KUNCI PERBAIKAN
+            $table->unsignedBigInteger('materi_id')->nullable();
+
+            // data
+            $table->text('body');
             $table->timestamps();
 
-            // Foreign keys
-            $table->foreign('siswa_id')->references('id')->on('siswas')->onDelete('cascade');
-            $table->foreign('kelas_id')->references('id')->on('kelas')->onDelete('cascade');
-            $table->foreign('materi_id')->references('id')->on('materi_pembelajaran')->onDelete('cascade');
+            // foreign keys
+            $table->foreign('siswa_id')
+                ->references('id')
+                ->on('siswas')
+                ->cascadeOnDelete();
 
-            // Index untuk performa query
+            $table->foreign('kelas_id')
+                ->references('id')
+                ->on('kelas')
+                ->cascadeOnDelete();
+
+            $table->foreign('materi_id')
+                ->references('id')
+                ->on('materi_pembelajaran')
+                ->nullOnDelete();
+
+            // index
             $table->index(['siswa_id', 'kelas_id']);
         });
     }

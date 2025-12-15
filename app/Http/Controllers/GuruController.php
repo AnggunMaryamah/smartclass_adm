@@ -31,23 +31,37 @@ class GuruController extends Controller
         ->distinct('siswa_id')
         ->count('siswa_id');
 
-    // total laporan
     $jumlahLaporan = LaporanHasilBelajar::count();
 
     // ambil semua id kelas milik guru
-$kelasIds = Kelas::where('guru_id', $guru->id)->pluck('id');
+    $kelasIds = Kelas::where('guru_id', $guru->id)->pluck('id');
 
-// total pemasukan pembayaran lunas untuk kelas-kelas guru
-$totalPembayaran = Pembayaran::where('status_pembayaran', 'lunas')
-    ->whereIn('kelas_id', $kelasIds)
-    ->sum('nominal_pembayaran');
+    // total pemasukan pembayaran lunas untuk kelas-kelas guru
+    $totalPembayaran = Pembayaran::where('status_pembayaran', 'lunas')
+        ->whereIn('kelas_id', $kelasIds)
+        ->sum('nominal_pembayaran');
+
+    // ========= DATA GRAFIK: JUMLAH SISWA BARU PER BULAN =========
+    // hitung siswa_kelas (enroll) per bulan untuk kelas milik guru ini
+    $rawChart = SiswaKelas::where('status', 'aktif')
+        ->whereIn('kelas_id', $kelasIds)
+        ->selectRaw('MONTH(enrolled_at) as bulan, COUNT(DISTINCT siswa_id) as total')
+        ->groupBy('bulan')
+        ->pluck('total', 'bulan');   // key = bulan (1-12), value = total
+
+    // susun jadi array 12 elemen urut Jan–Des
+    $chartData = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $chartData[] = (int) ($rawChart[$i] ?? 0);
+    }
 
     return view('guru.dashboard', compact(
         'guru',
         'totalKelas',
         'totalSiswa',
         'jumlahLaporan',
-        'totalPembayaran'
+        'totalPembayaran',
+        'chartData'        
     ));
 }
     // ================= PEMBAYARAN (READ ONLY) =================

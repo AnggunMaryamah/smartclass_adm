@@ -10,8 +10,6 @@
     box-sizing: border-box;
 }
 
-
-
 /* Header Section */
 .page-header {
     margin-bottom: 24px;
@@ -29,7 +27,7 @@
     color: #6B7280;
 }
 
-/* Stats Grid - 4 kolom desktop, 2 kolom mobile */
+/* Stats Grid */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -44,25 +42,31 @@
     }
 }
 
-/* Stat Card - Style seperti admin */
+/* Stat Card */
 .stat-card {
     background: white;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
     border-left: 4px solid;
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .stat-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.12);
 }
 
-.stat-card.primary { border-left-color: #3B82F6; }
+/* BIRU UTAMA SAMA DENGAN SIDEBAR */
+:root {
+    --primary-blue: #0EA5E9;   /* sidebar / accent */
+    --primary-blue-dark: #0284C7;
+}
+
+.stat-card.primary { border-left-color: var(--primary-blue); }
 .stat-card.warning { border-left-color: #F59E0B; }
 .stat-card.success { border-left-color: #10B981; }
-.stat-card.danger { border-left-color: #EF4444; }
+.stat-card.danger  { border-left-color: #EF4444; }
 
 .stat-content {
     display: flex;
@@ -99,30 +103,38 @@
 .stat-icon {
     width: 48px;
     height: 48px;
-    border-radius: 50%;
+    border-radius: 999px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.25rem;
     color: white;
     flex-shrink: 0;
+    box-shadow: 0 6px 14px rgba(14, 165, 233, 0.35);
 }
 
-.stat-card.primary .stat-icon { background: #3B82F6; }
+.stat-card.primary .stat-icon { background: var(--primary-blue); }
 .stat-card.warning .stat-icon { background: #F59E0B; }
 .stat-card.success .stat-icon { background: #10B981; }
-.stat-card.danger .stat-icon { background: #EF4444; }
+.stat-card.danger  .stat-icon { background: #EF4444; }
 
 /* Filter Section */
 .filter-section {
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     padding: 16px 20px;
     margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
 .filter-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* baris 1 yang diubah: ratakan ke kanan */
+    gap: 12px;
+}
+.filter-right {
+    margin-left: auto;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -140,54 +152,57 @@
 
 .filter-select {
     flex: 1;
-    max-width: 200px;
+    max-width: 220px;
     padding: 8px 12px;
     border: 1px solid #D1D5DB;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 0.875rem;
     color: #111827;
     background: white;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .filter-select:focus {
     outline: none;
-    border-color: #3B82F6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.25);
 }
 
 .filter-btn {
-    padding: 8px 20px;
-    background: #3B82F6;
+    padding: 9px 22px;
+    background: var(--primary-blue);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 999px;
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
     display: flex;
     align-items: center;
     gap: 6px;
 }
 
 .filter-btn:hover {
-    background: #2563EB;
+    background: var(--primary-blue-dark);
+    box-shadow: 0 8px 16px rgba(2, 132, 199, 0.35);
+    transform: translateY(-1px);
 }
 
 /* Table Section */
 .table-section {
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
     overflow: hidden;
 }
 
+/* HEADER TABEL – BIRU SAMA SIDEBAR */
 .table-header {
-    padding: 16px 20px;
-    background: #3B82F6;
-    border-bottom: 1px solid #2563EB;
+    padding: 14px 20px;
+    background: var(--primary-blue);
+    border-bottom: 1px solid var(--primary-blue-dark);
 }
 
 .table-title {
@@ -235,7 +250,7 @@
 }
 
 .data-table tbody tr:hover {
-    background: #F9FAFB;
+    background: #F3F4FF;
 }
 
 .data-table tbody tr:last-child {
@@ -251,7 +266,7 @@
 .data-table tbody td:first-child {
     text-align: center;
     font-weight: 700;
-    color: #3B82F6;
+    color: var(--primary-blue);
 }
 
 .data-table tbody td:nth-child(6),
@@ -265,7 +280,7 @@
     align-items: center;
     gap: 4px;
     padding: 4px 10px;
-    border-radius: 6px;
+    border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
     white-space: nowrap;
@@ -297,23 +312,25 @@
 /* Button View */
 .btn-view {
     padding: 6px 14px;
-    background: #3B82F6;
+    background: var(--primary-blue);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 600;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    transition: background 0.2s;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
 }
 
 .btn-view:hover {
-    background: #2563EB;
+    background: var(--primary-blue-dark);
     color: white;
     text-decoration: none;
+    box-shadow: 0 6px 12px rgba(2, 132, 199, 0.35);
+    transform: translateY(-1px);
 }
 
 /* Empty State */
@@ -410,15 +427,12 @@
 </style>
 
 <div class="payment-container">
-    <!-- Page Header -->
     <div class="page-header">
         <h1 class="page-title">Data Pembayaran Siswa</h1>
         <p class="page-subtitle">Kelola dan pantau pembayaran siswa di kelas Anda</p>
     </div>
 
-    <!-- Statistics Cards -->
     <div class="stats-grid">
-        <!-- Total Transaksi -->
         <div class="stat-card primary">
             <div class="stat-content">
                 <div class="stat-info">
@@ -432,7 +446,6 @@
             </div>
         </div>
 
-        <!-- Menunggu -->
         <div class="stat-card warning">
             <div class="stat-content">
                 <div class="stat-info">
@@ -446,7 +459,6 @@
             </div>
         </div>
 
-        <!-- Lunas -->
         <div class="stat-card success">
             <div class="stat-content">
                 <div class="stat-info">
@@ -460,7 +472,6 @@
             </div>
         </div>
 
-        <!-- Gagal -->
         <div class="stat-card danger">
             <div class="stat-content">
                 <div class="stat-info">
@@ -475,9 +486,9 @@
         </div>
     </div>
 
-    <!-- Filter Section -->
     <div class="filter-section">
-        <form class="filter-wrapper" onsubmit="event.preventDefault(); filterStatusGuru();">
+    <form class="filter-wrapper" onsubmit="event.preventDefault(); filterStatusGuru();">
+        <div class="filter-right">
             <label class="filter-label">
                 <i class="fas fa-filter"></i>
                 Filter Status:
@@ -489,13 +500,14 @@
                 <option value="gagal">Gagal</option>
             </select>
             <button class="filter-btn" type="submit">
-                <i class="fas fa-check"></i>
                 Terapkan
             </button>
-        </form>
-    </div>
+        </div>
+    </form>
+</div>
 
-    <!-- Table Section -->
+
+
     <div class="table-section">
         <div class="table-header">
             <h3 class="table-title">
@@ -544,8 +556,8 @@
                             </td>
                             <td>
                                 @if($p->bukti_pembayaran)
-                                    <a href="{{ asset('storage/'.$p->bukti_pembayaran) }}" 
-                                       target="_blank" 
+                                    <a href="{{ asset('storage/'.$p->bukti_pembayaran) }}"
+                                       target="_blank"
                                        class="btn-view">
                                         <i class="fas fa-eye"></i> Lihat
                                     </a>
@@ -581,15 +593,10 @@ function filterStatusGuru() {
     const rows  = document.querySelectorAll('#tabelPembayaranGuru tbody tr[data-status]');
 
     rows.forEach(row => {
-        if (value === '' || row.dataset.status === value) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+        row.style.display = (value === '' || row.dataset.status === value) ? '' : 'none';
     });
 }
 
-// Auto filter on change
 document.getElementById('filterStatusGuru')?.addEventListener('change', filterStatusGuru);
 </script>
 @endsection
