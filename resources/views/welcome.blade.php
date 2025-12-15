@@ -1275,8 +1275,11 @@ html[data-theme="dark"] .team-card {
                 </div>
                 <span class="brand-text">SmartClass</span>
             </a>
-
+            
             <nav class="nav-links" aria-label="Primary Links">
+                <a href="https://ours.web.id" class="nav-link" title="Kembali ke Portal Kelas Kami">
+                Portal
+            </a>
                 <a href="{{ url('/') }}" class="nav-link">Beranda</a>
 
                 <div style="position:relative;">
