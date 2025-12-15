@@ -1534,7 +1534,7 @@ html[data-theme="dark"] .team-card {
     <!-- PAKET -->
     <section class="paket-section" id="paket">
         <div class="container">
-            <div class="section-title" style="text-align:left;">
+            <div class="section-title" style="text-align:center;">
                 <h2><span class="gradient-text">Pilih Paket Belajar</span></h2>
                 <p class="small-muted">Pilih jenjang SD, SMP, atau SMA sesuai kebutuhanmu</p>
             </div>
