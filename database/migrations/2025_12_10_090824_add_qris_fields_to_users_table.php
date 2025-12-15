@@ -12,12 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            if (!Schema::hasColumn('users', 'role')) {
-                $table->string('role')->default('Guru');
-            }
-            if (!Schema::hasColumn('users', 'status')) {
-                $table->string('status')->default('Aktif');
-            }
+            $table->string('qris_image')->nullable();
+            $table->string('qris_nama_bank')->nullable();
+            $table->string('qris_nama_rekening')->nullable();
+            $table->string('no_wa')->nullable();
         });
     }
 
@@ -27,12 +25,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            if (Schema::hasColumn('users', 'role')) {
-                $table->dropColumn('role');
-            }
-            if (Schema::hasColumn('users', 'status')) {
-                $table->dropColumn('status');
-            }
+            $table->dropColumn([
+                'qris_image',
+                'qris_nama_bank',
+                'qris_nama_rekening',
+                'no_wa'
+            ]);
         });
     }
 };
