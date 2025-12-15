@@ -21,35 +21,27 @@ class User extends Authenticatable
      * Mass assignable attributes
      */
     protected $fillable = [
-<<<<<<< HEAD
+        'id',
         'name',
         'email',
         'password',
         'role',
+        'status_akun',
         'google_id',
         'avatar',
         'email_verified_at',
+
+        // QRIS / Pembayaran
+        'qris_image',
+        'qris_nama_bank',
+        'qris_nama_rekening',
+        'no_wa',
     ];
-=======
-    'id',
-    'name',
-    'email',
-    'password',
-    'role',
-    'status_akun',
-
-    // QRIS
-    'qris_image',
-    'qris_nama_bank',
-    'qris_nama_rekening',
-    'no_wa',
-];
-
 
     /**
      * Hidden attributes
      */
->>>>>>> 340ac98 (ini admin.pembayaran)
+    
     protected $hidden = [
         'password',
         'remember_token',
@@ -87,14 +79,14 @@ class User extends Authenticatable
     {
         return match (strtolower($this->role ?? '')) {
             'admin' => '/admin/dashboard',
-            'guru' => '/guru/dashboard',
+            'guru'  => '/guru/dashboard',
             'siswa' => '/siswa/dashboard',
             default => '/dashboard',
         };
     }
 
     /**
-     * Relasi ke siswa_kelas (jika digunakan)
+     * Relasi ke siswa_kelas
      */
     public function siswaKelas(): HasMany
     {
