@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiswaKelasController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\Auth\SocialAuthController;
 
 // TAMBAH DARI TIM (TIDAK BENTROK)
 use App\Http\Controllers\DataKelasController;
@@ -201,3 +202,11 @@ Route::post('/kontak/kirim', [ContactController::class, 'kirim'])
 Route::get('/jenjang/test-route', function () {
     return 'OK ROUTE';
 });
+
+
+Route::get('auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])
+    ->name('auth.google.redirect');
+
+// Callback dari Google
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])
+    ->name('auth.google.callback');
