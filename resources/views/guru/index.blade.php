@@ -815,13 +815,18 @@
     <!-- NAVIGATION (REPLACED) -->
     <header class="site-nav" role="navigation" aria-label="Main Navigation">
         <div class="nav-inner">
-            <a href="/" class="brand" aria-label="SmartClass">
-                <div class="brand-logo" aria-hidden="true">📚</div>
+            <a href="{{ url('/') }}" class="brand" aria-label="SmartClass">
+                <div class="brand-logo">
+                    <img src="{{ asset('images/smartclass-logo.png') }}" alt="Logo" style="width:28px;height:28px;">
+                </div>
                 <span class="brand-text">SmartClass</span>
             </a>
-
+            
             <nav class="nav-links" aria-label="Primary Links">
-                <a href="/" class="nav-link">Beranda</a>
+                <a href="https://ours.web.id" class="nav-link" title="Kembali ke Portal Kelas Kami">
+                Portal
+            </a>
+                <a href="{{ url('/') }}" class="nav-link">Beranda</a>
 
                 <div style="position:relative;">
                     <button class="nav-btn" id="jenjangBtn" aria-expanded="false" aria-haspopup="true"
@@ -1011,8 +1016,7 @@
                         style="display:block;padding:12px;text-decoration:none;color:var(--text);font-weight:800;border-radius:8px">Beranda</a>
                 </li>
                     <button id="mobileJenjangBtn"
-                        style="width:100%;text-align:left;background:none;border:none;padding:12px;font-weight:800;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;border-radius:8px">Pilih
-                        Jenjang ▾</button>
+                        style="width:100%;text-align:left;background:none;border:none;padding:12px;font-weight:800;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;border-radius:8px">Jenjang Kelas ▾</button>
                     <div id="mobileJenjang" style="display:none;padding-left:8px;margin-top:6px">
                         <a href="/jenjang/sd"
                             style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span

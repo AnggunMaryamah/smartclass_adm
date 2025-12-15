@@ -315,8 +315,7 @@
                 <a href="{{ url('/') }}" class="nav-link">Beranda</a>
 
                 <div style="position:relative;">
-                    <button id="jenjangBtn" class="nav-link" style="background:none;border:none;cursor:pointer">Pilih
-                        Jenjang ▾</button>
+                    <button id="jenjangBtn" class="nav-link" style="background:none;border:none;cursor:pointer">Jenjang Kelas ▾</button>
                     <div id="jenjangDropdown" class="nav-dropdown" role="menu" aria-hidden="true">
                         <a href="/jenjang/sd">SD</a>
                         <a href="/jenjang/smp">SMP</a>
@@ -486,10 +485,10 @@
             function applyTheme(t) {
                 if (t === 'dark') {
                     document.documentElement.classList.add('theme-dark');
-                    themeBtn.textContent = '☀️';
+                    themeBtn.textContent = '🌙';
                 } else {
                     document.documentElement.classList.remove('theme-dark');
-                    themeBtn.textContent = '🌙';
+                    themeBtn.textContent = '☀️';
                 }
             }
             try {

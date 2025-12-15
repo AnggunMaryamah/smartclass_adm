@@ -13,7 +13,9 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // UUID (bukan auto increment)
+    /**
+     * UUID (bukan auto increment)
+     */
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -27,21 +29,23 @@ class User extends Authenticatable
         'password',
         'role',
         'status_akun',
+
+        // OAuth / profile
         'google_id',
         'avatar',
-        'email_verified_at',
 
-        // QRIS / Pembayaran
+        // QRIS
         'qris_image',
         'qris_nama_bank',
         'qris_nama_rekening',
         'no_wa',
+
+        'email_verified_at',
     ];
 
     /**
      * Hidden attributes
      */
-    
     protected $hidden = [
         'password',
         'remember_token',
@@ -50,24 +54,19 @@ class User extends Authenticatable
     /**
      * Attribute casting
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     /**
      * Auto-generate UUID when creating
      */
-    protected static function boot()
+    protected static function booted()
     {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
+        static::creating(function ($user) {
+            if (empty($user->id)) {
+                $user->id = (string) Str::uuid();
             }
         });
     }
@@ -99,5 +98,13 @@ class User extends Authenticatable
     public function siswa(): HasOne
     {
         return $this->hasOne(Siswa::class, 'user_id', 'id');
+    }
+
+    /**
+     * Helper role
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }

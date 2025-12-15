@@ -784,11 +784,14 @@
             </a>
 
             <nav class="nav-links" aria-label="Primary Links">
+                <a href="https://ours.web.id" class="nav-link" title="Kembali ke Portal Kelas Kami">
+                    Portal
+                </a>
                 <a href="{{ url('/') }}" class="nav-link">Beranda</a>
 
-               <div style="position:relative;">
+                <div style="position:relative;">
                     <button class="nav-btn" id="jenjangBtn" aria-expanded="false" aria-haspopup="true"
-                        aria-controls="jenjangDropdown">Pilih Jenjang ▾</button>
+                        aria-controls="jenjangDropdown">Jenjang Kelas ▾</button>
                     <div class="nav-dropdown" id="jenjangDropdown" role="menu" aria-hidden="true">
                         <a href="/jenjang/sd" role="menuitem">SD</a>
                         <a href="/jenjang/smp" role="menuitem">SMP</a>
@@ -797,7 +800,7 @@
                 </div>
 
                 <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
-                <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
+                <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
             <div class="nav-actions" role="group" aria-label="Actions">
@@ -870,8 +873,7 @@
                 </li>
                 <li>
                     <button id="mobileJenjangBtn"
-                        style="width:100%;text-align:left;background:none;border:none;padding:12px;font-weight:800;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;border-radius:8px">Pilih
-                        Jenjang ▾</button>
+                        style="width:100%;text-align:left;background:none;border:none;padding:12px;font-weight:800;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;border-radius:8px">Jenjang Kelas ▾</button>
                     <div id="mobileJenjang" style="display:none;padding-left:8px;margin-top:6px">
                         <a href="/jenjang/sd"
                             style="display:block;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700">🎓
@@ -1148,10 +1150,10 @@
             function applyTheme(name) {
                 if (name === 'dark') {
                     html.classList.add('theme-dark');
-                    toggle.textContent = '☀️';
+                    toggle.textContent = '🌙';
                 } else {
                     html.classList.remove('theme-dark');
-                    toggle.textContent = '🌙';
+                    toggle.textContent = '☀️';
                 }
             }
             try {

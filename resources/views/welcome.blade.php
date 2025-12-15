@@ -1284,7 +1284,7 @@ html[data-theme="dark"] .team-card {
 
                 <div style="position:relative;">
                     <button class="nav-btn" id="jenjangBtn" aria-expanded="false" aria-haspopup="true"
-                        aria-controls="jenjangDropdown">Pilih Jenjang ▾</button>
+                        aria-controls="jenjangDropdown">Jenjang Kelas ▾</button>
                     <div class="nav-dropdown" id="jenjangDropdown" role="menu" aria-hidden="true">
                         <a href="/jenjang/sd" role="menuitem">SD</a>
                         <a href="/jenjang/smp" role="menuitem">SMP</a>
@@ -1627,22 +1627,17 @@ html[data-theme="dark"] .team-card {
                     <div class="team-grid">
                         <div class="team-card">
                             <div class="team-avatar">N</div>
-                            <strong>nona sparkle</strong>
-                            <div class="small-muted">Matematika • S2</div>
+                            <strong>budi</strong>
+                            <div class="small-muted">Matematika</div>
                         </div>
                         <div class="team-card">
                             <div class="team-avatar">m</div>
-                            <strong>madam herta</strong>
-                            <div class="small-muted">IPA • Guru</div>
+                            <strong>Winda Nur Permata</strong>
+                            <div class="small-muted">Bahasa Thailand</div>
                         </div>
                         <div class="team-card">
                             <div class="team-avatar">N</div>
-                            <strong>Nurr Aglaeaa</strong>
-                            <div class="small-muted">Bahasa • TPS</div>
-                        </div>
-                        <div class="team-card">
-                            <div class="team-avatar">N</div>
-                            <strong>Nurr Aglaeaa</strong>
+                            <strong>Ikan Goreng Bin Tomat</strong>
                             <div class="small-muted">Bahasa • TPS</div>
                         </div>
                     </div>
@@ -1787,7 +1782,6 @@ html[data-theme="dark"] .team-card {
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>

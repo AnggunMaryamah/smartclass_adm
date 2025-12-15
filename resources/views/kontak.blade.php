@@ -645,7 +645,7 @@
 
                 <div style="position:relative;">
                     <button class="nav-btn" id="jenjangBtn" aria-expanded="false" aria-haspopup="true"
-                        aria-controls="jenjangDropdown">Pilih Jenjang ▾</button>
+                        aria-controls="jenjangDropdown">Jenjang Kelas ▾</button>
                     <div class="nav-dropdown" id="jenjangDropdown" role="menu" aria-hidden="true">
                         <a href="/jenjang/sd" role="menuitem">SD</a>
                         <a href="/jenjang/smp" role="menuitem">SMP</a>
@@ -1015,7 +1015,7 @@
                 document.documentElement.classList.remove('theme-dark', 'theme-light');
                 if (name === 'dark') document.documentElement.classList.add('theme-dark');
                 else document.documentElement.classList.add('theme-light');
-                if (toggle) toggle.textContent = name === 'dark' ? '☀️' : '🌙';
+                if (toggle) toggle.textContent = name === 'dark' ? '🌙' : '☀️';
             }
 
             // initial apply (safe)

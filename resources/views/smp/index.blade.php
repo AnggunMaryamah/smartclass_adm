@@ -591,11 +591,14 @@
             </a>
 
             <nav class="nav-links" aria-label="Primary Links">
+                <a href="https://ours.web.id" class="nav-link" title="Kembali ke Portal Kelas Kami">
+                    Portal
+                </a>
                 <a href="{{ url('/') }}" class="nav-link">Beranda</a>
 
                 <div style="position:relative;">
                     <button class="nav-btn" id="jenjangBtn" aria-expanded="false" aria-haspopup="true"
-                        aria-controls="jenjangDropdown">Pilih Jenjang ▾</button>
+                        aria-controls="jenjangDropdown">Jenjang Kelas ▾</button>
                     <div class="nav-dropdown" id="jenjangDropdown" role="menu" aria-hidden="true">
                         <a href="/jenjang/sd" role="menuitem">SD</a>
                         <a href="/jenjang/smp" role="menuitem">SMP</a>
@@ -604,7 +607,7 @@
                 </div>
 
                 <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
-                <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
+                <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
             <div class="nav-actions" role="group" aria-label="Actions">
@@ -1113,10 +1116,10 @@
             function applyTheme(name) {
                 if (name === 'dark') {
                     html.classList.add('theme-dark');
-                    toggle.textContent = '☀️';
+                    toggle.textContent = '🌙';
                 } else {
                     html.classList.remove('theme-dark');
-                    toggle.textContent = '🌙';
+                    toggle.textContent = '☀️';
                 }
             }
             try {
