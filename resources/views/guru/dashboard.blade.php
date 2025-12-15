@@ -642,78 +642,82 @@
 
 @section('script')
     <script>
-        const ctx = document.getElementById('guruChart');
-        if (ctx) {
-            // Data REAL dari database (bisa siswa masuk per bulan atau transaksi)
-            const chartData = {!! json_encode($chartData ?? [0,0,0,0,0,0,0,0,0,0,0,0]) !!};
+    const ctx = document.getElementById('guruChart');
+    if (ctx) {
+        const chartData = {!! json_encode($chartData ?? [0,0,0,0,0,0,0,0,0,0,0,0]) !!};
 
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
-                    datasets: [{
-                        label: 'Jumlah Siswa',
-                        data: chartData,
-                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
-                        borderColor: '#0EA5E9',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#0EA5E9',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                datasets: [{
+                    label: 'Jumlah Siswa',
+                    data: chartData,
+                    backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                    borderColor: '#0EA5E9',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#0EA5E9',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        padding: 12,
+                        borderRadius: 8,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
                         },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            padding: 12,
-                            borderRadius: 8,
-                            titleFont: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            bodyFont: {
-                                size: 13
+                        bodyFont: {
+                            size: 13
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: 0,        // mulai dari 0
+                        max: 20,       // paksa sampai 20
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            stepSize: 5,   
+                            precision: 0,  
+                            font: { size: 12 },
+                            color: '#64748B',
+                            callback: function(value) {
+                                return value; 
                             }
                         }
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                font: {
-                                    size: 12
-                                },
-                                color: '#64748B'
-                            }
+                    x: {
+                        grid: {
+                            display: false
                         },
-                        x: {
-                            grid: {
-                                display: false
+                        ticks: {
+                            font: {
+                                size: 12
                             },
-                            ticks: {
-                                font: {
-                                    size: 12
-                                },
-                                color: '#64748B'
-                            }
+                            color: '#64748B'
                         }
                     }
                 }
-            });
-        }
-    </script>
+            }
+        });
+    }
+</script>
 @endsection

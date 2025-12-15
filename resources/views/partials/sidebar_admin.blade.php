@@ -223,28 +223,25 @@
        class="nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
         <i class="fas fa-chart-line"></i> 
         <span>Laporan Data Kelas</span>
-    </a>
-        <a href="{{ route('admin.payments.index') }}"
-           class="nav-link {{ request()->routeIs('admin.payments*') ? 'active' : '' }}">
+    {{-- MENU PEMBAYARAN --}}
+    @if(auth()->user()->role === 'admin')
+        <a href="{{ route('admin.pembayaran.index') }}"
+           class="nav-link {{ request()->is('admin/pembayaran*') ? 'active' : '' }}">
             <i class="fas fa-credit-card"></i>
             <span>Pembayaran</span>
         </a>
-    </nav>
-
+    @endif
     <div class="sidebar-footer">
-        @if (Route::has('logout'))
-            <form action="{{ route('logout') }}" method="POST" style="margin:0;">
-                @csrf
-                <button type="submit" class="logout-btn" onclick="return confirm('Yakin ingin logout?')">
-                    Logout
-                </button>
-            </form>
-        @else
-            <button class="logout-btn">
-                Logout
-            </button>
-        @endif
-    </div>
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit"
+                class="logout-btn"
+                onclick="return confirm('Yakin ingin logout?')">
+            <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i>
+            Logout
+        </button>
+    </form>
+</div>
 </aside>
 
 <script>
@@ -258,4 +255,8 @@
         if (sidebarToggle) sidebarToggle.classList.remove('active');
         document.body.style.overflow = '';
     }
+    .sidebar-admin .logout-btn:hover i {
+    transform: translateX(-3px);
+}
+
 </script>
