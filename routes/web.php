@@ -25,7 +25,7 @@ use App\Http\Controllers\JenjangController;
 
 // ===================== AUTH & DASHBOARD BAWAAN (KAMU) =====================
 Route::get('/', function () {
-    return view('home');
+    return view('welcome');
 });
 
 Route::middleware('auth')->group(function () {
@@ -175,12 +175,37 @@ Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group
     });
 
 // ===================== TAMBAHAN DARI TIM (TIDAK BENTROK) =====================
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/beranda', [HomeController::class, 'index'])->name('home');
+
+Route::get('/jenjang/sd', function () {
+    return view('sd.index'); // resources/views/sd/index.blade.php
+});
+
+// route untuk halaman SMP (konsisten dengan route SD)
+Route::get('/jenjang/smp', function () {
+    return view('smp.index'); // resources/views/smp/index.blade.php
+});
+
+Route::get('/jenjang/sma', function () {
+    return view('sma.index'); // resources/views/smp/index.blade.php
+});
+
+Route::get('/guru/Daftar', function () {
+    return view('guru.index');
+})->name('guru.index');
+
+// HALAMAN KONTAK (GET)
+Route::get('/kontak', [ContactController::class, 'index'])
+    ->name('kontak');
+
+Route::post('/kontak/kirim', [ContactController::class, 'kirim'])
+    ->name('kontak.kirim');
+
+
 // Test route dari tim (opsional)
 Route::get('/jenjang/test-route', function () {
     return 'OK ROUTE';
 });
-
 
 Route::get('auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])
     ->name('auth.google.redirect');
