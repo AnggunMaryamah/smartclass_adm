@@ -393,18 +393,32 @@
 
         .stats-card {
             display: flex;
-            gap: 16px;
+            gap: 0px;
+            /* HAPUS GAP */
             margin-top: 20px;
             background: var(--card-bg);
-            padding: 14px;
-            border-radius: 14px;
+            padding: 20px 24px;
+            /* PADDING LEBIH BESAR */
+            border-radius: 16px;
             box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
             border: 1px solid rgba(14, 165, 233, 0.06);
+            max-width: 600px;
+            /* BATASI LEBAR */
         }
 
         .stat-item {
             text-align: center;
-            min-width: 90px;
+            flex: 1;
+            /* SAMA LEBAR */
+            padding: 0 20px;
+            /* PADDING HORIZONTAL */
+            border-right: 2px solid rgba(14, 165, 233, 0.1);
+            /* GARIS PEMISAH */
+        }
+
+        .stat-item:last-child {
+            border-right: none;
+            /* HAPUS BORDER DI ITEM TERAKHIR */
         }
 
         .stat-number {
@@ -461,29 +475,113 @@
             gap: 24px;
         }
 
+        /* FEATURE CARDS - IMPROVED UI/UX WITH DARK MODE SUPPORT */
         .feature-card {
-            background: var(--card-bg);
-            padding: 28px;
-            border-radius: 16px;
-            box-shadow: 0 18px 40px rgba(2, 6, 23, 0.06);
-            border: 1px solid rgba(14, 165, 233, 0.06);
-            transition: transform 0.3s, box-shadow 0.3s;
+            background: rgba(224, 242, 254, 0.98);
+            border: 2px solid rgba(186, 230, 253, 0.6);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
+        .feature-card:nth-child(2) {
+            background: rgba(209, 250, 229, 0.98);
+            border-color: rgba(167, 243, 208, 0.6);
+        }
+
+        .feature-card:nth-child(3) {
+            background: rgba(224, 242, 254, 0.98);
+            border-color: rgba(186, 230, 253, 0.6);
+        }
+
+        .theme-dark .feature-card {
+            background: rgba(15, 23, 42, 0.95);
+            /* GELAP, BUKAN TERANG */
+        }
+
+        .theme-dark .feature-card:nth-child(2) {
+            background: rgba(15, 23, 42, 0.95);
+            border-color: rgba(45, 212, 191, 0.3);
+            /* BORDER TOSCA SOFT */
+        }
+
+        .theme-dark .feature-card:nth-child(3) {
+            background: rgba(15, 23, 42, 0.95);
+            border-color: rgba(186, 230, 253, 0.6);
+            /* BORDER KUNING SOFT */
+        }
+
+        /* HOVER EFFECT */
         .feature-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 25px 50px rgba(2, 6, 23, 0.12);
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(14, 165, 233, 0.3);
+            border-color: rgba(14, 165, 233, 0.9);
         }
 
+        .theme-dark .feature-card:hover {
+            box-shadow: 0 25px 50px rgba(45, 212, 191, 0.2);
+            border-color: rgba(45, 212, 191, 0.8);
+        }
+
+        /* FEATURE ICON */
         .feature-icon {
-            font-size: 2.6rem;
-            margin-bottom: 12px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent-from), var(--accent-to));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 15px 30px rgba(14, 165, 233, 0.25);
+            transition: all 0.3s ease;
         }
 
-        .feature-card h3 {
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 12px;
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.4);
+        }
+
+        /* SEMUA CARDS - SOLID BACKGROUND */
+        .stats-card,
+        .paket-card,
+        .guru-card,
+        .testimoni-card,
+        .faq-item,
+        section {
+            background: var(--card-bg);
+            position: relative;
+            z-index: 5;
+        }
+
+        .theme-dark .stats-card,
+        .theme-dark .paket-card,
+        .theme-dark .guru-card,
+        .theme-dark .testimoni-card,
+        .theme-dark .faq-item {
+            background: var(--card-bg);
+        }
+
+        /* PARTICLES - PALING BELAKANG */
+        .particles {
+            z-index: 0;
+            position: fixed;
+            pointer-events: none;
+        }
+
+        /* MAIN CONTENT - DI ATAS PARTICLES */
+        main,
+        .container {
+            position: relative;
+            z-index: 5;
         }
 
         /* PAKET */
@@ -924,10 +1022,250 @@
                 width: 50%;
             }
         }
-    </style>
+
+        /* Animated Background Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            /* ← DARI 1 JADI 0 */
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-from), transparent);
+            opacity: 0.15;
+            animation: float-particle 20s infinite ease-in-out;
+        }
+
+        @keyframes float-particle {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            25% {
+                transform: translate(100px, -100px) scale(1.2);
+            }
+
+            50% {
+                transform: translate(-50px, -200px) scale(0.8);
+            }
+
+            75% {
+                transform: translate(-150px, -100px) scale(1.1);
+            }
+        }
+
+        /* Kids Images Container - OVERLAP & SHADOW TEGAS */
+        .kids-images-container {
+            width: 100%;
+            max-width: 600px;
+            height: 450px;
+            position: relative;
+            margin: 0 auto;
+            margin-top: -60px;
+            display: flex;
+            align-items: center;
+            align-items: flex-end;
+            /* Biar kepala keluar frame */
+            justify-content: center;
+            overflow: visible;
+            /* Biar kepala bisa keluar */
+        }
+
+        /* Background Box - KOTAK DENGAN BORDER RADIUS (Biru SmartClass) */
+        .kids-images-container::before {
+            content: '';
+            position: absolute;
+            width: 550px;
+            height: 350px;
+            /* Lebih kecil biar kepala keluar */
+            border-radius: 40px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.20) 0%, rgba(6, 182, 212, 0.20) 100%);
+            /* Lebih terang */
+            bottom: 0;
+            /* Posisi di bawah */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+            box-shadow: 0 25px 50px rgba(14, 165, 233, 0.25);
+            /* SHADOW LEBIH TEGAS */
+        }
+
+        /* Wrapper untuk Boy & Girl - NEMPEL */
+        .kids-group {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            gap: 0;
+            z-index: 2;
+        }
+
+        .kid-image-wrapper {
+            position: relative;
+            filter: drop-shadow(0 20px 40px rgba(14, 165, 233, 0.25));
+            /* SHADOW LEBIH TEGAS */
+            transition: transform 0.3s ease;
+        }
+
+
+        .kid-image-wrapper:hover {
+            transform: scale(1.03);
+        }
+
+        .kid-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Girl - KIRI (ORDER 1) - LEBIH BESAR */
+        .kid-image-girl {
+            width: 340px;
+            height: auto;
+            margin-right: -60px;
+            z-index: 2;
+            order: 1;
+        }
+
+        /* Boy - KANAN (ORDER 2) - LEBIH BESAR */
+        .kid-image-boy {
+            width: 300px;
+            height: auto;
+            z-index: 1;
+            order: 2;
+        }
+
+        /* TABLET */
+        @media (max-width: 1024px) {
+            .kids-images-container {
+                height: 400px;
+            }
+
+            .kids-images-container::before {
+                width: 480px;
+                height: 350px;
+            }
+
+            .kid-image-girl {
+                width: 300px;
+                margin-right: -55px;
+            }
+
+            .kid-image-boy {
+                width: 260px;
+            }
+        }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .kids-images-container {
+                height: 350px;
+            }
+
+            .kids-images-container::before {
+                width: 400px;
+                height: 300px;
+                border-radius: 30px;
+            }
+
+            .kid-image-girl {
+                width: 250px;
+                margin-right: -50px;
+            }
+
+            .kid-image-boy {
+                width: 220px;
+            }
+        }
+
+        /* SMALL MOBILE */
+        @media (max-width: 480px) {
+            .kids-images-container {
+                height: 300px;
+            }
+
+            .kids-images-container::before {
+                width: 340px;
+                height: 260px;
+                border-radius: 25px;
+            }
+
+            .kid-image-girl {
+                width: 210px;
+                margin-right: -45px;
+            }
+
+            .kid-image-boy {
+                width: 180px;
+            }
+        }
+/* Team Card - No Hover, Clean Style */
+.team-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+  border: 1px solid rgba(14, 165, 233, 0.06);
+}
+
+/* Dark Mode Support */
+html[data-theme="dark"] .team-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(14, 165, 233, 0.15);
+}
+
+/* TABLET & MOBILE (1 Column) */
+@media (max-width: 1024px) {
+  .team-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    max-width: 600px !important;
+  }
+}
+
+/* MOBILE SMALL - Stack Photo on Top */
+@media (max-width: 640px) {
+  .team-section {
+    padding: 50px 0 !important;
+  }
+  
+  .section-title h2 {
+    font-size: 2rem !important;
+  }
+  
+  /* Stack Photo on Top for Mobile */
+  .team-card > div {
+    flex-direction: column !important;
+  }
+  
+  .team-photo-container {
+    width: 100% !important;
+    height: 220px !important;
+    border-right: none !important;
+    border-bottom: 3px solid rgba(14, 165, 233, 0.15) !important;
+  }
+  
+  .team-card > div > div:last-child {
+    width: 100% !important;
+    padding: 24px !important;
+  }
+}
+</style>
 </head>
 
 <body>
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
     <!-- NAVIGATION (REPLACE ONLY THIS HEADER) -->
     <header class="site-nav" role="navigation" aria-label="Main Navigation">
         <div class="nav-inner">
@@ -953,7 +1291,6 @@
 
                 <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
-                <a href="{{ route('kontak') }}" class="nav-link">Tim SmartClass</a>
             </nav>
 
             <div class="nav-actions" role="group" aria-label="Actions">
@@ -1102,7 +1439,7 @@
                     <p class="small-muted">SmartClass menyediakan les private & bimbel online dengan guru
                         berpengalaman, metode pembelajaran modern, dan hasil terbukti.</p>
                     <div class="hero-cta">
-                        <button class="btn-cta" style="padding:12px 20px;">Daftar Sekarang</button>
+                        <button class="btn-cta" style="padding:12px 20px;">Mulai Belajar Sekarang</button>
                     </div>
                     <div class="stats-card">
                         <div class="stat-item">
@@ -1120,27 +1457,26 @@
                     </div>
                 </div>
                 <div style="display:flex;justify-content:center;align-items:center;">
-                    <div class="hero-circle">
-                        <div class="hero-card"> <img src="{{ asset('images/smartclass-logo.png') }}" alt="Logo"
-                                style="width:100px;height:100px;"></div>
-                        <div class="hero-badge" style="top:18px;right:14%;">
-                            <div style="font-size:1.2rem">📚</div>
-                            <div>
-                                <div style="font-weight:700;">2+</div>
-                                <div style="font-size:.8rem;color:var(--muted)">Siswa</div>
+                    <div style="display:flex;justify-content:center;align-items:center;">
+                        <div class="kids-images-container">
+                            <div class="kids-group">
+                                <!-- Boy Image - NEMPEL KIRI -->
+                                <div class="kid-image-wrapper kid-image-boy">
+                                    <img src="{{ asset('images/picture-boy.png') }}" alt="Happy Student Boy"
+                                        loading="lazy">
+                                </div>
+
+                                <!-- Girl Image - NEMPEL KANAN -->
+                                <div class="kid-image-wrapper kid-image-girl">
+                                    <img src="{{ asset('images/picture-girl.png') }}" alt="Happy Student Girl"
+                                        loading="lazy">
+                                </div>
                             </div>
                         </div>
-                        <div class="hero-badge" style="bottom:14px;left:12%;">
-                            <div style="font-size:1.2rem">🏆</div>
-                            <div>
-                                <div style="font-weight:700;">2+</div>
-                                <div style="font-size:.8rem;color:var(--muted)">Guru</div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
-        </div>
     </main>
 
     <!-- FEATURES -->
@@ -1152,25 +1488,47 @@
             </div>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                    </div>
                     <h3>Persiapan UN/UTBK</h3>
                     <p class="small-muted">Program intensif untuk persiapan ujian nasional dan masuk perguruan tinggi
                         favorit</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">👨‍🏫</div>
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
                     <h3>Guru Berpengalaman</h3>
                     <p class="small-muted">Tim pengajar lulusan PTN terkemuka dengan metode pembelajaran yang terbukti
                         efektif</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">💻</div>
-                    <h3>Kelas Online & Offline</h3>
-                    <p class="small-muted">Fleksibilitas belajar tatap muka atau online dengan fasilitas pembelajaran
-                        modern</p>
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Pembelajaran Fleksibel</h3>
+                    <p class="small-muted">Jadwal belajar yang fleksibel dengan sistem tatap muka dan online sesuai
+                        kebutuhan siswa</p>
                 </div>
             </div>
-        </div>
     </section>
 
     <!-- PAKET -->
@@ -1212,8 +1570,8 @@
                     </div>
                 </article>
                 <article class="paket-card">
-                    <div class="paket-header" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);">
-                        <div class="paket-badge" style="background:#7c3aed">SMA</div>
+                    <div class="paket-header" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);">
+                        <div class="paket-badge" style="background:#0ea5e9">SMA</div>
                     </div>
                     <div class="paket-body">
                         <h3>Kelas SMA / SMK</h3>
@@ -1288,34 +1646,148 @@
                 </div>
             </div>
     </section>
+    <!-- TIM KAMI SECTION -->
+<section class="team-section" id="tim" style="padding: 80px 0; background: var(--bg);">
+  <div class="container">
+    
+    <!-- Section Title -->
+    <div class="section-title" style="text-align: center; margin-bottom: 50px;">
+      <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 12px;">
+        Tim <span class="gradient-text">Kami</span>
+      </h2>
+      <p class="small-muted" style="font-size: 1rem; max-width: 600px; margin: 0 auto;">
+        Sistem SmartClass dikembangkan oleh mahasiswa D4 Keamanan Sistem Informasi Politeknik Negeri Bengkalis
+      </p>
+    </div>
 
-    <!-- FAQ -->
-    <section class="faq-section" id="faq">
-        <div class="container">
-            <div class="section-title">
-                <h2>Pertanyaan yang Sering Diajukan</h2>
-                <p class="small-muted">Semua jawaban ditampilkan penuh untuk kemudahan baca.</p>
+    <!-- Team Grid (2x2 Grid) -->
+    <div class="team-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 1100px; margin: 0 auto;">
+      
+      <!-- KETUA: Abdulraziq J. Hasan (BIRU) -->
+      <div class="team-card">
+        <!-- Photo Container (Left Side - 45% Width) -->
+        <div style="display: flex; align-items: stretch; height: 220px;">
+          
+          <!-- Photo -->
+          <div class="team-photo-container" style="width: 45%; overflow: hidden; position: relative; background: rgba(14, 165, 233, 0.08); border-right: 3px solid rgba(14, 165, 233, 0.15);">
+            <!-- ⚠️ GANTI DENGAN FOTO ABDULRAZIQ ⚠️ -->
+            <img src="{{ asset('images/abdulraziq.jpg') }}" alt="Abdulraziq J. Hasan">
+          </div>
+          
+          <!-- Content (Right Side - 55% Width) -->
+          <div style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
+            <!-- Name -->
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">Abdulraziq J. Hasan</h3>
+            
+            <!-- Position Badge -->
+            <div style="text-align: center; margin-bottom: 14px;">
+            <div style="display: inline-block; background: rgba(14, 165, 233, 0.12); color: var(--primary); padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
+              Ketua Tim
             </div>
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <div class="faq-question">Bagaimana cara mendaftar kelas privat?</div>
-                    <div class="faq-answer">Untuk mendaftar, klik tombol <strong>Daftar Sekarang</strong> atau hubungi
-                        kami melalui WhatsApp. Isi formulir pendaftaran singkat; tim kami akan menghubungi Anda untuk
-                        konfirmasi jadwal.</div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">Apakah tersedia kelas online dan offline?</div>
-                    <div class="faq-answer">Ya — kami menyediakan kedua pilihan. Anda dapat memilih kelas tatap muka
-                        atau kelas online melalui platform video conference. Materi dan evaluasi sama.</div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">Bagaimana metode pembayaran?</div>
-                    <div class="faq-answer">Pembayaran dapat dilakukan via transfer bank atau e-wallet. Kami memberikan
-                        evaluasi berkala dan laporan perkembangan untuk setiap siswa.</div>
-                </div>
             </div>
+            
+            <!-- Roles -->
+            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
+              <div>System Analyst • UI/UX Designer • Project Documentation Lead</div>
+            </div>
+          </div>
         </div>
-    </section>
+      </div>
+
+      <!-- ANGGOTA 1: Anggun Maryamah (TOSCA) -->
+      <div class="team-card">
+        <!-- Photo Container (Left Side - 45% Width) -->
+        <div style="display: flex; align-items: stretch; height: 220px;">
+          
+          <!-- Photo -->
+          <div class="team-photo-container" style="width: 45%; overflow: hidden; position: relative; background: rgba(45, 212, 191, 0.08); border-right: 3px solid rgba(45, 212, 191, 0.15);">
+            <!-- ⚠️ GANTI DENGAN FOTO ANGGUN ⚠️ -->
+            <img src="{{ asset('images/anggun.jpg') }}" alt="Anggun Maryamah">
+          </div>
+          
+          <!-- Content (Right Side - 55% Width) -->
+          <div style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
+            <!-- Name -->
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">Anggun Maryamah</h3>
+            
+            <!-- Position Badge -->
+            <div style="text-align: center; margin-bottom: 14px;">
+            <div style="display: inline-block; background: rgba(45, 212, 191, 0.12); color: #14b8a6; padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
+              Anggota Tim
+            </div>
+            </div>
+            
+            <!-- Roles -->
+            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
+              <div>System Analyst • Backend Developer • Database Designer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANGGOTA 2: Winda Nur Permata (BIRU) -->
+      <div class="team-card">
+        <!-- Photo Container (Left Side - 45% Width) -->
+        <div style="display: flex; align-items: stretch; height: 220px;">
+          
+          <!-- Photo -->
+          <div class="team-photo-container" style="width: 45%; overflow: hidden; position: relative; background: rgba(14, 165, 233, 0.08); border-right: 3px solid rgba(14, 165, 233, 0.15);">
+            <!-- ⚠️ GANTI DENGAN FOTO WINDA ⚠️ -->
+           <img src="{{ asset('images/winda.jpg') }}" alt="Winda Nur Permata">
+          </div>
+          
+          <!-- Content (Right Side - 55% Width) -->
+          <div style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
+            <!-- Name -->
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">Winda Nur Permata</h3>
+            
+            <!-- Position Badge -->
+            <div style="text-align: center; margin-bottom: 14px;">
+            <div style="display: inline-block; background: rgba(14, 165, 233, 0.12); color: var(--primary); padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
+              Anggota Tim
+            </div>
+            </div>
+            <!-- Roles -->
+            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
+              <div>System Analyst • Frontend Developer • Database Designer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ANGGOTA 3: Revis Irwan Gea (TOSCA) -->
+      <div class="team-card">
+        <!-- Photo Container (Left Side - 45% Width) -->
+        <div style="display: flex; align-items: stretch; height: 220px;">
+          
+          <!-- Photo -->
+          <div class="team-photo-container" style="width: 45%; overflow: hidden; position: relative; background: rgba(45, 212, 191, 0.08); border-right: 3px solid rgba(45, 212, 191, 0.15);">
+            <!-- ⚠️ GANTI DENGAN FOTO REVIS ⚠️ -->
+            <img src="{{ asset('images/revis.jpg') }}" alt="Revis irwan">
+          </div>
+          
+          <!-- Content (Right Side - 55% Width) -->
+          <div style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
+            <!-- Name -->
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">Revis Irwan Gea</h3>
+            
+            <!-- Position Badge -->
+            <div style="text-align: center; margin-bottom: 14px;">
+            <div style="display: inline-block; background: rgba(45, 212, 191, 0.12); color: #14b8a6; padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
+              Anggota Tim
+            </div>
+            </div>
+            <!-- Roles -->
+            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
+              <div>System Analyst • Backend Developer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
     <!-- FOOTER -->
     <footer class="footer" id="kontak">
@@ -1499,6 +1971,18 @@
                 }
             });
         });
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 15; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.width = `${Math.random() * 100 + 50}px`;
+            particle.style.height = particle.style.width;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            particle.style.animationDuration = `${Math.random() * 10 + 15}s`;
+            particlesContainer.appendChild(particle);
+        }
     </script>
 </body>
 <script>
