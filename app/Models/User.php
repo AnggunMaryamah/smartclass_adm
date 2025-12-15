@@ -13,7 +13,9 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // UUID (bukan auto increment)
+    /**
+     * UUID (bukan auto increment)
+     */
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -21,35 +23,29 @@ class User extends Authenticatable
      * Mass assignable attributes
      */
     protected $fillable = [
-<<<<<<< HEAD
+        'id',
         'name',
         'email',
         'password',
         'role',
+        'status_akun',
+
+        // OAuth / profile
         'google_id',
         'avatar',
+
+        // QRIS
+        'qris_image',
+        'qris_nama_bank',
+        'qris_nama_rekening',
+        'no_wa',
+
         'email_verified_at',
     ];
-=======
-    'id',
-    'name',
-    'email',
-    'password',
-    'role',
-    'status_akun',
-
-    // QRIS
-    'qris_image',
-    'qris_nama_bank',
-    'qris_nama_rekening',
-    'no_wa',
-];
-
 
     /**
      * Hidden attributes
      */
->>>>>>> 340ac98 (ini admin.pembayaran)
     protected $hidden = [
         'password',
         'remember_token',
@@ -58,24 +54,19 @@ class User extends Authenticatable
     /**
      * Attribute casting
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     /**
      * Auto-generate UUID when creating
      */
-    protected static function boot()
+    protected static function booted()
     {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (empty($model->id)) {
-                $model->id = (string) Str::uuid();
+        static::creating(function ($user) {
+            if (empty($user->id)) {
+                $user->id = (string) Str::uuid();
             }
         });
     }
@@ -87,14 +78,14 @@ class User extends Authenticatable
     {
         return match (strtolower($this->role ?? '')) {
             'admin' => '/admin/dashboard',
-            'guru' => '/guru/dashboard',
+            'guru'  => '/guru/dashboard',
             'siswa' => '/siswa/dashboard',
             default => '/dashboard',
         };
     }
 
     /**
-     * Relasi ke siswa_kelas (jika digunakan)
+     * Relasi ke siswa_kelas
      */
     public function siswaKelas(): HasMany
     {
@@ -107,5 +98,13 @@ class User extends Authenticatable
     public function siswa(): HasOne
     {
         return $this->hasOne(Siswa::class, 'user_id', 'id');
+    }
+
+    /**
+     * Helper role
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }
