@@ -78,7 +78,7 @@ class User extends Authenticatable
     {
         return match (strtolower($this->role ?? '')) {
             'admin' => '/admin/dashboard',
-            'guru'  => '/guru/dashboard',
+            'guru' => '/guru/dashboard',
             'siswa' => '/siswa/dashboard',
             default => '/dashboard',
         };

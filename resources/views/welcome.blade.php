@@ -1209,58 +1209,59 @@
                 width: 180px;
             }
         }
-/* Team Card - No Hover, Clean Style */
-.team-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
-  border: 1px solid rgba(14, 165, 233, 0.06);
-}
 
-/* Dark Mode Support */
-html[data-theme="dark"] .team-card {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(14, 165, 233, 0.15);
-}
+        /* Team Card - No Hover, Clean Style */
+        .team-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.06);
+        }
 
-/* TABLET & MOBILE (1 Column) */
-@media (max-width: 1024px) {
-  .team-grid {
-    grid-template-columns: 1fr !important;
-    gap: 24px !important;
-    max-width: 600px !important;
-  }
-}
+        /* Dark Mode Support */
+        html[data-theme="dark"] .team-card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(14, 165, 233, 0.15);
+        }
 
-/* MOBILE SMALL - Stack Photo on Top */
-@media (max-width: 640px) {
-  .team-section {
-    padding: 50px 0 !important;
-  }
-  
-  .section-title h2 {
-    font-size: 2rem !important;
-  }
-  
-  /* Stack Photo on Top for Mobile */
-  .team-card > div {
-    flex-direction: column !important;
-  }
-  
-  .team-photo-container {
-    width: 100% !important;
-    height: 220px !important;
-    border-right: none !important;
-    border-bottom: 3px solid rgba(14, 165, 233, 0.15) !important;
-  }
-  
-  .team-card > div > div:last-child {
-    width: 100% !important;
-    padding: 24px !important;
-  }
-}
-</style>
+        /* TABLET & MOBILE (1 Column) */
+        @media (max-width: 1024px) {
+            .team-grid {
+                grid-template-columns: 1fr !important;
+                gap: 24px !important;
+                max-width: 600px !important;
+            }
+        }
+
+        /* MOBILE SMALL - Stack Photo on Top */
+        @media (max-width: 640px) {
+            .team-section {
+                padding: 50px 0 !important;
+            }
+
+            .section-title h2 {
+                font-size: 2rem !important;
+            }
+
+            /* Stack Photo on Top for Mobile */
+            .team-card>div {
+                flex-direction: column !important;
+            }
+
+            .team-photo-container {
+                width: 100% !important;
+                height: 220px !important;
+                border-right: none !important;
+                border-bottom: 3px solid rgba(14, 165, 233, 0.15) !important;
+            }
+
+            .team-card>div>div:last-child {
+                width: 100% !important;
+                padding: 24px !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -1275,11 +1276,11 @@ html[data-theme="dark"] .team-card {
                 </div>
                 <span class="brand-text">SmartClass</span>
             </a>
-            
+
             <nav class="nav-links" aria-label="Primary Links">
                 <a href="https://ours.web.id" class="nav-link" title="Kembali ke Portal Kelas Kami">
-                Portal
-            </a>
+                    Portal
+                </a>
                 <a href="{{ url('/') }}" class="nav-link">Beranda</a>
 
                 <div style="position:relative;">
@@ -1375,7 +1376,7 @@ html[data-theme="dark"] .team-card {
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="btn-cta">Login</a>
+                    <a href="{{ route('login') }}" class="btn-cta" id="loginBtnHeader">Login</a>
                 @endauth
 
                 <button class="hamburger" id="hamburger" aria-controls="mobileDrawer" aria-expanded="false"
@@ -1626,18 +1627,18 @@ html[data-theme="dark"] .team-card {
                 <div style="position:sticky;top:50px;">
                     <div class="team-grid">
                         <div class="team-card">
-                            <div class="team-avatar">N</div>
+                            <div class="team-avatar">B</div>
                             <strong>budi</strong>
                             <div class="small-muted">Matematika</div>
                         </div>
                         <div class="team-card">
-                            <div class="team-avatar">m</div>
+                            <div class="team-avatar">W</div>
                             <strong>Winda Nur Permata</strong>
-                            <div class="small-muted">Bahasa Thailand</div>
+                            <div class="small-muted">TIK</div>
                         </div>
                         <div class="team-card">
-                            <div class="team-avatar">N</div>
-                            <strong>Ikan Goreng Bin Tomat</strong>
+                            <div class="team-avatar">T</div>
+                            <strong>Tumi</strong>
                             <div class="small-muted">Bahasa • TPS</div>
                         </div>
                     </div>
@@ -1645,146 +1646,258 @@ html[data-theme="dark"] .team-card {
             </div>
     </section>
     <!-- TIM KAMI SECTION -->
-<section class="team-section" id="tim" style="padding: 80px 0; background: var(--bg);">
-  <div class="container">
-    
-    <!-- Section Title -->
-    <div class="section-title" style="text-align: center; margin-bottom: 50px;">
-      <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 12px;">
-        Tim <span class="gradient-text">Kami</span>
-      </h2>
-      <p class="small-muted" style="font-size: 1rem; max-width: 600px; margin: 0 auto;">
-        Sistem SmartClass dikembangkan oleh mahasiswa D4 Keamanan Sistem Informasi Politeknik Negeri Bengkalis
-      </p>
-    </div>
+    <section class="team-section" id="tim" style="padding: 80px 0; background: var(--bg);">
+        <div class="container">
 
-    <!-- Team Grid (2x2 Grid) -->
-    <div class="team-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 1100px; margin: 0 auto;">
-      
-      <!-- KETUA: Abdulraziq J. Hasan (BIRU) -->
-      <div class="team-card">
-        <!-- Photo Container (Left Side - 45% Width) -->
-        <div style="display: flex; align-items: stretch; height: 220px;">
-          
-          <!-- Photo -->
-          <div class="team-photo-container" style="width: 45%; overflow: hidden; position: relative; background: rgba(14, 165, 233, 0.08); border-right: 3px solid rgba(14, 165, 233, 0.15);">
-            <!-- ⚠️ GANTI DENGAN FOTO ABDULRAZIQ ⚠️ -->
-            <img src="{{ asset('images/abdulraziq.jpg') }}" alt="Abdulraziq J. Hasan">
-          </div>
-          
-          <!-- Content (Right Side - 55% Width) -->
-          <div style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
-            <!-- Name -->
-            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">Abdulraziq J. Hasan</h3>
-            
-            <!-- Position Badge -->
-            <div style="text-align: center; margin-bottom: 14px;">
-            <div style="display: inline-block; background: rgba(14, 165, 233, 0.12); color: var(--primary); padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
-              Ketua Tim
+            <!-- Section Title -->
+            <div class="section-title" style="text-align: center; margin-bottom: 50px;">
+                <h2 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 12px;">
+                    Tim <span class="gradient-text">Kami</span>
+                </h2>
+                <p class="small-muted" style="font-size: 1rem; max-width: 600px; margin: 0 auto;">
+                    Sistem SmartClass dikembangkan oleh mahasiswa D4 Keamanan Sistem Informasi Politeknik Negeri
+                    Bengkalis
+                </p>
             </div>
-            </div>
-            
-            <!-- Roles -->
-            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
-              <div>System Analyst • UI/UX Designer • Project Documentation Lead</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- ANGGOTA 1: Anggun Maryamah (TOSCA) -->
-      <div class="team-card">
-        <!-- Photo Container (Left Side - 45% Width) -->
-        <div style="display: flex; align-items: stretch; height: 220px;">
-          
-          <!-- Photo -->
-          <div class="team-photo-container" style="width: 45%; overflow: hidden; position: relative; background: rgba(45, 212, 191, 0.08); border-right: 3px solid rgba(45, 212, 191, 0.15);">
-            <!-- ⚠️ GANTI DENGAN FOTO ANGGUN ⚠️ -->
-            <img src="{{ asset('images/anggun.jpg') }}" alt="Anggun Maryamah">
-          </div>
-          
-          <!-- Content (Right Side - 55% Width) -->
-          <div style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
-            <!-- Name -->
-            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">Anggun Maryamah</h3>
-            
-            <!-- Position Badge -->
-            <div style="text-align: center; margin-bottom: 14px;">
-            <div style="display: inline-block; background: rgba(45, 212, 191, 0.12); color: #14b8a6; padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
-              Anggota Tim
-            </div>
-            </div>
-            
-            <!-- Roles -->
-            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
-              <div>System Analyst • Backend Developer • Database Designer</div>
-            </div>
-          </div>
-        </div>
-      </div>
+            <!-- Team Grid (2x2 Grid) -->
+            <div class="team-grid"
+                style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; max-width: 1100px; margin: 0 auto;">
 
-      <!-- ANGGOTA 2: Winda Nur Permata (BIRU) -->
-      <div class="team-card">
-        <!-- Photo Container (Left Side - 45% Width) -->
-        <div style="display: flex; align-items: stretch; height: 220px;">
-          
-          <!-- Photo -->
-          <div class="team-photo-container" style="width: 45%; overflow: hidden; position: relative; background: rgba(14, 165, 233, 0.08); border-right: 3px solid rgba(14, 165, 233, 0.15);">
-            <!-- ⚠️ GANTI DENGAN FOTO WINDA ⚠️ -->
-           <img src="{{ asset('images/winda.jpg') }}" alt="Winda Nur Permata">
-          </div>
-          
-          <!-- Content (Right Side - 55% Width) -->
-          <div style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
-            <!-- Name -->
-            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">Winda Nur Permata</h3>
-            
-            <!-- Position Badge -->
-            <div style="text-align: center; margin-bottom: 14px;">
-            <div style="display: inline-block; background: rgba(14, 165, 233, 0.12); color: var(--primary); padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
-              Anggota Tim
-            </div>
-            </div>
-            <!-- Roles -->
-            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
-              <div>System Analyst • Frontend Developer • Database Designer</div>
-            </div>
-          </div>
-        </div>
-      </div>
+                <!-- KETUA: Abdulraziq J. Hasan (BIRU) -->
+                <div class="team-card">
+                    <!-- Photo Container (Left Side - 45% Width) -->
+                    <div style="display: flex; align-items: stretch; height: 220px;">
 
-      <!-- ANGGOTA 3: Revis Irwan Gea (TOSCA) -->
-      <div class="team-card">
-        <!-- Photo Container (Left Side - 45% Width) -->
-        <div style="display: flex; align-items: stretch; height: 220px;">
-          
-          <!-- Photo -->
-          <div class="team-photo-container" style="width: 45%; overflow: hidden; position: relative; background: rgba(45, 212, 191, 0.08); border-right: 3px solid rgba(45, 212, 191, 0.15);">
-            <!-- ⚠️ GANTI DENGAN FOTO REVIS ⚠️ -->
-            <img src="{{ asset('images/revis.jpg') }}" alt="Revis irwan">
-          </div>
-          
-          <!-- Content (Right Side - 55% Width) -->
-          <div style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
-            <!-- Name -->
-            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">Revis Irwan Gea</h3>
-            
-            <!-- Position Badge -->
-            <div style="text-align: center; margin-bottom: 14px;">
-            <div style="display: inline-block; background: rgba(45, 212, 191, 0.12); color: #14b8a6; padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
-              Anggota Tim
+                        <!-- Photo -->
+                        <div class="team-photo-container"
+                            style="width: 45%; overflow: hidden; position: relative; background: rgba(14, 165, 233, 0.08); border-right: 3px solid rgba(14, 165, 233, 0.15);">
+                            <!-- ⚠️ GANTI DENGAN FOTO ABDULRAZIQ ⚠️ -->
+                            <img src="{{ asset('images/abdulraziq.jpg') }}" alt="Abdulraziq J. Hasan">
+                        </div>
+
+                        <!-- Content (Right Side - 55% Width) -->
+                        <div
+                            style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
+                            <!-- Name -->
+                            <h3
+                                style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">
+                                Abdulraziq J. Hasan</h3>
+
+                            <!-- Position Badge -->
+                            <div style="text-align: center; margin-bottom: 14px;">
+                                <div
+                                    style="display: inline-block; background: rgba(14, 165, 233, 0.12); color: var(--primary); padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
+                                    Ketua Tim
+                                </div>
+                            </div>
+
+                            <!-- Roles -->
+                            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
+                                <div>System Analyst • UI/UX Designer • Project Documentation Lead</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANGGOTA 1: Anggun Maryamah (TOSCA) -->
+                <div class="team-card">
+                    <!-- Photo Container (Left Side - 45% Width) -->
+                    <div style="display: flex; align-items: stretch; height: 220px;">
+
+                        <!-- Photo -->
+                        <div class="team-photo-container"
+                            style="width: 45%; overflow: hidden; position: relative; background: rgba(45, 212, 191, 0.08); border-right: 3px solid rgba(45, 212, 191, 0.15);">
+                            <!-- ⚠️ GANTI DENGAN FOTO ANGGUN ⚠️ -->
+                            <img src="{{ asset('images/anggun.jpg') }}" alt="Anggun Maryamah">
+                        </div>
+
+                        <!-- Content (Right Side - 55% Width) -->
+                        <div
+                            style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
+                            <!-- Name -->
+                            <h3
+                                style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">
+                                Anggun Maryamah</h3>
+
+                            <!-- Position Badge -->
+                            <div style="text-align: center; margin-bottom: 14px;">
+                                <div
+                                    style="display: inline-block; background: rgba(45, 212, 191, 0.12); color: #14b8a6; padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
+                                    Anggota Tim
+                                </div>
+                            </div>
+
+                            <!-- Roles -->
+                            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
+                                <div>System Analyst • Backend Developer • Database Designer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANGGOTA 2: Winda Nur Permata (BIRU) -->
+                <div class="team-card">
+                    <!-- Photo Container (Left Side - 45% Width) -->
+                    <div style="display: flex; align-items: stretch; height: 220px;">
+
+                        <!-- Photo -->
+                        <div class="team-photo-container"
+                            style="width: 45%; overflow: hidden; position: relative; background: rgba(14, 165, 233, 0.08); border-right: 3px solid rgba(14, 165, 233, 0.15);">
+                            <!-- ⚠️ GANTI DENGAN FOTO WINDA ⚠️ -->
+                            <img src="{{ asset('images/winda.jpg') }}" alt="Winda Nur Permata">
+                        </div>
+
+                        <!-- Content (Right Side - 55% Width) -->
+                        <div
+                            style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
+                            <!-- Name -->
+                            <h3
+                                style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">
+                                Winda Nur Permata</h3>
+
+                            <!-- Position Badge -->
+                            <div style="text-align: center; margin-bottom: 14px;">
+                                <div
+                                    style="display: inline-block; background: rgba(14, 165, 233, 0.12); color: var(--primary); padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
+                                    Anggota Tim
+                                </div>
+                            </div>
+                            <!-- Roles -->
+                            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
+                                <div>System Analyst • Frontend Developer • Database Designer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANGGOTA 3: Revis Irwan Gea (TOSCA) -->
+                <div class="team-card">
+                    <!-- Photo Container (Left Side - 45% Width) -->
+                    <div style="display: flex; align-items: stretch; height: 220px;">
+
+                        <!-- Photo -->
+                        <div class="team-photo-container"
+                            style="width: 45%; overflow: hidden; position: relative; background: rgba(45, 212, 191, 0.08); border-right: 3px solid rgba(45, 212, 191, 0.15);">
+                            <!-- ⚠️ GANTI DENGAN FOTO REVIS ⚠️ -->
+                            <img src="{{ asset('images/revis.jpg') }}" alt="Revis irwan">
+                        </div>
+
+                        <!-- Content (Right Side - 55% Width) -->
+                        <div
+                            style="width: 55%; padding: 28px; display: flex; flex-direction: column; justify-content: center; background: var(--card-bg);">
+                            <!-- Name -->
+                            <h3
+                                style="font-size: 1.35rem; font-weight: 800; margin-bottom: 10px; color: var(--text); line-height: 1.3;">
+                                Revis Irwan Gea</h3>
+
+                            <!-- Position Badge -->
+                            <div style="text-align: center; margin-bottom: 14px;">
+                                <div
+                                    style="display: inline-block; background: rgba(45, 212, 191, 0.12); color: #14b8a6; padding: 5px 18px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; width: fit-content;">
+                                    Anggota Tim
+                                </div>
+                            </div>
+                            <!-- Roles -->
+                            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
+                                <div>System Analyst • Backend Developer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            </div>
-            <!-- Roles -->
-            <div style="font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 500;">
-              <div>System Analyst • Backend Developer</div>
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="section-title">
+                <h2>FAQ <span class="gradient-text">SmartClass</span></h2>
+                <p class="small-muted">Jawaban cepat sebelum kamu mulai belajar bersama kami</p>
+            </div>
+
+            <div class="faq-grid">
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Untuk siapa layanan SmartClass?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        SmartClass ditujukan untuk siswa <strong>SD, SMP, hingga SMA/SMK</strong>
+                        yang ingin meningkatkan prestasi akademik secara terarah dan konsisten.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Apakah SmartClass cocok untuk siswa yang tertinggal pelajaran?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Sangat cocok. Sistem kami fokus pada <strong>pendekatan personal</strong>,
+                        sehingga materi disesuaikan dengan kemampuan dan kebutuhan masing-masing siswa.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Bagaimana sistem pembayaran di SmartClass?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Pembayaran dilakukan secara <strong>bulanan</strong> sesuai paket yang dipilih
+                        dan dikonfirmasi langsung oleh admin setelah pendaftaran.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Apakah orang tua bisa memantau perkembangan anak?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Bisa. Orang tua akan mendapatkan <strong>laporan perkembangan</strong>
+                        dan evaluasi hasil belajar secara berkala dari tutor.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Jika tidak cocok dengan tutor, apakah bisa ganti?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Bisa. SmartClass memberikan <strong>opsi pergantian tutor</strong>
+                        agar siswa merasa nyaman dan proses belajar tetap optimal.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Berapa lama durasi belajar setiap pertemuan?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Durasi belajar umumnya <strong>60–90 menit per sesi</strong>,
+                        tergantung paket dan jenjang yang dipilih.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.faq-item');
+                const open = item.classList.contains('active');
+
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                if (!open) item.classList.add('active');
+            });
+        });
+    </script>
 
     <!-- FOOTER -->
     <footer class="footer" id="kontak">

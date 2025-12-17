@@ -19,6 +19,14 @@ use App\Http\Controllers\TinyMceUploadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\GuruRegisterController;
+use App\Http\Controllers\AdminGuruController;
+
+
+// TAMBAH DARI TIM (TIDAK BENTROK)
+use App\Http\Controllers\JenjangController;
+
+
 // ===================== AUTH & DASHBOARD BAWAAN (KAMU) =====================
 Route::get('/', function () {
     return view('welcome');
@@ -245,9 +253,10 @@ Route::get('/jenjang/sma', function () {
     return view('sma.index'); // resources/views/smp/index.blade.php
 });
 
-Route::get('/guru/Daftar', function () {
-    return view('guru.index');
-})->name('guru.index');
+//Guru
+Route::get('/guru/daftar', [GuruRegisterController::class, 'index'])->name('guru.index');
+Route::post('/guru/daftar', [GuruRegisterController::class, 'store'])->name('guru.daftar');
+
 
 // HALAMAN KONTAK (GET)
 Route::get('/kontak', [ContactController::class, 'index'])
@@ -261,9 +270,24 @@ Route::get('/jenjang/test-route', function () {
     return 'OK ROUTE';
 });
 
-Route::get('auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])
+
+Route::get('/auth/google/redirect', [SocialAuthController::class, 'redirectToGoogle'])
     ->name('auth.google.redirect');
 
-// Callback dari Google
-Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])
     ->name('auth.google.callback');
+
+Route::post('/logout', function (Request $request) {
+    Auth::logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/');
+})->name('logout');
+
+Route::post('/admin/guru/{guru}/verifikasi', [AdminController::class, 'verifikasiGuru'])
+    ->name('admin.guru.verifikasi');
+
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+    ->name('admin.dashboard');

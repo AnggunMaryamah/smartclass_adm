@@ -11,13 +11,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // alias middleware kamu (TETAP)
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'check.active' => \App\Http\Middleware\CheckActive::class,
             'check.materi.completion' => \App\Http\Middleware\CheckMateriCompletion::class,
         ]);
-    })
 
+        // 🔥 INI YANG KURANG & PENYEBAB 419
+        $middleware->validateCsrfTokens(except: [
+            'logout',
+        ]);
+    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
+
     })->create();
