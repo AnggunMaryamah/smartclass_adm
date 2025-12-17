@@ -14,12 +14,19 @@ class Guru extends Authenticatable
     protected $primaryKey = 'id';
     protected $keyType = 'string';
     public $incrementing = false;
-
     protected $fillable = [
-        'admin_id', 'email', 'password', 'nama_lengkap',
-        'jenis_kelamin', 'no_hp', 'mata_pelajaran', 'cv', 'status_akun'
+        'admin_id',
+        'nama_lengkap',
+        'email',
+        'password',
+        'jenis_kelamin',
+        'no_hp',
+        'mata_pelajaran',
+        'cv',
+        'status_akun',
     ];
 
+    protected $hidden = ['password'];
     protected static function boot()
     {
         parent::boot();

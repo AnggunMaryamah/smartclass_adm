@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>SmartClass - Pendaftaran Guru Bimbel</title>
     <meta name="description"
         content="Bergabunglah sebagai guru bimbel di SmartClass. Fleksibel, kompensasi kompetitif, dan bantu ribuan siswa meraih prestasi." />
@@ -808,6 +808,25 @@
             outline-offset: 3px;
             border-radius: 10px;
         }
+
+        .form-step {
+            display: none;
+            position: relative;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .form-actions {
+            position: relative;
+            z-index: 50;
+        }
+
+        .form-actions button {
+            pointer-events: auto !important;
+            z-index: 100;
+        }
     </style>
 </head>
 
@@ -821,11 +840,11 @@
                 </div>
                 <span class="brand-text">SmartClass</span>
             </a>
-            
+
             <nav class="nav-links" aria-label="Primary Links">
                 <a href="https://ours.web.id" class="nav-link" title="Kembali ke Portal Kelas Kami">
-                Portal
-            </a>
+                    Portal
+                </a>
                 <a href="{{ url('/') }}" class="nav-link">Beranda</a>
 
                 <div style="position:relative;">
@@ -1015,24 +1034,25 @@
                 <li><a href="/"
                         style="display:block;padding:12px;text-decoration:none;color:var(--text);font-weight:800;border-radius:8px">Beranda</a>
                 </li>
-                    <button id="mobileJenjangBtn"
-                        style="width:100%;text-align:left;background:none;border:none;padding:12px;font-weight:800;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;border-radius:8px">Jenjang Kelas ▾</button>
-                    <div id="mobileJenjang" style="display:none;padding-left:8px;margin-top:6px">
-                        <a href="/jenjang/sd"
-                            style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
-                                style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SD</span>
-                            SD</a>
-                        <a href="/jenjang/smp"
-                            style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
-                                style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMP</span>
-                            SMP</a>
-                        <a href="/jenjang/sma"
-                            style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
-                                style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMA</span>
-                            SMK/SMA</a>
-                    </div>
-                    <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
-                    <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
+                <button id="mobileJenjangBtn"
+                    style="width:100%;text-align:left;background:none;border:none;padding:12px;font-weight:800;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;border-radius:8px">Jenjang
+                    Kelas ▾</button>
+                <div id="mobileJenjang" style="display:none;padding-left:8px;margin-top:6px">
+                    <a href="/jenjang/sd"
+                        style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
+                            style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SD</span>
+                        SD</a>
+                    <a href="/jenjang/smp"
+                        style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
+                            style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMP</span>
+                        SMP</a>
+                    <a href="/jenjang/sma"
+                        style="display:flex;gap:10px;align-items:center;padding:10px;border-radius:8px;text-decoration:none;color:var(--text);font-weight:700"><span
+                            style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMA</span>
+                        SMK/SMA</a>
+                </div>
+                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
             </ul>
         </div>
     </div>
@@ -1100,227 +1120,81 @@
                     </div>
                 </div>
 
-                <form id="registrationForm" novalidate>
-                    <!-- Step 1: Data Pribadi -->
+                <form id="registrationForm" method="POST" action="{{ route('guru.daftar') }}"
+                    enctype="multipart/form-data" novalidate>
+                    @csrf
+
+                    <!-- STEP 1 -->
                     <div class="form-step active" data-step="1">
+
                         <div class="form-grid">
-                            <div class="form-field" id="field-namaLengkap">
-                                <label for="namaLengkap">Nama Lengkap <span class="required">*</span></label>
-                                <input type="text" id="namaLengkap" name="namaLengkap"
-                                    placeholder="Nama lengkap Anda" required>
-                                <span class="error-message">Nama lengkap wajib diisi</span>
+
+                            <div class="form-field">
+                                <label>Nama Lengkap <span class="required">*</span></label>
+                                <input type="text" id="namaLengkap" name="nama_lengkap" required>
                             </div>
 
-                            <div class="form-field" id="field-email">
-                                <label for="email">Email <span class="required">*</span></label>
-                                <input type="email" id="email" name="email" placeholder="email@domain.com"
-                                    required>
-                                <span class="error-message">Masukkan email yang valid</span>
+                            <div class="form-field">
+                                <label>Email <span class="required">*</span></label>
+                                <input type="email" id="email" name="email" required>
                             </div>
 
-                            <div class="form-field" id="field-telepon">
-                                <label for="telepon">Nomor Telepon/WhatsApp <span class="required">*</span></label>
-                                <input type="tel" id="telepon" name="telepon" placeholder="08xx-xxxx-xxxx"
-                                    required pattern="^\+?\d{9,15}$">
-                                <span class="error-message">Masukkan nomor telepon yang valid (angka, 9-15
-                                    digit)</span>
+                            <div class="form-field">
+                                <label>Nomor HP / WhatsApp <span class="required">*</span></label>
+                                <input type="tel" id="telepon" name="no_hp" required>
                             </div>
 
-                            <div class="form-field" id="field-kota">
-                                <label for="kota">Kota/Kabupaten <span class="required">*</span></label>
-                                <input type="text" id="kota" name="kota" placeholder="Contoh: Jakarta"
-                                    required>
-                                <span class="error-message">Kota wajib diisi</span>
+                            <div class="form-field">
+                                <label>Jenis Kelamin <span class="required">*</span></label>
+                                <select id="jenisKelamin" name="jenis_kelamin" required>
+                                    <option value="">Pilih</option>
+                                    <option value="L">Laki-laki</option>
+                                    <option value="P">Perempuan</option>
+                                </select>
                             </div>
 
-                            <div class="form-field full-width">
-                                <label for="alamat">Alamat Lengkap</label>
-                                <textarea id="alamat" name="alamat" placeholder="Alamat lengkap Anda (opsional)"></textarea>
-                            </div>
                         </div>
 
+                        <!-- 🔥 TOMBOL WAJIB DI DALAM form-step -->
                         <div class="form-actions">
-                            <button type="button" class="btn btn-primary" onclick="nextStep()">Lanjut →</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">
+                                Lanjut
+                            </button>
                         </div>
+
                     </div>
 
-                    <!-- Step 2: Pengalaman -->
+                    <!-- STEP 2 -->
                     <div class="form-step" data-step="2">
                         <div class="form-grid">
-                            <div class="form-field" id="field-pendidikan">
-                                <label for="pendidikan">Pendidikan Terakhir <span class="required">*</span></label>
-                                <select id="pendidikan" name="pendidikan" required>
-                                    <option value="">Pilih pendidikan...</option>
-                                    <option value="D3">D3</option>
-                                    <option value="S1">S1</option>
-                                    <option value="S2">S2</option>
-                                    <option value="S3">S3</option>
-                                </select>
-                                <span class="error-message">Pilih pendidikan terakhir</span>
-                            </div>
 
-                            <div class="form-field" id="field-jurusan">
-                                <label for="jurusan">Jurusan/Program Studi <span class="required">*</span></label>
-                                <input type="text" id="jurusan" name="jurusan"
-                                    placeholder="Contoh: Pendidikan Matematika" required>
-                                <span class="error-message">Jurusan wajib diisi</span>
-                            </div>
-
-                            <div class="form-field" id="field-pengalaman">
-                                <label for="pengalaman">Pengalaman Mengajar <span class="required">*</span></label>
-                                <select id="pengalaman" name="pengalaman" required>
-                                    <option value="">Pilih pengalaman...</option>
-                                    <option value="< 1 tahun">Kurang dari 1 tahun</option>
-                                    <option value="1-2 tahun">1-2 tahun</option>
-                                    <option value="3-5 tahun">3-5 tahun</option>
-                                    <option value="> 5 tahun">Lebih dari 5 tahun</option>
-                                </select>
-                                <span class="error-message">Pilih pengalaman mengajar</span>
-                            </div>
-
-                            <div class="form-field full-width" id="field-jenjang">
-                                <label>Jenjang yang Dapat Diampu <span class="required">*</span></label>
-                                <div class="checkbox-group" id="jenjangGroup">
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="jenjang_sd" name="jenjang" value="SD">
-                                        <label for="jenjang_sd">SD</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="jenjang_smp" name="jenjang" value="SMP">
-                                        <label for="jenjang_smp">SMP</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="jenjang_sma" name="jenjang" value="SMA/SMK">
-                                        <label for="jenjang_sma">SMA/SMK</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="jenjang_utbk" name="jenjang" value="UTBK">
-                                        <label for="jenjang_utbk">UTBK</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="jenjang_umum" name="jenjang" value="Umum">
-                                        <label for="jenjang_umum">Umum</label>
-                                    </div>
-                                </div>
-                                <span class="error-message">Pilih minimal satu jenjang</span>
-                            </div>
-
-                            <div class="form-field full-width" id="field-mataPelajaran">
-                                <label for="mataPelajaran">Mata Pelajaran yang Dikuasai <span
-                                        class="required">*</span></label>
-                                <input type="text" id="mataPelajaran" name="mataPelajaran"
-                                    placeholder="Pisahkan dengan koma, contoh: Matematika, Fisika, Kimia" required>
-                                <span class="field-hint">Tuliskan semua mata pelajaran yang dapat Anda ajarkan</span>
-                                <span class="error-message">Mata pelajaran wajib diisi</span>
+                            <div class="form-field full-width">
+                                <label>Mata Pelajaran yang Dikuasai <span class="required">*</span></label>
+                                <input type="text" id="mataPelajaran" name="mata_pelajaran"
+                                    placeholder="Matematika, Fisika" required>
                             </div>
 
                             <div class="form-field full-width">
-                                <label for="deskripsiPengalaman">Deskripsi Pengalaman Mengajar</label>
-                                <textarea id="deskripsiPengalaman" name="deskripsiPengalaman"
-                                    placeholder="Ceritakan pengalaman mengajar Anda, metode yang digunakan, dan prestasi siswa..."></textarea>
+                                <label>Upload CV (PDF/DOC, Max 5MB)</label>
+                                <input type="file" name="cv" accept=".pdf,.doc,.docx">
                             </div>
+
                         </div>
 
                         <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="prevStep()">← Kembali</button>
-                            <button type="button" class="btn btn-primary" onclick="nextStep()">Lanjut →</button>
+                            <button type="button" class="btn btn-secondary" onclick="prevStep()">Kembali</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">Lanjut</button>
                         </div>
                     </div>
 
-                    <!-- Step 3: Ketersediaan -->
+                    <!-- STEP 3 -->
                     <div class="form-step" data-step="3">
-                        <div class="form-grid">
-                            <div class="form-field full-width" id="field-hari">
-                                <label>Hari yang Tersedia <span class="required">*</span></label>
-                                <div class="checkbox-group" id="hariGroup">
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="hari_senin" name="hari" value="Senin">
-                                        <label for="hari_senin">Senin</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="hari_selasa" name="hari" value="Selasa">
-                                        <label for="hari_selasa">Selasa</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="hari_rabu" name="hari" value="Rabu">
-                                        <label for="hari_rabu">Rabu</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="hari_kamis" name="hari" value="Kamis">
-                                        <label for="hari_kamis">Kamis</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="hari_jumat" name="hari" value="Jumat">
-                                        <label for="hari_jumat">Jumat</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="hari_sabtu" name="hari" value="Sabtu">
-                                        <label for="hari_sabtu">Sabtu</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="hari_minggu" name="hari" value="Minggu">
-                                        <label for="hari_minggu">Minggu</label>
-                                    </div>
-                                </div>
-                                <span class="error-message">Pilih minimal satu hari</span>
-                            </div>
-
-                            <div class="form-field full-width" id="field-waktu">
-                                <label>Waktu yang Tersedia <span class="required">*</span></label>
-                                <div class="checkbox-group" id="waktuGroup">
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="waktu_pagi" name="waktu"
-                                            value="Pagi (08:00-12:00)">
-                                        <label for="waktu_pagi">Pagi (08:00-12:00)</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="waktu_siang" name="waktu"
-                                            value="Siang (12:00-16:00)">
-                                        <label for="waktu_siang">Siang (12:00-16:00)</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="waktu_sore" name="waktu"
-                                            value="Sore (16:00-18:00)">
-                                        <label for="waktu_sore">Sore (16:00-18:00)</label>
-                                    </div>
-                                    <div class="checkbox-item">
-                                        <input type="checkbox" id="waktu_malam" name="waktu"
-                                            value="Malam (18:00-21:00)">
-                                        <label for="waktu_malam">Malam (18:00-21:00)</label>
-                                    </div>
-                                </div>
-                                <span class="error-message">Pilih minimal satu waktu</span>
-                            </div>
-
-                            <div class="form-field" id="field-metodePengajaran">
-                                <label for="metodePengajaran">Metode Pengajaran <span
-                                        class="required">*</span></label>
-                                <select id="metodePengajaran" name="metodePengajaran" required>
-                                    <option value="">Pilih metode...</option>
-                                    <option value="Online">Online (via Zoom/Google Meet)</option>
-                                    <option value="Offline">Offline (Datang ke rumah siswa)</option>
-                                    <option value="Keduanya">Keduanya (Online & Offline)</option>
-                                </select>
-                                <span class="error-message">Pilih metode pengajaran</span>
-                            </div>
-
-                            <div class="form-field" id="field-ekspektasiHonor">
-                                <label for="ekspektasiHonor">Ekspektasi Honor per Jam (IDR) <span
-                                        class="required">*</span></label>
-                                <input type="number" id="ekspektasiHonor" name="ekspektasiHonor"
-                                    placeholder="Contoh: 100000" min="0" required>
-                                <span class="error-message">Masukkan ekspektasi honor (angka)</span>
-                            </div>
-
-                            <div class="form-field full-width">
-                                <label for="cvUpload">Upload CV / Portofolio (opsional)</label>
-                                <input type="file" id="cvUpload" name="cvUpload" accept=".pdf,.doc,.docx" />
-                                <span class="field-hint">Format PDF atau DOC, maksimal 5MB</span>
-                            </div>
-                        </div>
+                        <p style="color:var(--muted)">
+                            Data Anda akan diverifikasi oleh Admin SmartClass sebelum akun diaktifkan.
+                        </p>
 
                         <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="prevStep()">← Kembali</button>
+                            <button type="button" class="btn btn-secondary" onclick="prevStep()">Kembali</button>
                             <button type="submit" class="btn btn-primary">Kirim Pendaftaran</button>
                         </div>
                     </div>
@@ -1347,10 +1221,9 @@
     <button class="back-to-top" id="backToTop" aria-label="Kembali ke atas">↑</button>
 
     <script>
-        /* ===============
-                       NAV & THEME SCRIPTS (from SD page)
-                       =============== */
-        /* Theme Toggle (uses localStorage 'smartclass-theme') */
+        /* =========================
+                               NAV & THEME (JANGAN DIUBAH)
+                               ========================= */
         (function() {
             const html = document.documentElement;
             const toggle = document.getElementById('themeToggle');
@@ -1367,369 +1240,172 @@
                     toggle.setAttribute('aria-pressed', 'false');
                 }
             }
+
             try {
                 const saved = localStorage.getItem(key);
                 if (saved) applyTheme(saved);
-                else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme(
-                    'dark');
+                else if (window.matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark');
                 else applyTheme('light');
-            } catch (e) {
+            } catch {
                 applyTheme('light');
             }
+
             toggle.addEventListener('click', () => {
-                const dark = document.documentElement.classList.toggle('theme-dark');
-                try {
-                    localStorage.setItem(key, dark ? 'dark' : 'light');
-                } catch (e) {}
+                const dark = html.classList.toggle('theme-dark');
+                localStorage.setItem(key, dark ? 'dark' : 'light');
                 applyTheme(dark ? 'dark' : 'light');
             });
         })();
 
-        /* Nav Dropdown */
+        /* NAV DROPDOWN */
         (function() {
-            const jenjangBtn = document.getElementById('jenjangBtn');
-            const jenjangDropdown = document.getElementById('jenjangDropdown');
-            if (!jenjangBtn || !jenjangDropdown) return;
+            const btn = document.getElementById('jenjangBtn');
+            const drop = document.getElementById('jenjangDropdown');
+            if (!btn || !drop) return;
 
-            jenjangBtn.addEventListener('click', (e) => {
+            btn.addEventListener('click', e => {
                 e.stopPropagation();
-                const opened = jenjangDropdown.classList.toggle('show');
-                jenjangBtn.setAttribute('aria-expanded', opened ? 'true' : 'false');
-                jenjangDropdown.setAttribute('aria-hidden', opened ? 'false' : 'true');
+                drop.classList.toggle('show');
             });
 
-            document.addEventListener('click', (e) => {
-                if (!jenjangBtn.contains(e.target) && !jenjangDropdown.contains(e.target)) {
-                    jenjangDropdown.classList.remove('show');
-                    jenjangBtn.setAttribute('aria-expanded', 'false');
-                    jenjangDropdown.setAttribute('aria-hidden', 'true');
+            document.addEventListener('click', e => {
+                if (!btn.contains(e.target) && !drop.contains(e.target)) {
+                    drop.classList.remove('show');
                 }
             });
         })();
 
-        /* Mobile Drawer */
+        /* MOBILE DRAWER */
         (function() {
-            const hamburger = document.getElementById('hamburger');
-            const mobileDrawer = document.getElementById('mobileDrawer');
-            const closeDrawer = document.getElementById('closeDrawer');
+            const ham = document.getElementById('hamburger');
+            const drawer = document.getElementById('mobileDrawer');
+            const close = document.getElementById('closeDrawer');
+            if (!ham || !drawer) return;
 
-            function openDrawer() {
-                mobileDrawer.classList.add('show');
-                mobileDrawer.style.display = 'block';
-                hamburger.classList.add('open');
-                hamburger.setAttribute('aria-expanded', 'true');
+            ham.onclick = () => {
+                drawer.classList.add('show');
                 document.body.style.overflow = 'hidden';
-            }
+            };
 
-            function closeDrawerFn() {
-                mobileDrawer.classList.remove('show');
-                mobileDrawer.style.display = 'none';
-                hamburger.classList.remove('open');
-                hamburger.setAttribute('aria-expanded', 'false');
+            close.onclick = () => {
+                drawer.classList.remove('show');
                 document.body.style.overflow = '';
-            }
-
-            if (hamburger && mobileDrawer) {
-                hamburger.addEventListener('click', () => {
-                    if (mobileDrawer.classList.contains('show')) closeDrawerFn();
-                    else openDrawer();
-                });
-                closeDrawer.addEventListener('click', closeDrawerFn);
-                mobileDrawer.addEventListener('click', (e) => {
-                    if (e.target === mobileDrawer) closeDrawerFn();
-                });
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && mobileDrawer.classList.contains('show')) closeDrawerFn();
-                });
-                window.addEventListener('resize', () => {
-                    if (window.innerWidth > 880) closeDrawerFn();
-                });
-            }
-
-            const mobileJenjangBtn = document.getElementById('mobileJenjangBtn');
-            const mobileJenjang = document.getElementById('mobileJenjang');
-            if (mobileJenjangBtn && mobileJenjang) {
-                mobileJenjangBtn.addEventListener('click', () => {
-                    const is = mobileJenjang.style.display === 'block';
-                    mobileJenjang.style.display = is ? 'none' : 'block';
-                    mobileJenjangBtn.setAttribute('aria-expanded', !is ? 'true' : 'false');
-                });
-            }
+            };
         })();
 
-        /* Back to Top & simple footer subscription behavior */
+        /* BACK TO TOP */
         (function() {
-            const back = document.getElementById('backToTop');
+            const btn = document.getElementById('backToTop');
             window.addEventListener('scroll', () => {
-                back.style.display = window.scrollY > 320 ? 'flex' : 'none';
+                btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
             });
-            back.addEventListener('click', () => window.scrollTo({
+            btn.onclick = () => window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
-            }));
+            });
         })();
 
-        /* ============================
-           REGISTRATION FORM SCRIPTS
-           (from pendaftaran page)
-           ============================ */
-        // Step navigation
+        /* =========================
+           FORM PENDAFTARAN (FINAL)
+           ========================= */
+
         let currentStep = 1;
         const totalSteps = 3;
 
         function showStep(step) {
             currentStep = step;
+
+            // Tampilkan step sesuai nomor
             document.querySelectorAll('.form-step').forEach(el => {
                 el.classList.toggle('active', Number(el.dataset.step) === step);
             });
-            document.querySelectorAll('.progress-steps .step').forEach(el => {
+
+            // Update progress indicator
+            document.querySelectorAll('.step').forEach(el => {
                 const s = Number(el.dataset.step);
                 el.classList.toggle('active', s === step);
                 el.classList.toggle('completed', s < step);
-                el.setAttribute('aria-selected', s === step ? 'true' : 'false');
+                el.setAttribute('aria-selected', s === step);
             });
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+
+            // ✅ AUTO SCROLL KE ATAS FORM
+            const formSection = document.getElementById('formSection');
+            if (formSection) {
+                formSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }
 
         function nextStep() {
             if (!validateStep(currentStep)) return;
-            if (currentStep < totalSteps) showStep(currentStep + 1);
+            if (currentStep < totalSteps) {
+                showStep(currentStep + 1);
+            }
         }
 
         function prevStep() {
-            if (currentStep > 1) showStep(currentStep - 1);
+            if (currentStep > 1) {
+                showStep(currentStep - 1);
+            }
         }
 
-        // Basic validation per step
+        /* =========================
+           VALIDATION
+           ========================= */
+
+        function val(id) {
+            const el = document.getElementById(id);
+            return el && el.value.trim() !== '';
+        }
+
+        function emailOk(id) {
+            const el = document.getElementById(id);
+            return el && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value);
+        }
+
         function validateStep(step) {
-            clearErrors(step);
-            let valid = true;
             if (step === 1) {
-                const nama = document.getElementById('namaLengkap');
-                const email = document.getElementById('email');
-                const telepon = document.getElementById('telepon');
-                const kota = document.getElementById('kota');
-
-                if (!nama.value.trim()) {
-                    markError('field-namaLengkap');
-                    valid = false;
+                if (!val('namaLengkap')) {
+                    alert('Nama wajib diisi');
+                    return false;
                 }
-                if (!validateEmail(email.value)) {
-                    markError('field-email');
-                    valid = false;
+                if (!emailOk('email')) {
+                    alert('Email tidak valid');
+                    return false;
                 }
-                if (!validatePhone(telepon.value)) {
-                    markError('field-telepon');
-                    valid = false;
+                if (!val('telepon')) {
+                    alert('Nomor HP wajib diisi');
+                    return false;
                 }
-                if (!kota.value.trim()) {
-                    markError('field-kota');
-                    valid = false;
-                }
-            } else if (step === 2) {
-                const pendidikan = document.getElementById('pendidikan');
-                const jurusan = document.getElementById('jurusan');
-                const pengalaman = document.getElementById('pengalaman');
-                const mata = document.getElementById('mataPelajaran');
-
-                if (!pendidikan.value) {
-                    markError('field-pendidikan');
-                    valid = false;
-                }
-                if (!jurusan.value.trim()) {
-                    markError('field-jurusan');
-                    valid = false;
-                }
-                if (!pengalaman.value) {
-                    markError('field-pengalaman');
-                    valid = false;
-                }
-                if (!mata.value.trim()) {
-                    markError('field-mataPelajaran');
-                    valid = false;
-                }
-
-                if (!isAnyChecked('#jenjangGroup input[type="checkbox"]')) {
-                    markError('field-jenjang');
-                    valid = false;
-                }
-            } else if (step === 3) {
-                if (!isAnyChecked('#hariGroup input[type="checkbox"]')) {
-                    markError('field-hari');
-                    valid = false;
-                }
-                if (!isAnyChecked('#waktuGroup input[type="checkbox"]')) {
-                    markError('field-waktu');
-                    valid = false;
-                }
-                if (!document.getElementById('metodePengajaran').value) {
-                    markError('field-metodePengajaran');
-                    valid = false;
-                }
-                const honor = document.getElementById('ekspektasiHonor');
-                if (!honor.value || Number(honor.value) < 0) {
-                    markError('field-ekspektasiHonor');
-                    valid = false;
+                if (!val('jenisKelamin')) {
+                    alert('Pilih jenis kelamin');
+                    return false;
                 }
             }
 
-            if (!valid) {
-                showToast('Mohon lengkapi data di langkah ini sebelum melanjutkan.', 'error');
+            if (step === 2) {
+                if (!val('mataPelajaran')) {
+                    alert('Mata pelajaran wajib diisi');
+                    return false;
+                }
             }
-            return valid;
+
+            return true;
         }
 
-        function markError(fieldId) {
-            const el = document.getElementById(fieldId);
-            if (el) el.classList.add('error');
-        }
+        /* =========================
+           FORM SUBMIT (LARAVEL)
+           ========================= */
 
-        function clearErrors(step) {
-            const stepEl = document.querySelector('.form-step[data-step="' + step + '"]');
-            if (!stepEl) return;
-            stepEl.querySelectorAll('.form-field').forEach(f => f.classList.remove('error'));
-        }
-
-        function isAnyChecked(selector) {
-            return Array.from(document.querySelectorAll(selector)).some(i => i.checked);
-        }
-
-        function validateEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-
-        function validatePhone(phone) {
-            const cleaned = phone.replace(/\D/g, '');
-            return cleaned.length >= 9 && cleaned.length <= 15;
-        }
-
-        // Toast helper
-        const toastEl = document.getElementById('toast');
-        let toastTimer = null;
-
-        function showToast(message, type = 'success') {
-            if (!toastEl) return;
-            toastEl.className = 'toast ' + (type === 'error' ? 'error' : 'success') + ' show';
-            toastEl.textContent = message;
-            if (toastTimer) clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                toastEl.classList.remove('show');
-            }, 4000);
-        }
-
-        // Form submission
         document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Ensure we're validating the final step
-            if (!validateStep(currentStep)) return;
-
-            // collect data
-            const formData = new FormData();
-            const fields = [
-                'namaLengkap', 'email', 'telepon', 'kota', 'alamat',
-                'pendidikan', 'jurusan', 'pengalaman', 'deskripsiPengalaman', 'mataPelajaran',
-                'metodePengajaran', 'ekspektasiHonor'
-            ];
-            fields.forEach(k => {
-                const el = document.getElementById(k);
-                if (el) formData.append(k, el.value);
-            });
-
-            const jenjang = Array.from(document.querySelectorAll('#jenjangGroup input[type="checkbox"]:checked'))
-                .map(i => i.value);
-            const hari = Array.from(document.querySelectorAll('#hariGroup input[type="checkbox"]:checked')).map(i =>
-                i.value);
-            const waktu = Array.from(document.querySelectorAll('#waktuGroup input[type="checkbox"]:checked')).map(
-                i => i.value);
-
-            formData.append('jenjang', JSON.stringify(jenjang));
-            formData.append('hari', JSON.stringify(hari));
-            formData.append('waktu', JSON.stringify(waktu));
-
-            // file (optional)
-            const fileEl = document.getElementById('cvUpload');
-            if (fileEl && fileEl.files && fileEl.files[0]) {
-                const file = fileEl.files[0];
-                if (file.size > 5 * 1024 * 1024) {
-                    showToast('Ukuran file maksimal 5MB', 'error');
-                    return;
-                }
-                formData.append('cv', file);
+            if (!validateStep(currentStep)) {
+                e.preventDefault();
             }
-
-            // show sending toast
-            showToast('Mengirim pendaftaran...', 'success');
-
-            // --- Real request: ganti URL '/api/pendaftaran-guru' sesuai backend Anda ---
-            fetch('/api/pendaftaran-guru', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(async r => {
-                    // try parse JSON, but be tolerant if not JSON
-                    const json = await r.json().catch(() => ({}));
-                    if (r.ok && (json.ok === undefined || json.ok === true)) {
-                        // success
-                        document.getElementById('registrationForm').style.display = 'none';
-                        document.getElementById('progressSteps').style.display = 'none';
-                        document.getElementById('successMessage').classList.add('show');
-                        showToast('Pendaftaran berhasil dikirim. Terima kasih!', 'success');
-                    } else {
-                        const msg = json.message || 'Gagal mengirim pendaftaran';
-                        showToast(msg, 'error');
-                    }
-                })
-                .catch(err => {
-                    showToast('Terjadi kesalahan jaringan. Silakan coba lagi.', 'error');
-                    console.error('Submit error:', err);
-
-                    // Uncomment the block below to simulate success locally if backend not ready:
-                    /*
-                    setTimeout(() => {
-                        document.getElementById('registrationForm').style.display = 'none';
-                        document.getElementById('progressSteps').style.display = 'none';
-                        document.getElementById('successMessage').classList.add('show');
-                        showToast('Pendaftaran berhasil dikirim. Terima kasih!', 'success');
-                    }, 1100);
-                    */
-                });
         });
-
-        // Make progress steps clickable (with validation checks)
-        document.querySelectorAll('.progress-steps .step').forEach(s => {
-            s.addEventListener('click', () => {
-                const step = Number(s.dataset.step);
-                if (step > currentStep) {
-                    for (let st = 1; st < step; st++) {
-                        if (!validateStep(st)) return;
-                    }
-                }
-                showStep(step);
-            });
-            // keyboard support
-            s.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    s.click();
-                }
-            });
-        });
-
-        // Prevent enter from submitting when focusing inputs (except textarea)
-        document.querySelectorAll('#registrationForm input').forEach(i => {
-            i.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && i.tagName !== 'TEXTAREA') {
-                    e.preventDefault();
-                }
-            });
-        });
-
-        // set initial scroll position (optional)
-        window.scrollTo(0, 0);
     </script>
+
 </body>
 
 </html>
