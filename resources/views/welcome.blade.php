@@ -1376,7 +1376,7 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('auth.google.redirect') }}" class="btn-cta">Login</a>
+                    <a href="{{ route('login') }}" class="btn-cta" id="loginBtnHeader">Login</a>
                 @endauth
 
                 <button class="hamburger" id="hamburger" aria-controls="mobileDrawer" aria-expanded="false"
@@ -1627,18 +1627,18 @@
                 <div style="position:sticky;top:50px;">
                     <div class="team-grid">
                         <div class="team-card">
-                            <div class="team-avatar">N</div>
+                            <div class="team-avatar">B</div>
                             <strong>budi</strong>
                             <div class="small-muted">Matematika</div>
                         </div>
                         <div class="team-card">
-                            <div class="team-avatar">m</div>
+                            <div class="team-avatar">W</div>
                             <strong>Winda Nur Permata</strong>
-                            <div class="small-muted">Bahasa Thailand</div>
+                            <div class="small-muted">TIK</div>
                         </div>
                         <div class="team-card">
-                            <div class="team-avatar">N</div>
-                            <strong>Ikan Goreng Bin Tomat</strong>
+                            <div class="team-avatar">T</div>
+                            <strong>Tumi</strong>
                             <div class="small-muted">Bahasa • TPS</div>
                         </div>
                     </div>
@@ -1808,6 +1808,96 @@
             </div>
         </div>
     </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="section-title">
+                <h2>FAQ <span class="gradient-text">SmartClass</span></h2>
+                <p class="small-muted">Jawaban cepat sebelum kamu mulai belajar bersama kami</p>
+            </div>
+
+            <div class="faq-grid">
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Untuk siapa layanan SmartClass?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        SmartClass ditujukan untuk siswa <strong>SD, SMP, hingga SMA/SMK</strong>
+                        yang ingin meningkatkan prestasi akademik secara terarah dan konsisten.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Apakah SmartClass cocok untuk siswa yang tertinggal pelajaran?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Sangat cocok. Sistem kami fokus pada <strong>pendekatan personal</strong>,
+                        sehingga materi disesuaikan dengan kemampuan dan kebutuhan masing-masing siswa.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Bagaimana sistem pembayaran di SmartClass?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Pembayaran dilakukan secara <strong>bulanan</strong> sesuai paket yang dipilih
+                        dan dikonfirmasi langsung oleh admin setelah pendaftaran.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Apakah orang tua bisa memantau perkembangan anak?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Bisa. Orang tua akan mendapatkan <strong>laporan perkembangan</strong>
+                        dan evaluasi hasil belajar secara berkala dari tutor.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Jika tidak cocok dengan tutor, apakah bisa ganti?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Bisa. SmartClass memberikan <strong>opsi pergantian tutor</strong>
+                        agar siswa merasa nyaman dan proses belajar tetap optimal.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question">
+                        Berapa lama durasi belajar setiap pertemuan?
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        Durasi belajar umumnya <strong>60–90 menit per sesi</strong>,
+                        tergantung paket dan jenjang yang dipilih.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.querySelectorAll('.faq-question').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.faq-item');
+                const open = item.classList.contains('active');
+
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+                if (!open) item.classList.add('active');
+            });
+        });
+    </script>
 
     <!-- FOOTER -->
     <footer class="footer" id="kontak">
