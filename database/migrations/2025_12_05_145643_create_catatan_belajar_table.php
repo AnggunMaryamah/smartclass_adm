@@ -9,15 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('catatan_belajar', function (Blueprint $table) {
-<<<<<<< HEAD
             $table->unsignedBigInteger('materi_id')->nullable();
-=======
-
             // primary key
             $table->uuid('id')->primary();
 
             // relasi
->>>>>>> 340ac98 (ini admin.pembayaran)
             $table->uuid('siswa_id');
             $table->uuid('kelas_id');
 

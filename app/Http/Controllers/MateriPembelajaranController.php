@@ -55,7 +55,6 @@ class MateriPembelajaranController extends Controller
             'konten'     => 'nullable|string',
             'keterangan' => 'nullable|string',
             'file_path'  => 'nullable|file|mimes:pdf|max:10240',
-            'video_url'  => 'nullable|url',
             'deadline'   => 'nullable|date',
         ]);
 
@@ -76,7 +75,6 @@ class MateriPembelajaranController extends Controller
             'judul'      => $validated['judul'],
             'konten'     => $validated['konten'] ?? null,
             'keterangan' => $validated['keterangan'] ?? null,
-            'video_url'  => $validated['video_url'] ?? null,
             'file_path'  => $pathPdf,
             // tugas_id diisi setelah tugas dibuat (untuk kuis/ujian)
         ]);
@@ -140,7 +138,6 @@ class MateriPembelajaranController extends Controller
             'konten'     => 'nullable|string',
             'keterangan' => 'nullable|string',
             'file_path'  => 'nullable|file|mimes:pdf|max:10240',
-            'video_url'  => 'nullable|url',
         ]);
 
         $materi = MateriPembelajaran::findOrFail($materiId);
@@ -152,7 +149,6 @@ class MateriPembelajaranController extends Controller
             'judul'      => $validated['judul'],
             'konten'     => $validated['konten'] ?? null,
             'keterangan' => $validated['keterangan'] ?? null,
-            'video_url'  => $validated['video_url'] ?? null,
         ];
 
         if ($request->hasFile('file_path')) {

@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'check.active' => \App\Http\Middleware\CheckActive::class,
+            'check.materi.completion' => \App\Http\Middleware\CheckMateriCompletion::class,
         ]);
     })
 

@@ -3,25 +3,21 @@
 // ==================== IMPORT KAMU (LENGKAP) + TAMBAH TIM ====================
 use App\Http\Controllers\Admin\AdminPembayaranController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\GuruController;
+use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DataKelasController;
 use App\Http\Controllers\Guru\TugasController;
+use App\Http\Controllers\GuruController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\MateriPembelajaranController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\SiswaKelasController;
+use App\Http\Controllers\Siswa\KuisController;
 use App\Http\Controllers\TinyMceUploadController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SiswaKelasController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\Auth\SocialAuthController;
-
-
-// TAMBAH DARI TIM (TIDAK BENTROK)
-use App\Http\Controllers\DataKelasController;
-use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\JenjangController;
-
 
 // ===================== AUTH & DASHBOARD BAWAAN (KAMU) =====================
 Route::get('/', function () {
@@ -75,20 +71,19 @@ Route::prefix('admin')
             ->name('payments.verify');
     });
 
-
 // ===================== GURU (KAMU 100% - SUDAH LENGKAP) =====================
-Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(function () {
+Route::prefix('guru')->name('guru.')->middleware(['auth', 'role:guru'])->group(function () {
     Route::get('/dashboard', [GuruController::class, 'index'])->name('dashboard');
 
     Route::prefix('kelas')->name('kelas.')->group(function () {
-    Route::get('/', [GuruController::class, 'kelas'])->name('index');
-    Route::get('/tambah', [GuruController::class, 'kelasCreate'])->name('create');
-    Route::post('/', [GuruController::class, 'kelasStore'])->name('store');
-    Route::get('/{id}', [GuruController::class, 'kelasDetail'])->name('show');
-    Route::get('/{id}/edit', [GuruController::class, 'kelasEdit'])->name('edit');
-    Route::put('/{id}', [GuruController::class, 'kelasUpdate'])->name('update');
-    Route::delete('/{id}', [GuruController::class, 'kelasDestroy'])->name('destroy');
-    Route::patch('/{id}/toggle-status', [GuruController::class, 'toggleStatusKelas'])->name('toggle-status');
+        Route::get('/', [GuruController::class, 'kelas'])->name('index');
+        Route::get('/tambah', [GuruController::class, 'kelasCreate'])->name('create');
+        Route::post('/', [GuruController::class, 'kelasStore'])->name('store');
+        Route::get('/{id}', [GuruController::class, 'kelasDetail'])->name('show');
+        Route::get('/{id}/edit', [GuruController::class, 'kelasEdit'])->name('edit');
+        Route::put('/{id}', [GuruController::class, 'kelasUpdate'])->name('update');
+        Route::delete('/{id}', [GuruController::class, 'kelasDestroy'])->name('destroy');
+        Route::patch('/{id}/toggle-status', [GuruController::class, 'toggleStatusKelas'])->name('toggle-status');
 
         Route::post('/kelas/tambah-siswa', [\App\Http\Controllers\SiswaKelasController::class, 'tambahSiswaKeKelas'])->name('kelas.tambah-siswa');
         Route::delete('/kelas/{kelasId}/siswa/{siswaId}', [\App\Http\Controllers\SiswaKelasController::class, 'hapusSiswaDariKelas'])->name('kelas.hapus-siswa');
@@ -104,7 +99,7 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
         Route::put('/{materiId}', [MateriPembelajaranController::class, 'update'])->name('update');
         Route::delete('/{materiId}', [MateriPembelajaranController::class, 'destroy'])->name('destroy');
     });
-    Route::get('/pembayaran', [GuruController::class, 'pembayaran'])->name('pembayaran.index');  
+    Route::get('/pembayaran', [GuruController::class, 'pembayaran'])->name('pembayaran.index');
     Route::get('/laporan-siswa', [GuruController::class, 'laporanSiswa'])->name('laporan_siswa.index');
     Route::get('/laporan-siswa', [GuruController::class, 'laporan'])->name('laporan_siswa.index');
     Route::get('/laporan-siswa/kelas/{kelasId}', [GuruController::class, 'laporanSiswaDaftarKelas'])->name('laporan_siswa.daftar');
@@ -121,58 +116,118 @@ Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(fu
     Route::put('/laporan-siswa/update/{laporan_id}', [GuruController::class, 'updateLaporanSiswa'])->name('laporan_siswa.update');
     Route::delete('/laporan-siswa/hapus/{laporan_id}', [GuruController::class, 'destroyLaporanSiswa'])->name('laporan_siswa.destroy');
     // kuis dan tugas siswa
-Route::prefix('kelas/{kelasId}/tugas')->name('tugas.')->group(function () {
-    Route::get('/', [TugasController::class, 'index'])->name('index');
-    Route::get('/create', [TugasController::class, 'create'])->name('create');
-    Route::post('/', [TugasController::class, 'store'])->name('store');
+    Route::prefix('kelas/{kelasId}/tugas')->name('tugas.')->group(function () {
+        Route::get('/', [TugasController::class, 'index'])->name('index');
+        Route::get('/create', [TugasController::class, 'create'])->name('create');
+        Route::post('/', [TugasController::class, 'store'])->name('store');
 
-    // kelola soal
-    Route::get('/{tugas}/soal', [TugasController::class, 'editSoal'])->name('soal.edit');
-    Route::post('/{tugas}/soal', [TugasController::class, 'storeSoal'])->name('soal.store');
-}); // <-- PASTIKAN INI ADA
+        // kelola soal
+        Route::get('/{tugas}/soal', [TugasController::class, 'editSoal'])->name('soal.edit');
+        Route::post('/{tugas}/soal', [TugasController::class, 'storeSoal'])->name('soal.store');
 
-// route hapus tugas (DI LUAR grup di atas)
-Route::delete('/kelas/{kelasId}/tugas/{tugas}', [TugasController::class, 'destroy'])
-    ->name('tugas.destroy');
+        // ✅ PUBLISH/UNPUBLISH (MASIH DI DALAM GROUP)
+        Route::post('/{tugas}/publish', [TugasController::class, 'publish'])->name('publish');
+        Route::post('/{tugas}/unpublish', [TugasController::class, 'unpublish'])->name('unpublish');
 
-Route::post('/upload-image', [TinyMceUploadController::class, 'upload'])->name('upload.image');
-Route::get('/siswa', [GuruController::class, 'siswa'])->name('siswa.index');
-Route::get('/laporan', [GuruController::class, 'laporan'])->name('laporan.index');
-Route::get('/transaksi', [GuruController::class, 'transaksi'])->name('transaksi.index');
-Route::get('/profil', [GuruController::class, 'profil'])->name('profil.index');
-Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
-}); // <-- kurung tutup grup guru
-
-// ===================== SISWA (KAMU 100% - SUDAH LENGKAP) =====================
-Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group(function () {
-    Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
-
-    Route::get('/kelas', [SiswaController::class, 'kelas'])->name('kelas.index');
-    Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])->name('kelas.riwayat'); 
-    Route::get('/kelas/{kelas}/materi/{materi?}', [SiswaKelasController::class, 'read'])->name('kelas.read'); 
-    Route::post('/kelas/{kelas}/materi/{materi}/complete',[SiswaKelasController::class, 'markComplete'])->name('kelas.materi.complete');
-    
-    Route::get('/tugas', [SiswaController::class, 'tugas'])->name('tugas.index');
-
-    Route::get('/pembayaran', [SiswaController::class, 'pembayaran'])->name('pembayaran.index');
-    Route::post('/pembayaran', [SiswaController::class, 'storePembayaran'])->name('pembayaran.store');
-    Route::get('/pembayaran/{pembayaran}', [SiswaController::class, 'showPembayaran'])->name('pembayaran.show');
-
-    Route::get('/transaksi', [SiswaController::class, 'transaksi'])->name('transaksi.index');
-
-    Route::get('/profil', [SiswaController::class, 'profil'])->name('profil.index');
-    Route::put('/profil', [SiswaController::class, 'updateProfil'])->name('profil.update');
-    Route::post('/catatan', [SiswaController::class, 'storeCatatan'])->name('catatan.store');
-});
-// Kuis & Ujian Routes
-    Route::prefix('kuis')->name('kuis.')->group(function () {
-        Route::get('/{tugas}', [App\Http\Controllers\Siswa\KuisController::class, 'show'])->name('show');
-        Route::post('/{tugas}/start', [App\Http\Controllers\Siswa\KuisController::class, 'start'])->name('start');
-        Route::get('/attempt/{attempt}', [App\Http\Controllers\Siswa\KuisController::class, 'attempt'])->name('attempt');
-        Route::post('/attempt/{attempt}/submit', [App\Http\Controllers\Siswa\KuisController::class, 'submit'])->name('submit');
-        Route::get('/result/{attempt}', [App\Http\Controllers\Siswa\KuisController::class, 'result'])->name('result');
-        Route::get('/{tugas}/riwayat', [App\Http\Controllers\Siswa\KuisController::class, 'riwayat'])->name('riwayat');
+        // ✅ HAPUS (MASIH DI DALAM GROUP)
+        Route::delete('/{tugas}', [TugasController::class, 'destroy'])->name('destroy');
     });
+
+    Route::post('/upload-image', [TinyMceUploadController::class, 'upload'])->name('upload.image');
+    Route::get('/siswa', [GuruController::class, 'siswa'])->name('siswa.index');
+    Route::get('/laporan', [GuruController::class, 'laporan'])->name('laporan.index');
+    Route::get('/transaksi', [GuruController::class, 'transaksi'])->name('transaksi.index');
+    Route::get('/profil', [GuruController::class, 'profil'])->name('profil.index');
+    Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.update');
+});
+
+// ===================== SISWA (LENGKAP & BENAR) =====================
+Route::prefix('siswa')->name('siswa.')->middleware(['auth', 'role:siswa'])->group(function () {
+
+    // ================= DASHBOARD =================
+    Route::get('/dashboard', [SiswaController::class, 'dashboard'])
+        ->name('dashboard');
+
+    // ================= KELAS =================
+    Route::get('/kelas', [SiswaController::class, 'kelas'])
+        ->name('kelas.index');
+
+    Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])
+        ->name('kelas.riwayat');
+
+    // ================= MASUK KELAS (WAJIB ADA, JANGAN HAPUS) =================
+    Route::get('/kelas/{kelas}', [SiswaKelasController::class, 'read'])
+        ->name('kelas.read.index');
+
+    // ================= BACA MATERI =================
+    Route::get('/kelas/{kelas}/materi/{materi?}', [SiswaKelasController::class, 'read'])
+        ->name('kelas.read');
+
+    // ================= PROGRESS MATERI =================
+    Route::post('/kelas/{kelas}/materi/{materi}/complete', [SiswaKelasController::class, 'markComplete'])
+        ->name('kelas.materi.complete');
+
+    Route::post('/kelas/{kelas}/materi/{materi}/uncomplete', [SiswaKelasController::class, 'markUncomplete'])
+        ->name('kelas.materi.uncomplete');
+
+    Route::prefix('kuis')->name('kuis.')->group(function () {
+
+        // DAFTAR KUIS & UJIAN PER KELAS
+        Route::get('/kelas/{kelas}', [\App\Http\Controllers\Siswa\KuisController::class, 'index'])
+            ->name('index');
+
+        // DETAIL KUIS / UJIAN
+        Route::get('/{tugas}', [\App\Http\Controllers\Siswa\KuisController::class, 'show'])
+            ->name('show');
+
+        // MULAI KUIS (POST)
+        Route::post('/{tugas}/start', [\App\Http\Controllers\Siswa\KuisController::class, 'start'])
+            ->name('start');
+
+        // HALAMAN MENGERJAKAN (GET)
+        Route::get('/{tugas}/attempt', [\App\Http\Controllers\Siswa\KuisController::class, 'attempt'])
+            ->name('attempt');
+            
+
+        // SUBMIT JAWABAN (POST)
+        Route::post('/{tugas}/submit', [\App\Http\Controllers\Siswa\KuisController::class, 'submit'])
+            ->name('submit');
+
+        // HASIL (GET)
+        Route::get('/{tugas}/result', [\App\Http\Controllers\Siswa\KuisController::class, 'result'])
+            ->name('result');
+
+        // RIWAYAT (GET)
+        Route::get('/{tugas}/riwayat', [\App\Http\Controllers\Siswa\KuisController::class, 'riwayat'])
+            ->name('riwayat');
+
+    });
+
+    // ================= TUGAS =================
+    Route::get('/tugas', [SiswaController::class, 'tugas'])
+        ->name('tugas.index');
+
+    // ================= PEMBAYARAN =================
+    Route::get('/pembayaran', [SiswaController::class, 'pembayaran'])
+        ->name('pembayaran.index');
+
+    Route::post('/pembayaran', [SiswaController::class, 'storePembayaran'])
+        ->name('pembayaran.store');
+
+    Route::get('/pembayaran/{pembayaran}', [SiswaController::class, 'showPembayaran'])
+        ->name('pembayaran.show');
+
+    // ================= TRANSAKSI =================
+    Route::get('/transaksi', [SiswaController::class, 'transaksi'])
+        ->name('transaksi.index');
+
+    // ================= PROFIL =================
+    Route::get('/profil', [SiswaController::class, 'profil'])
+        ->name('profil.index');
+
+    Route::put('/profil', [SiswaController::class, 'updateProfil'])
+        ->name('profil.update');
+});
 
 // ===================== TAMBAHAN DARI TIM (TIDAK BENTROK) =====================
 Route::get('/beranda', [HomeController::class, 'index'])->name('home');
@@ -200,7 +255,6 @@ Route::get('/kontak', [ContactController::class, 'index'])
 
 Route::post('/kontak/kirim', [ContactController::class, 'kirim'])
     ->name('kontak.kirim');
-
 
 // Test route dari tim (opsional)
 Route::get('/jenjang/test-route', function () {

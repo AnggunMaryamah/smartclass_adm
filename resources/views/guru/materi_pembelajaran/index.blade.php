@@ -16,38 +16,46 @@
             </div>
             <div class="header-right">
                 <a href="{{ route('guru.kelas.index') }}" class="btn-secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
                     Kembali
                 </a>
                 <a href="{{ route('guru.materi_pembelajaran.create', $kelas->id) }}" class="btn-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
                     Tambah Materi
                 </a>
+                <a href="{{ route('guru.tugas.index', $kelas->id) }}" class="btn btn-outline-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Tambah Tugas
+                </a>
             </div>
         </div>
 
         {{-- Alert Success --}}
-        @if(session('success'))
+        @if (session('success'))
             <div class="alert alert-success" id="success-alert">
                 <div class="alert-content">
                     <svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                         stroke-linecap="round" stroke-linejoin="round">
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                     <span>{{ session('success') }}</span>
                 </div>
                 <button type="button" class="alert-close" onclick="closeAlert()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
@@ -80,9 +88,9 @@
                                 {{-- JUDUL MATERI --}}
                                 <td>
                                     <div class="materi-title-wrapper">
-                                        <svg class="title-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                             stroke-linecap="round" stroke-linejoin="round">
+                                        <svg class="title-icon" xmlns="http://www.w3.org/2000/svg" width="18"
+                                            height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                                             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                                         </svg>
@@ -93,30 +101,33 @@
                                 {{-- JENIS --}}
                                 <td>
                                     <div class="tipe-badge tipe-{{ $materi->tipe }}">
-                                        @if($materi->tipe === 'bacaan')
-                                            <svg class="tipe-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round">
+                                        @if ($materi->tipe === 'bacaan')
+                                            <svg class="tipe-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                                height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z">
+                                                </path>
                                             </svg>
                                             <span>Bacaan</span>
                                         @elseif($materi->tipe === 'kuis')
-                                            <svg class="tipe-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round">
+                                            <svg class="tipe-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                                height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M12 20h9"></path>
                                                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
                                             </svg>
                                             <span>Kuis</span>
                                         @elseif($materi->tipe === 'ujian')
-                                            <svg class="tipe-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round">
+                                            <svg class="tipe-icon" xmlns="http://www.w3.org/2000/svg" width="16"
+                                                height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                                 <polyline points="14 2 14 8 20 8"></polyline>
-                                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                <line x1="16" y1="13" x2="8" y2="13">
+                                                </line>
+                                                <line x1="16" y1="17" x2="8" y2="17">
+                                                </line>
                                                 <polyline points="10 9 9 9 8 9"></polyline>
                                             </svg>
                                             <span>Ujian</span>
@@ -126,17 +137,17 @@
 
                                 {{-- KETERANGAN --}}
                                 <td>
-                                    @if($materi->keterangan)
+                                    @if ($materi->keterangan)
                                         <span class="keterangan-text">{{ Str::limit($materi->keterangan, 50) }}</span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
 
-                                    @if($materi->file_path)
+                                    @if ($materi->file_path)
                                         <div class="file-indicator">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round">
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                                 <polyline points="14 2 14 8 20 8"></polyline>
                                             </svg>
@@ -144,84 +155,140 @@
                                         </div>
                                     @endif
 
-                                    @if($materi->video_url)
+                                    @if ($materi->video_url)
                                         <div class="video-indicator">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round">
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <polygon points="23 7 16 12 23 17 23 7"></polygon>
-                                                <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                                                <rect x="1" y="5" width="15" height="14" rx="2"
+                                                    ry="2"></rect>
                                             </svg>
                                             <span>Video</span>
                                         </div>
                                     @endif
                                 </td>
 
-{{-- AKSI --}}
-<td>
-    <div class="action-buttons">
-        @if($materi->tipe === 'bacaan')
-            {{-- Bacaan: Edit konten materi --}}
-            <a href="{{ route('guru.materi_pembelajaran.edit', [$kelas->id, $materi->id]) }}"
-               class="btn-edit" title="Edit Materi">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"></path>
-                </svg>
-            </a>
-        @else
-            {{-- Kuis / Ujian: tombol Kelola Soal pakai tugas_id --}}
-            @if($materi->tugas_id)
-                <a href="{{ route('guru.tugas.soal.edit', [$kelas->id, $materi->tugas_id]) }}"
-                   class="btn-kelola-soal" title="Kelola Soal {{ ucfirst($materi->tipe) }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                         viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <path d="M12 18l4-4-4-4"></path>
-                    </svg>
-                </a>
-            @endif
-        @endif
+                                {{-- AKSI --}}
+                                <td>
+                                    <div class="action-buttons">
+                                        @if ($materi->tipe === 'bacaan')
+                                            {{-- ========== BACAAN: Edit Materi ========== --}}
+                                            <a href="{{ route('guru.materi_pembelajaran.edit', [$kelas->id, $materi->id]) }}"
+                                                class="btn-edit" title="Edit Materi">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7">
+                                                    </path>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"></path>
+                                                </svg>
+                                            </a>
+                                        @else
+                                            {{-- ========== KUIS / UJIAN ========== --}}
 
-        {{-- Hapus: selalu ada --}}
-        <button type="button" class="btn-delete"
-                onclick="openDeleteModal('{{ $materi->id }}', '{{ $materi->judul }}')"
-                title="Hapus">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                 viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6l-1 14H6L5 6"></path>
-                <path d="M10 11v6"></path>
-                <path d="M14 11v6"></path>
-                <path d="M9 6l1-3h4l1 3"></path>
-            </svg>
-        </button>
+                                            {{-- 1. Tombol Kelola Soal --}}
+                                            @if ($materi->tugas_id)
+                                                <a href="{{ route('guru.tugas.soal.edit', [$kelas->id, $materi->tugas_id]) }}"
+                                                    class="btn-kelola-soal" title="Kelola Soal">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path
+                                                            d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+                                                        </path>
+                                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                                    </svg>
+                                                </a>
+                                            @endif
 
-        <form id="delete-form-{{ $materi->id }}"
-              action="{{ route('guru.materi_pembelajaran.destroy', [$kelas->id, $materi->id]) }}"
-              method="POST" style="display:none;">
-            @csrf
-            @method('DELETE')
-        </form>
-    </div>
-</td>
+                                            {{-- 2. Badge Status dengan Publish/Unpublish --}}
+                                            @php
+                                                $tugas = \App\Models\Tugas::find($materi->tugas_id);
+                                            @endphp
+
+                                            @if ($tugas)
+                                                @if ($tugas->status === 'active')
+                                                    {{-- Status Aktif: Tombol Unpublish --}}
+                                                    <button type="button" class="btn-status btn-status-active"
+                                                        onclick="openUnpublishModal('{{ $tugas->id }}', '{{ $materi->judul }}')"
+                                                        title="Klik untuk Unpublish">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                            height="14" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                                        </svg>
+                                                        Aktif
+                                                    </button>
+                                                @else
+                                                    {{-- Status Draft: Tombol Publish --}}
+                                                    <button type="button" class="btn-status btn-status-draft"
+                                                        onclick="openPublishModal('{{ $tugas->id }}', '{{ $materi->judul }}')"
+                                                        title="Klik untuk Publish">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14"
+                                                            height="14" viewBox="0 0 24 24" fill="none"
+                                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round">
+                                                            <circle cx="12" cy="12" r="10"></circle>
+                                                        </svg>
+                                                        Draft
+                                                    </button>
+                                                @endif
+
+                                                {{-- Form Hidden untuk Publish --}}
+                                                <form id="publish-form-{{ $tugas->id }}"
+                                                    action="{{ route('guru.tugas.publish', [$kelas->id, $tugas->id]) }}"
+                                                    method="POST" style="display:none;">
+                                                    @csrf
+                                                </form>
+
+                                                {{-- Form Hidden untuk Unpublish --}}
+                                                <form id="unpublish-form-{{ $tugas->id }}"
+                                                    action="{{ route('guru.tugas.unpublish', [$kelas->id, $tugas->id]) }}"
+                                                    method="POST" style="display:none;">
+                                                    @csrf
+                                                </form>
+                                            @endif
+                                        @endif
+
+                                        {{-- 3. Tombol Hapus (selalu ada) --}}
+                                        <button type="button" class="btn-delete"
+                                            onclick="openDeleteModal('{{ $materi->id }}', '{{ $materi->judul }}')"
+                                            title="Hapus">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                <path d="M19 6l-1 14H6L5 6"></path>
+                                                <path d="M10 11v6"></path>
+                                                <path d="M14 11v6"></path>
+                                                <path d="M9 6l1-3h4l1 3"></path>
+                                            </svg>
+                                        </button>
+
+                                        <form id="delete-form-{{ $materi->id }}"
+                                            action="{{ route('guru.materi_pembelajaran.destroy', [$kelas->id, $materi->id]) }}"
+                                            method="POST" style="display:none;">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    </div>
+                                </td>
+
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="5" class="empty-state">
-                                    <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48"
-                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                         stroke-linecap="round" stroke-linejoin="round">
+                                    <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" width="48"
+                                        height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                                     </svg>
                                     <p class="empty-text">Belum ada materi</p>
-                                    <a href="{{ route('guru.materi_pembelajaran.create', $kelas->id) }}" class="btn-add-first">
+                                    <a href="{{ route('guru.materi_pembelajaran.create', $kelas->id) }}"
+                                        class="btn-add-first">
                                         Tambah Materi Pertama
                                     </a>
                                 </td>
@@ -232,50 +299,53 @@
             </div>
 
             {{-- ✅ PAGINATION (SELALU TAMPIL) --}}
-            @if($materis->total() > 0)
+            @if ($materis->total() > 0)
                 <div class="pagination-wrapper">
                     <div class="pagination-info">
                         <span class="pagination-text">
-                            Menampilkan {{ $materis->firstItem() }} - {{ $materis->lastItem() }} dari {{ $materis->total() }} materi
+                            Menampilkan {{ $materis->firstItem() }} - {{ $materis->lastItem() }} dari
+                            {{ $materis->total() }} materi
                         </span>
                     </div>
 
                     <div class="pagination-buttons">
                         {{-- ✅ TOMBOL PREVIOUS (KIRI) --}}
-                        @if($materis->onFirstPage())
+                        @if ($materis->onFirstPage())
                             <button class="page-btn disabled" disabled>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="15 18 9 12 15 6"></polyline>
                                 </svg>
                             </button>
                         @else
                             <a href="{{ $materis->previousPageUrl() }}" class="page-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="15 18 9 12 15 6"></polyline>
                                 </svg>
                             </a>
                         @endif
 
                         {{-- ✅ NOMOR HALAMAN --}}
-                        @if($materis->lastPage() > 1)
+                        @if ($materis->lastPage() > 1)
                             @php
                                 $start = max(1, $materis->currentPage() - 2);
                                 $end = min($materis->lastPage(), $materis->currentPage() + 2);
                             @endphp
 
                             {{-- First page --}}
-                            @if($start > 1)
+                            @if ($start > 1)
                                 <a href="{{ $materis->url(1) }}" class="page-number">1</a>
-                                @if($start > 2)
+                                @if ($start > 2)
                                     <span class="page-dots">...</span>
                                 @endif
                             @endif
 
                             {{-- Page numbers --}}
-                            @for($page = $start; $page <= $end; $page++)
-                                @if($page == $materis->currentPage())
+                            @for ($page = $start; $page <= $end; $page++)
+                                @if ($page == $materis->currentPage())
                                     <span class="page-number active">{{ $page }}</span>
                                 @else
                                     <a href="{{ $materis->url($page) }}" class="page-number">{{ $page }}</a>
@@ -283,11 +353,12 @@
                             @endfor
 
                             {{-- Last page --}}
-                            @if($end < $materis->lastPage())
-                                @if($end < $materis->lastPage() - 1)
+                            @if ($end < $materis->lastPage())
+                                @if ($end < $materis->lastPage() - 1)
                                     <span class="page-dots">...</span>
                                 @endif
-                                <a href="{{ $materis->url($materis->lastPage()) }}" class="page-number">{{ $materis->lastPage() }}</a>
+                                <a href="{{ $materis->url($materis->lastPage()) }}"
+                                    class="page-number">{{ $materis->lastPage() }}</a>
                             @endif
                         @else
                             {{-- ✅ JIKA HANYA 1 HALAMAN --}}
@@ -295,17 +366,19 @@
                         @endif
 
                         {{-- ✅ TOMBOL NEXT (KANAN) --}}
-                        @if($materis->hasMorePages())
+                        @if ($materis->hasMorePages())
                             <a href="{{ $materis->nextPageUrl() }}" class="page-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </a>
                         @else
                             <button class="page-btn disabled" disabled>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="9 18 15 12 9 6"></polyline>
                                 </svg>
                             </button>
@@ -323,7 +396,8 @@
             <div class="modal-icon-wrapper">
                 <div class="modal-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
-                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
@@ -335,6 +409,65 @@
             <div class="modal-actions">
                 <button type="button" class="modal-btn btn-cancel" onclick="closeDeleteModal()">Batal</button>
                 <button type="button" class="modal-btn btn-confirm" onclick="confirmDelete()">Hapus</button>
+            </div>
+        </div>
+    </div>
+    {{-- Modal Publish --}}
+    <div id="publishModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closePublishModal()"></div>
+        <div class="modal-content">
+            <div class="modal-icon-wrapper">
+                <div class="modal-icon" style="background: linear-gradient(135deg, #D1FAE5, #A7F3D0);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                        fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="modal-title">Publish Kuis/Ujian?</h3>
+            <p class="modal-message" id="publishMateriName"></p>
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 24px;">
+                Siswa akan bisa mengerjakan kuis ini setelah dipublish.
+            </p>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn btn-cancel" onclick="closePublishModal()">Batal</button>
+                <button type="button" class="modal-btn"
+                    style="background: linear-gradient(135deg, #10B981, #059669); color: white;"
+                    onclick="confirmPublish()">
+                    Publish
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal Unpublish --}}
+    <div id="unpublishModal" class="modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeUnpublishModal()"></div>
+        <div class="modal-content">
+            <div class="modal-icon-wrapper">
+                <div class="modal-icon" style="background: linear-gradient(135deg, #FEF3C7, #FDE68A);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                        fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                </div>
+            </div>
+            <h3 class="modal-title">Unpublish Kuis/Ujian?</h3>
+            <p class="modal-message" id="unpublishMateriName"></p>
+            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 24px;">
+                Siswa tidak akan bisa mengakses kuis ini setelah di-unpublish.
+            </p>
+            <div class="modal-actions">
+                <button type="button" class="modal-btn btn-cancel" onclick="closeUnpublishModal()">Batal</button>
+                <button type="button" class="modal-btn"
+                    style="background: linear-gradient(135deg, #F59E0B, #D97706); color: white;"
+                    onclick="confirmUnpublish()">
+                    Unpublish
+                </button>
             </div>
         </div>
     </div>
@@ -374,8 +507,15 @@
         }
 
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* ===== HEADER ===== */
@@ -411,7 +551,8 @@
             gap: 12px;
         }
 
-        .btn-primary, .btn-secondary {
+        .btn-primary,
+        .btn-secondary {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -460,13 +601,27 @@
         }
 
         @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes slideUp {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10px); }
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
         }
 
         .alert-success {
@@ -565,11 +720,27 @@
             border-right: none;
         }
 
-        .col-no { width: 80px; text-align: center; }
-        .col-judul { width: 30%; }
-        .col-tipe { width: 15%; }
-        .col-keterangan { width: 30%; }
-        .col-aksi { width: 120px; text-align: center; }
+        .col-no {
+            width: 80px;
+            text-align: center;
+        }
+
+        .col-judul {
+            width: 30%;
+        }
+
+        .col-tipe {
+            width: 15%;
+        }
+
+        .col-keterangan {
+            width: 30%;
+        }
+
+        .col-aksi {
+            width: 120px;
+            text-align: center;
+        }
 
         .no-text {
             font-size: 1rem;
@@ -629,7 +800,8 @@
             margin-bottom: 6px;
         }
 
-        .file-indicator, .video-indicator {
+        .file-indicator,
+        .video-indicator {
             display: inline-flex;
             align-items: center;
             gap: 4px;
@@ -648,7 +820,9 @@
             color: #92400E;
         }
 
-        .text-muted { color: #9CA3AF; }
+        .text-muted {
+            color: #9CA3AF;
+        }
 
         .action-buttons {
             display: flex;
@@ -656,7 +830,9 @@
             gap: 8px;
         }
 
-        .btn-edit, .btn-delete, .btn-kelola-soal {
+        .btn-edit,
+        .btn-delete,
+        .btn-kelola-soal {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -703,6 +879,48 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
+
+        /* ===== TOMBOL STATUS PUBLISH/UNPUBLISH ===== */
+        .btn-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-status-active {
+            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+            color: #065F46;
+            border: 1px solid #6EE7B7;
+        }
+
+        .btn-status-active:hover {
+            background: #10B981;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-status-draft {
+            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            color: #92400E;
+            border: 1px solid #FCD34D;
+        }
+
+        .btn-status-draft:hover {
+            background: #F59E0B;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
 
         .empty-state {
             padding: 80px 20px !important;
@@ -767,7 +985,8 @@
             align-items: center;
         }
 
-        .page-btn, .page-number {
+        .page-btn,
+        .page-number {
             width: 40px;
             height: 40px;
             display: flex;
@@ -844,8 +1063,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .modal-overlay {
@@ -871,8 +1095,15 @@
         }
 
         @keyframes scaleUp {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .modal-icon-wrapper {
@@ -893,8 +1124,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
         }
 
         .modal-icon svg {
@@ -963,12 +1201,19 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+
             .header-right {
                 width: 100%;
                 justify-content: space-between;
             }
-            .col-no { width: 60px; }
-            .col-keterangan { display: none; }
+
+            .col-no {
+                width: 60px;
+            }
+
+            .col-keterangan {
+                display: none;
+            }
 
             .pagination-wrapper {
                 flex-direction: column;
@@ -982,18 +1227,23 @@
         }
 
         @media (max-width: 480px) {
-            .btn-primary, .btn-secondary {
+
+            .btn-primary,
+            .btn-secondary {
                 padding: 10px 16px;
                 font-size: 0.875rem;
             }
+
             .modal-actions {
                 flex-direction: column;
             }
+
             .modal-btn {
                 width: 100%;
             }
 
-            .page-btn, .page-number {
+            .page-btn,
+            .page-number {
                 width: 36px;
                 height: 36px;
                 font-size: 0.875rem;
@@ -1045,6 +1295,55 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeDeleteModal();
+            }
+        });
+        let publishTugasId = null;
+        let unpublishTugasId = null;
+
+        function openPublishModal(tugasId, materiNama) {
+            publishTugasId = tugasId;
+            document.getElementById('publishMateriName').textContent = materiNama;
+            document.getElementById('publishModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePublishModal() {
+            document.getElementById('publishModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            publishTugasId = null;
+        }
+
+        function confirmPublish() {
+            if (publishTugasId) {
+                document.getElementById('publish-form-' + publishTugasId).submit();
+            }
+        }
+
+        function openUnpublishModal(tugasId, materiNama) {
+            unpublishTugasId = tugasId;
+            document.getElementById('unpublishMateriName').textContent = materiNama;
+            document.getElementById('unpublishModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeUnpublishModal() {
+            document.getElementById('unpublishModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            unpublishTugasId = null;
+        }
+
+        function confirmUnpublish() {
+            if (unpublishTugasId) {
+                document.getElementById('unpublish-form-' + unpublishTugasId).submit();
+            }
+        }
+
+        // Update event listener Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeDeleteModal();
+                closePublishModal();
+                closeUnpublishModal();
             }
         });
     </script>

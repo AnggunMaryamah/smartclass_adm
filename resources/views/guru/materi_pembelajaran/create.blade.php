@@ -137,10 +137,6 @@
             <span class="select-value">
                 @if(old('tipe') === 'bacaan')
                     Materi Bacaan
-                @elseif(old('tipe') === 'kuis')
-                    Kuis
-                @elseif(old('tipe') === 'ujian')
-                    Ujian
                 @else
                     Pilih Jenis Materi
                 @endif
@@ -154,8 +150,6 @@
         <div class="select-options">
             <div class="select-option" data-value="">Pilih Jenis Materi</div>
             <div class="select-option" data-value="bacaan">Materi Bacaan</div>
-            <div class="select-option" data-value="kuis">Kuis</div>
-            <div class="select-option" data-value="ujian">Ujian</div>
         </div>
     </div>
     @error('tipe')
@@ -296,14 +290,6 @@
     @error('keterangan')
         <span class="error-message">{{ $message }}</span>
     @enderror
-</div>
-
-{{-- Info jika tipe = kuis / ujian --}}
-<div id="info-tugas" style="display: none; margin-top: -8px; margin-bottom: 16px;">
-    <p style="font-size: 0.8rem; color: #6B7280; line-height: 1.5;">
-        Setelah menyimpan, Anda akan diarahkan ke halaman untuk mengisi soal 
-        <strong>kuis/ujian</strong>. Konten teks panjang dan upload PDF tidak perlu diisi di sini.
-    </p>
 </div>
 
                 {{-- Buttons (HORIZONTAL DI KANAN) --}}

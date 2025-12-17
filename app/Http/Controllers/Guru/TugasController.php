@@ -79,9 +79,10 @@ class TugasController extends Controller
     {
         abort_if($tugas->kelas_id != $kelasId, 404);
 
+        // PERBAIKAN: Validasi id sekarang string UUID, bukan integer
         $data = $request->validate([
             'soal'                  => 'required|array',
-            'soal.*.id'             => 'nullable|integer|exists:tugas_soals,id',
+            'soal.*.id'             => 'nullable|string|size:36', // UUID 36 karakter
             'soal.*.pertanyaan'     => 'required|string',
             'soal.*.pilihan_a'      => 'required|string',
             'soal.*.pilihan_b'      => 'required|string',
@@ -91,22 +92,22 @@ class TugasController extends Controller
         ]);
 
         foreach ($data['soal'] as $item) {
-            if (!empty($item['id'])) {
-                // update soal lama
-                $soal = TugasSoal::where('tugas_id', $tugas->id)
-                    ->where('id', $item['id'])
-                    ->firstOrFail();
-
-                $soal->update([
-                    'pertanyaan'    => $item['pertanyaan'],
-                    'pilihan_a'     => $item['pilihan_a'],
-                    'pilihan_b'     => $item['pilihan_b'],
-                    'pilihan_c'     => $item['pilihan_c'] ?? null,
-                    'pilihan_d'     => $item['pilihan_d'] ?? null,
-                    'jawaban_benar' => $item['jawaban_benar'],
-                ]);
+            // PERBAIKAN: Cek id valid UUID (36 karakter) dan tidak kosong
+            if (!empty($item['id']) && strlen($item['id']) === 36) {
+                // Update soal existing
+                TugasSoal::where('id', $item['id'])
+                    ->where('tugas_id', $tugas->id)
+                    ->update([
+                        'pertanyaan'    => $item['pertanyaan'],
+                        'pilihan_a'     => $item['pilihan_a'],
+                        'pilihan_b'     => $item['pilihan_b'],
+                        'pilihan_c'     => $item['pilihan_c'] ?? null,
+                        'pilihan_d'     => $item['pilihan_d'] ?? null,
+                        'jawaban_benar' => $item['jawaban_benar'],
+                    ]);
             } else {
-                // buat soal baru
+                // PERBAIKAN: Buat soal baru TANPA field 'id'
+                // Model TugasSoal akan auto-generate UUID di method boot()
                 TugasSoal::create([
                     'tugas_id'       => $tugas->id,
                     'pertanyaan'     => $item['pertanyaan'],
@@ -136,4 +137,34 @@ class TugasController extends Controller
             ->route('guru.tugas.index', $kelasId)
             ->with('success', 'Kuis/ujian berhasil dihapus.');
     }
+    // Publish tugas agar siswa bisa akses
+public function publish($kelasId, Tugas $tugas)
+{
+    abort_if($tugas->kelas_id != $kelasId, 404);
+
+    // Validasi: minimal 1 soal
+    if ($tugas->soals()->count() < 1) {
+        return redirect()
+            ->back()
+            ->with('error', 'Kuis harus memiliki minimal 1 soal sebelum dipublish!');
+    }
+
+    $tugas->update(['status' => 'active']);
+
+    return redirect()
+        ->back()
+        ->with('success', 'Kuis berhasil dipublish! Siswa sekarang bisa mengerjakan.');
+}
+
+// Unpublish tugas (sembunyikan dari siswa)
+public function unpublish($kelasId, Tugas $tugas)
+{
+    abort_if($tugas->kelas_id != $kelasId, 404);
+
+    $tugas->update(['status' => 'pending']);
+
+    return redirect()
+        ->back()
+        ->with('success', 'Kuis belum bisa dilihat siswa.');
+}
 }
