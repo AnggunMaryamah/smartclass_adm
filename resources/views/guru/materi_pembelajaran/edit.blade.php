@@ -573,38 +573,54 @@
             }
         }
     </style>
+{{-- ✅ TinyMCE dari CDN (TANPA API KEY) --}}
+<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
 
-    {{-- ✅ TinyMCE WITH Image Support --}}
-    <script src="https://cdn.tiny.cloud/1/68bvpv4qzyhlp8g7qyzzpsppch2vj7nuznaynd0t8wpndr8t/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
-    <script>
-        tinymce.init({
-            selector: '#konten',
-            height: 500,
-            menubar: false,
-            plugins: 'link lists table code help',
-            toolbar: 'undo redo | blocks | bold italic underline strikethrough | forecolor backcolor | ' +
-                     'alignleft aligncenter alignright alignjustify | ' +
-                     'bullist numlist | link | removeformat | code',
-            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.8; padding: 16px; }',
-            branding: false,
-            promotion: false,
-            // ✅ Gambar yang ada di konten akan tetap tampil
-            valid_elements: '*[*]',
-            extended_valid_elements: 'img[*]',
-            // ✅ Supaya gambar tidak dihapus
-            cleanup: false,
-            verify_html: false
-        });
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof tinymce !== 'undefined') {
+            tinymce.init({
+                selector: '#konten',
+                height: 500,
+                menubar: false,
+                plugins: 'link lists table code help',
+                toolbar: 'undo redo | blocks | bold italic underline strikethrough | forecolor backcolor | ' +
+                         'alignleft aligncenter alignright alignjustify | ' +
+                         'bullist numlist | link | removeformat | code',
+                content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; line-height: 1.8; padding: 16px; }',
+                branding: false,
+                promotion: false,
+                // ✅ Gambar yang ada di konten akan tetap tampil
+                valid_elements: '*[*]',
+                extended_valid_elements: 'img[*]',
+                // ✅ Supaya gambar tidak dihapus
+                cleanup: false,
+                verify_html: false,
+                setup: function(editor) {
+                    editor.on('init', function() {
+                        console.log('✅ TinyMCE loaded!');
+                    });
+                }
+            });
+        } else {
+            console.error('❌ TinyMCE gagal load!');
+        }
 
         // File upload preview
-        document.getElementById('file_path').addEventListener('change', function(e) {
-            const fileName = e.target.files[0]?.name;
-            if (fileName) {
-                const label = document.querySelector('.file-upload-label .upload-text');
-                label.textContent = fileName;
-                label.parentElement.style.borderColor = 'var(--success)';
-                label.parentElement.style.background = '#D1FAE5';
-            }
-        });
-    </script>
+        const fileInput = document.getElementById('file_path');
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name;
+                if (fileName) {
+                    const label = document.querySelector('.file-upload-label .upload-text');
+                    if (label) {
+                        label.textContent = fileName;
+                        label.parentElement.style.borderColor = 'var(--success)';
+                        label.parentElement.style.background = '#D1FAE5';
+                    }
+                }
+            });
+        }
+    });
+</script>
 @endsection
