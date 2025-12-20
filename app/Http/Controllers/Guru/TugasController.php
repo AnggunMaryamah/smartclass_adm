@@ -38,27 +38,42 @@ class TugasController extends Controller
         return view('guru.tugas.create', compact('kelas', 'tipeOptions'));
     }
 
-    // Simpan tugas baru
     public function store(Request $request, $kelasId)
-    {
-        $kelas = Kelas::findOrFail($kelasId);
+{
+    $kelas = Kelas::findOrFail($kelasId);
 
-        $validated = $request->validate([
-            'judul'     => 'required|string|max:255',
-            'deskripsi' => 'nullable|string',
-            'deadline'  => 'nullable|date',
-            'tipe'      => 'required|in:kuis,ujian_subbab,ujian_bab,ujian_akhir',
-        ]);
+    $validated = $request->validate([
+        'judul'     => 'required|string|max:255',
+        'deskripsi' => 'nullable|string',
+        'deadline'  => 'nullable|date',
+        'tipe'      => 'required|in:kuis,ujian_subbab,ujian_bab,ujian_akhir',
+    ]);
 
-        $validated['kelas_id'] = $kelas->id;
-        $validated['status']   = 'pending';
+    // 1. BUAT TUGAS DULU
+    $tugas = Tugas::create([
+        'kelas_id'  => $kelas->id,
+        'judul'     => $validated['judul'],
+        'deskripsi' => $validated['deskripsi'],
+        'deadline'  => $validated['deadline'],
+        'status'    => 'pending',
+        'tipe'      => $validated['tipe'],
+    ]);
 
-        $tugas = Tugas::create($validated);
+    // 2. BUAT RECORD DI MATERI_PEMBELAJARAN (AGAR MUNCUL DI DAFTAR MATERI)
+    \App\Models\MateriPembelajaran::create([
+        'kelas_id'   => $kelas->id,
+        'bab'        => 0, // Default 0 untuk kuis/ujian, bisa diubah nanti
+        'urutan'     => 999, // Prioritas rendah agar muncul di bawah
+        'tipe'       => $validated['tipe'] === 'kuis' ? 'kuis' : 'ujian',
+        'judul'      => $validated['judul'],
+        'keterangan' => $validated['deskripsi'],
+        'tugas_id'   => $tugas->id, // LINK KE TUGAS
+    ]);
 
-        return redirect()
-            ->route('guru.tugas.soal.edit', [$kelas->id, $tugas->id])
-            ->with('success', 'Tugas berhasil dibuat. Silakan tambahkan soal.');
-    }
+    return redirect()
+        ->route('guru.tugas.soal.edit', [$kelas->id, $tugas->id])
+        ->with('success', 'Tugas berhasil dibuat. Silakan tambahkan soal.');
+}
 
     // Form kelola soal
     public function editSoal($kelasId, Tugas $tugas)
@@ -125,18 +140,23 @@ class TugasController extends Controller
             ->with('success', 'Soal berhasil disimpan.');
     }
 
-    // Hapus tugas + semua soal
-    public function destroy($kelasId, Tugas $tugas)
-    {
-        abort_if($tugas->kelas_id != $kelasId, 404);
+   public function destroy($kelasId, Tugas $tugas)
+{
+    abort_if($tugas->kelas_id != $kelasId, 404);
 
-        $tugas->soals()->delete();
-        $tugas->delete();
+    // 1. Hapus record di materi_pembelajaran yang terhubung dengan tugas ini
+    \App\Models\MateriPembelajaran::where('tugas_id', $tugas->id)->delete();
 
-        return redirect()
-            ->route('guru.tugas.index', $kelasId)
-            ->with('success', 'Kuis/ujian berhasil dihapus.');
-    }
+    // 2. Hapus semua soal
+    $tugas->soals()->delete();
+    
+    // 3. Hapus tugas
+    $tugas->delete();
+
+    return redirect()
+        ->route('guru.tugas.index', $kelasId)
+        ->with('success', 'Kuis/ujian berhasil dihapus.');
+}
     // Publish tugas agar siswa bisa akses
 public function publish($kelasId, Tugas $tugas)
 {

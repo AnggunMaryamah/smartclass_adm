@@ -21,13 +21,11 @@ class MateriPembelajaran extends Model
         return $this->belongsTo(Kelas::class, 'kelas_id', 'id');
     }
 
-    // Relasi ke Tugas (Kuis/Ujian)
-    public function tugas()
-    {
-        return $this->hasMany(Tugas::class, 'materi_id')
-            ->where('status', 'active')
-            ->orderBy('created_at', 'asc');
-    }
+    // Relasi ke Tugas (Kuis/Ujian) - 1 MATERI = 1 TUGAS
+public function tugas()
+{
+    return $this->belongsTo(Tugas::class, 'tugas_id');
+}
 
     // Relasi ke Kuis (filter tipe)
     public function kuis()

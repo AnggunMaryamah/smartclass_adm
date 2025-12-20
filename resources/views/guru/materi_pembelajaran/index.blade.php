@@ -31,7 +31,7 @@
                     </svg>
                     Tambah Materi
                 </a>
-                <a href="{{ route('guru.tugas.index', $kelas->id) }}" class="btn btn-outline-primary">
+                <a href="{{ route('guru.tugas.index', $kelas->id) }}" class="btn-secondary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -165,6 +165,18 @@
                                                     ry="2"></rect>
                                             </svg>
                                             <span>Video</span>
+                                        </div>
+                                    @endif
+                                    @if(in_array($materi->tipe, ['kuis', 'ujian']) && $materi->tugas)
+                                        <div class="soal-indicator">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                            </svg>
+                                            <span>{{ $materi->tugas->soals->count() }} soal</span>
                                         </div>
                                     @endif
                                 </td>
@@ -818,6 +830,23 @@
         .video-indicator {
             background: #FEF3C7;
             color: #92400E;
+        }
+        .soal-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+            color: #1E40AF;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .soal-indicator svg {
+            color: #1E40AF;
+            flex-shrink: 0;
         }
 
         .text-muted {
