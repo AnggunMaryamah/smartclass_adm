@@ -114,7 +114,6 @@
                     </label>
                     <select id="durasi" name="durasi" required style="display: none;">
                         <option value="">Pilih Durasi</option>
-                        <option value="1 bulan" {{ old('durasi', $kelas->durasi) == '1 bulan' ? 'selected' : '' }}>1 bulan</option>
                         <option value="3 bulan" {{ old('durasi', $kelas->durasi) == '3 bulan' ? 'selected' : '' }}>3 bulan</option>
                         <option value="6 bulan" {{ old('durasi', $kelas->durasi) == '6 bulan' ? 'selected' : '' }}>6 bulan</option>
                         <option value="1 tahun" {{ old('durasi', $kelas->durasi) == '1 tahun' ? 'selected' : '' }}>1 tahun</option>
@@ -129,7 +128,6 @@
                         </div>
                         <div class="custom-options">
                             <div class="custom-option placeholder" data-value="">Pilih Durasi</div>
-                            <div class="custom-option" data-value="1 bulan">1 bulan</div>
                             <div class="custom-option" data-value="3 bulan">3 bulan</div>
                             <div class="custom-option" data-value="6 bulan">6 bulan</div>
                             <div class="custom-option" data-value="1 tahun">1 tahun</div>
