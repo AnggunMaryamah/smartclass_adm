@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Http\Requests\Auth\LoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -18,26 +18,39 @@ class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
+        // Proses login
         $request->authenticate();
         $request->session()->regenerate();
 
         $user = Auth::user();
-        $role = strtolower(trim($user->role ?? ''));
 
-        if ($role === 'admin') {
-            return redirect()->intended('/admin/dashboard');
+        // =========================
+        // FINAL REDIRECT LOGIC
+        // =========================
+
+        // ADMIN
+        if ($user->isAdmin()) {
+            return redirect('/admin/dashboard');
         }
 
-        if ($role === 'guru') {
-            return redirect()->intended('/guru/dashboard');
+        // BELUM DAFTAR SISWA / GURU
+        if (!$user->siswa && !$user->guru) {
+            return redirect()->route('pilih.role');
         }
 
-        if ($role === 'siswa') {
-            return redirect()->intended('/siswa/dashboard');
+        // SISWA
+        if ($user->siswa) {
+            return redirect('/siswa/dashboard');
         }
 
-        return redirect()->intended('/dashboard');
+        // GURU
+        if ($user->guru) {
+            return redirect('/guru/dashboard');
+        }
+
+        abort(403);
     }
+
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
@@ -45,7 +58,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Setelah logout, arahkan ke halaman login
         return redirect()->route('login');
     }
 }

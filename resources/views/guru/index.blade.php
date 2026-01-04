@@ -857,7 +857,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="/guru/daftar" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
@@ -988,7 +988,6 @@
                                     if (btn.getAttribute('aria-expanded') === 'true') closeMenu();
                                 } else if (e.key === 'ArrowDown') {
                                     if (document.activeElement === btn) {
-                                        e.preventDefault();
                                         openMenu();
                                     }
                                 }
@@ -1051,7 +1050,7 @@
                             style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMA</span>
                         SMK/SMA</a>
                 </div>
-                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="/guru/daftar" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
             </ul>
         </div>
@@ -1120,15 +1119,15 @@
                     </div>
                 </div>
 
-                <form id="registrationForm" method="POST" action="{{ route('guru.daftar') }}"
-                    enctype="multipart/form-data" novalidate>
+                <form method="POST" action="{{ route('guru.daftar') }}" enctype="multipart/form-data"
+                    id="registrationForm">
+
                     @csrf
 
-                    <!-- STEP 1 -->
+                    <!-- ================= STEP 1 ================= -->
                     <div class="form-step active" data-step="1">
 
                         <div class="form-grid">
-
                             <div class="form-field">
                                 <label>Nama Lengkap <span class="required">*</span></label>
                                 <input type="text" id="namaLengkap" name="nama_lengkap" required>
@@ -1152,22 +1151,19 @@
                                     <option value="P">Perempuan</option>
                                 </select>
                             </div>
-
                         </div>
 
-                        <!-- 🔥 TOMBOL WAJIB DI DALAM form-step -->
                         <div class="form-actions">
                             <button type="button" class="btn btn-primary" onclick="nextStep()">
                                 Lanjut
                             </button>
                         </div>
-
                     </div>
 
-                    <!-- STEP 2 -->
+                    <!-- ================= STEP 2 ================= -->
                     <div class="form-step" data-step="2">
-                        <div class="form-grid">
 
+                        <div class="form-grid">
                             <div class="form-field full-width">
                                 <label>Mata Pelajaran yang Dikuasai <span class="required">*</span></label>
                                 <input type="text" id="mataPelajaran" name="mata_pelajaran"
@@ -1178,24 +1174,35 @@
                                 <label>Upload CV (PDF/DOC, Max 5MB)</label>
                                 <input type="file" name="cv" accept=".pdf,.doc,.docx">
                             </div>
-
                         </div>
 
                         <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="prevStep()">Kembali</button>
-                            <button type="button" class="btn btn-primary" onclick="nextStep()">Lanjut</button>
+                            <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                                Kembali
+                            </button>
+
+                            <button type="button" class="btn btn-primary" onclick="nextStep()">
+                                Lanjut
+                            </button>
                         </div>
                     </div>
 
-                    <!-- STEP 3 -->
+                    <!-- ================= STEP 3 ================= -->
                     <div class="form-step" data-step="3">
+
                         <p style="color:var(--muted)">
                             Data Anda akan diverifikasi oleh Admin SmartClass sebelum akun diaktifkan.
                         </p>
 
                         <div class="form-actions">
-                            <button type="button" class="btn btn-secondary" onclick="prevStep()">Kembali</button>
-                            <button type="submit" class="btn btn-primary">Kirim Pendaftaran</button>
+                            <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                                Kembali
+                            </button>
+
+                            <!-- 🔥 SATU-SATUNYA SUBMIT -->
+                            <button type="submit" class="btn btn-primary">
+                                Kirim Pendaftaran
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -1222,8 +1229,8 @@
 
     <script>
         /* =========================
-                               NAV & THEME (JANGAN DIUBAH)
-                               ========================= */
+                                               NAV & THEME (JANGAN DIUBAH)
+                                               ========================= */
         (function() {
             const html = document.documentElement;
             const toggle = document.getElementById('themeToggle');
@@ -1398,14 +1405,7 @@
         /* =========================
            FORM SUBMIT (LARAVEL)
            ========================= */
-
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            if (!validateStep(currentStep)) {
-                e.preventDefault();
-            }
-        });
     </script>
-
 </body>
 
 </html>

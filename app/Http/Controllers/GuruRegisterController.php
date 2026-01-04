@@ -4,44 +4,48 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Guru;
-use App\Models\Admin;
-use Illuminate\Support\Str;
+use App\Models\Admin; // 🔥 BUKAN User
+use Illuminate\Support\Facades\Hash;
 
 class GuruRegisterController extends Controller
 {
-    public function index()
+    public function form()
     {
         return view('guru.index');
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'nama_lengkap' => 'required|string|max:100',
-            'email' => 'required|email|unique:gurus,email',
-            'no_hp' => 'required|string|max:20',
-            'jenis_kelamin' => 'required|in:L,P',
-            'mata_pelajaran' => 'required|string|max:255',
-            'cv' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+        $request->validate([
+            'nama_lengkap'   => 'required|string|max:255',
+            'email'          => 'required|email',
+            'no_hp'          => 'required|string',
+            'jenis_kelamin'  => 'required|in:L,P',
+            'mata_pelajaran' => 'required|string',
+            'cv'             => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
-        $admin = Admin::first();
-        if (!$admin) {
-            return back()->withErrors(['admin' => 'Admin belum tersedia']);
+        // 🔥 AMBIL ADMIN DARI TABEL ADMINS (WAJIB)
+        $adminId = Admin::value('id'); // ambil admin pertama
+
+        if (!$adminId) {
+            return back()->withErrors([
+                'admin' => 'Data admin belum tersedia'
+            ]);
         }
 
-        if ($request->hasFile('cv')) {
-            $data['cv'] = $request->file('cv')->store('cv-guru', 'public');
-        }
+        Guru::create([
+            'admin_id'       => $adminId, // ✅ SESUAI FOREIGN KEY
+            'nama_lengkap'   => $request->nama_lengkap,
+            'email'          => $request->email,
+            'password'       => Hash::make('guru12345'),
+            'no_hp'          => $request->no_hp,
+            'jenis_kelamin'  => $request->jenis_kelamin,
+            'mata_pelajaran' => $request->mata_pelajaran,
+            'status_akun'    => 'Nonaktif',
+        ]);
 
-        $data['id'] = (string) Str::uuid();
-        $data['admin_id'] = $admin->id;
-        $data['password'] = bcrypt(Str::random(10));
-        $data['status_akun'] = 'Nonaktif';
-
-        Guru::create($data);
-
-        return redirect()->back()->with('success', 'Pendaftaran berhasil, menunggu verifikasi admin');
+        return redirect()->route('guru.form')
+            ->with('success', 'Pendaftaran berhasil, menunggu verifikasi admin.');
     }
-
 }

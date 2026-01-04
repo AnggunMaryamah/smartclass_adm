@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\EnsureSiswaExists; // ⬅️ TAMBAH INI
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -15,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'check.active' => \App\Http\Middleware\CheckActive::class,
+            'siswa.exists' => EnsureSiswaExists::class, // ⬅️ TAMBAH INI
         ]);
 
         // 🔥 INI YANG KURANG & PENYEBAB 419

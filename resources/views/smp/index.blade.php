@@ -606,7 +606,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="/guru/daftar" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
@@ -697,7 +697,7 @@
                                 style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent-from),var(--accent-to));display:grid;place-items:center;border-radius:8px;color:#fff">SMA</span>
                             SMK/SMA</a>
                 </li>
-                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="/guru/daftar" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
             </ul>
             <a href="{{ route('login') }}" class="btn-cta" id="loginBtnHeader">Login</a>

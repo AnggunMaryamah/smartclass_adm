@@ -18,6 +18,7 @@ use App\Http\Controllers\GuruRegisterController;
 use App\Http\Controllers\AdminGuruController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\SiswaRegisterController;
 
 // TAMBAH DARI TIM (TIDAK BENTROK)
 use App\Http\Controllers\DataKelasController;
@@ -147,8 +148,11 @@ Route::put('/profil', [GuruController::class, 'updateProfil'])->name('profil.upd
 }); // <-- kurung tutup grup guru
 
 // ===================== SISWA (KAMU 100% - SUDAH LENGKAP) =====================
-Route::prefix('siswa')->name('siswa.')->middleware(['auth','role:siswa'])->group(function () {
-    Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
+Route::prefix('siswa')
+    ->name('siswa.')
+    ->middleware(['auth','role:siswa','siswa.exists'])
+    ->group(function () {
+        Route::get('/dashboard', [SiswaController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/kelas', [SiswaController::class, 'kelas'])->name('kelas.index');
     Route::get('/kelas/riwayat', [SiswaController::class, 'riwayatKelas'])->name('kelas.riwayat'); 
@@ -194,9 +198,12 @@ Route::get('/jenjang/sma', function () {
 });
 
 //Guru
-Route::get('/guru/daftar', [GuruRegisterController::class, 'index'])->name('guru.index');
-Route::post('/guru/daftar', [GuruRegisterController::class, 'store'])->name('guru.daftar');
 
+Route::get('/guru/daftar', [GuruRegisterController::class, 'form'])
+    ->name('guru.form');
+
+Route::post('/guru/daftar', [GuruRegisterController::class, 'store'])
+    ->name('guru.daftar');
 
 // HALAMAN KONTAK (GET)
 Route::get('/kontak', [ContactController::class, 'index'])
@@ -232,3 +239,18 @@ Route::post('/admin/guru/{guru}/verifikasi', [AdminController::class, 'verifikas
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
     ->name('admin.dashboard');
+
+Route::get('/pilih-role', function () {
+    return view('auth.pilih-role');
+})->middleware(['auth','verified'])->name('pilih.role');
+
+
+
+Route::middleware(['auth','verified'])->group(function () {
+
+    Route::get('/daftar-siswa', [SiswaRegisterController::class, 'create'])
+        ->name('siswa.daftar');
+
+    Route::post('/daftar-siswa', [SiswaRegisterController::class, 'store'])
+        ->name('siswa.store');
+});

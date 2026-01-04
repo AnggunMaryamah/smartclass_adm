@@ -1293,7 +1293,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="/guru" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
@@ -1426,7 +1426,7 @@
                     </div>
                 </li>
                 <li>
-                <li><a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <li><a href="/guru" class="nav-link">Guru</a>
                 </li>
                 <li>
                     <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>

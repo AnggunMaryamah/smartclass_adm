@@ -19,12 +19,12 @@ class Guru extends Authenticatable
         'nama_lengkap',
         'email',
         'password',
-        'jenis_kelamin',
         'no_hp',
+        'jenis_kelamin',
         'mata_pelajaran',
-        'cv',
         'status_akun',
     ];
+
 
     protected $hidden = ['password'];
     protected static function boot()
@@ -62,7 +62,7 @@ class Guru extends Authenticatable
     {
         return $this->hasMany(TesKemampuan::class);
     }
-    
+
     public function siswas()
     {
         return $this->hasMany(Siswa::class);

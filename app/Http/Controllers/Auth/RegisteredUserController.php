@@ -21,33 +21,28 @@ class RegisteredUserController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // ✅ REGISTER AKUN BIASA
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => ['required', 'in:guru,siswa'],
         ]);
 
-        $role = strtolower($request->role);
-        $status = $role === 'guru' ? 'pending' : 'active';
-
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $role,
-            'status_akun' => $status,
+
+            // ❗ JANGAN SET ROLE / STATUS DI SINI
+            // role tetap default (dari migration)
         ]);
 
         event(new Registered($user));
 
-        // siswa → login langsung
-        if ($status === 'active') {
-            Auth::login($user);
-            return redirect('/siswa/dashboard');
-        }
+        // ✅ LOGIN LANGSUNG, TAPI BELUM PUNYA ROLE REAL
+        Auth::login($user);
 
-        // guru → TIDAK login, diarahkan ke pending
-        return redirect()->route('register.pending');
+        // ⛔ JANGAN KE DASHBOARD
+        return redirect()->route('pilih.role');
     }
 }
