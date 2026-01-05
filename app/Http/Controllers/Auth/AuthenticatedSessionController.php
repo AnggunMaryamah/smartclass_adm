@@ -18,38 +18,14 @@ class AuthenticatedSessionController extends Controller
 
     public function store(LoginRequest $request): RedirectResponse
     {
-        // Proses login
         $request->authenticate();
         $request->session()->regenerate();
 
         $user = Auth::user();
 
-        // =========================
-        // FINAL REDIRECT LOGIC
-        // =========================
-
-        // ADMIN
-        if ($user->isAdmin()) {
-            return redirect('/admin/dashboard');
-        }
-
-        // BELUM DAFTAR SISWA / GURU
-        if (!$user->siswa && !$user->guru) {
-            return redirect()->route('pilih.role');
-        }
-
-        // SISWA
-        if ($user->siswa) {
-            return redirect('/siswa/dashboard');
-        }
-
-        // GURU
-        if ($user->guru) {
-            return redirect('/guru/dashboard');
-        }
-
-        abort(403);
+        return redirect($user->getRedirectRoute());
     }
+
 
     public function destroy(Request $request): RedirectResponse
     {

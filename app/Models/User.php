@@ -8,20 +8,15 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\Guru;
 
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * UUID (bukan auto increment)
-     */
     public $incrementing = false;
     protected $keyType = 'string';
 
-    /**
-     * Mass assignable attributes
-     */
     protected $fillable = [
         'id',
         'name',
@@ -29,39 +24,25 @@ class User extends Authenticatable
         'password',
         'role',
         'status_akun',
-
-        // OAuth / profile
         'google_id',
         'avatar',
-
-        // QRIS
         'qris_image',
         'qris_nama_bank',
         'qris_nama_rekening',
         'no_wa',
-
         'email_verified_at',
     ];
 
-    /**
-     * Hidden attributes
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Attribute casting
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
-    /**
-     * Auto-generate UUID when creating
-     */
     protected static function booted()
     {
         static::creating(function ($user) {
@@ -71,45 +52,36 @@ class User extends Authenticatable
         });
     }
 
-    /**
-     * Redirect after login based on role
-     */
+    // 🔥 REDIRECT FINAL BERDASARKAN ROLE
     public function getRedirectRoute(): string
     {
-        return match (strtolower($this->role ?? '')) {
+        return match (strtolower(trim($this->role ?? ''))) {
             'admin' => '/admin/dashboard',
-            'guru' => '/guru/dashboard',
+            'guru'  => '/guru/dashboard',
             'siswa' => '/siswa/dashboard',
-            default => '/dashboard',
+            default => '/',
         };
     }
 
-    /**
-     * Relasi ke siswa_kelas
-     */
-    public function siswaKelas(): HasMany
-    {
-        return $this->hasMany(SiswaKelas::class, 'siswa_id');
-    }
-
-    /**
-     * Relasi one-to-one ke tabel siswa
-     */
+    // RELASI SISWA (BENAR, PAKAI user_id)
     public function siswa(): HasOne
     {
         return $this->hasOne(Siswa::class, 'user_id', 'id');
     }
 
+    // 🔥 RELASI GURU FINAL (PAKAI EMAIL)
     public function guru(): HasOne
     {
-        return $this->hasOne(Guru::class, 'user_id', 'id');
+        return $this->hasOne(
+            Guru::class,
+            'email', // kolom di tabel gurus
+            'email'  // kolom di tabel users
+        );
     }
 
-    /**
-     * Helper role
-     */
+    // HELPER ADMIN
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return strtolower(trim($this->role ?? '')) === 'admin';
     }
 }

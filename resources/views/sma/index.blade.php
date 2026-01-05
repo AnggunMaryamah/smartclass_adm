@@ -711,7 +711,7 @@
                     </div>
                 </div>
 
-                <a href="/guru/daftar" class="nav-link">Guru</a>s
+                <a href="/guru/daftar" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 

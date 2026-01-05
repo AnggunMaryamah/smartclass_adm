@@ -1293,7 +1293,7 @@
                     </div>
                 </div>
 
-                <a href="/guru" class="nav-link">Guru</a>
+                <a href="/guru/daftar" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
@@ -1348,12 +1348,15 @@
 
                             @php
                                 $role = $user->role ?? null;
-                                if ($role === 'admin') {
+
+                                if ($role === 'admin' && Route::has('admin.dashboard')) {
                                     $dashRoute = route('admin.dashboard');
-                                } elseif ($role === 'guru') {
+                                } elseif ($role === 'guru' && Route::has('guru.dashboard')) {
                                     $dashRoute = route('guru.dashboard');
-                                } else {
+                                } elseif ($role === 'siswa' && Route::has('siswa.dashboard')) {
                                     $dashRoute = route('siswa.dashboard');
+                                } else {
+                                    $dashRoute = route('login');
                                 }
                             @endphp
 
@@ -1426,7 +1429,7 @@
                     </div>
                 </li>
                 <li>
-                <li><a href="/guru" class="nav-link">Guru</a>
+                <li><a href="/guru/daftar" class="nav-link">Guru</a>
                 </li>
                 <li>
                     <a href="{{ route('kontak') }}"class="nav-link">Kontak</a>

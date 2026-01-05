@@ -81,8 +81,10 @@ Route::prefix('admin')
 
 
 // ===================== GURU (KAMU 100% - SUDAH LENGKAP) =====================
-Route::prefix('guru')->name('guru.')->middleware(['auth','role:guru'])->group(function () {
-    Route::get('/dashboard', [GuruController::class, 'index'])->name('dashboard');
+Route::middleware(['auth', 'verified', 'guru.approved'])->group(function () {
+
+    Route::get('/guru/dashboard', [GuruController::class, 'index'])
+        ->name('guru.dashboard');
 
     Route::prefix('kelas')->name('kelas.')->group(function () {
     Route::get('/', [GuruController::class, 'kelas'])->name('index');
