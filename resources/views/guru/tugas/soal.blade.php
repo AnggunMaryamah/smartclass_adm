@@ -162,34 +162,34 @@ let soalIndex = {{ max($soals->count() - 1, 0) }};
 function tambahSoal() {
     soalIndex++;
 
-    const template = `
+    const template = 
     <div class="card mb-3 p-3" style="background: white; border-radius: 12px; border: 2px solid #E5E7EB; padding: 20px !important; margin-bottom: 16px !important;">
-        <input type="hidden" name="soal[\${soalIndex}][id]" value="">
+        <input type="hidden" name="soal[${soalIndex}][id]" value="">
         <div class="mb-2">
             <label class="form-label" style="font-weight: 600; color: #0F172A; margin-bottom: 8px;">Pertanyaan</label>
-            <textarea name="soal[\${soalIndex}][pertanyaan]" class="form-control" rows="2" required style="width:100%; padding:12px; border: 2px solid #E5E7EB; border-radius:8px;"></textarea>
+            <textarea name="soal[${soalIndex}][pertanyaan]" class="form-control" rows="2" required style="width:100%; padding:12px; border: 2px solid #E5E7EB; border-radius:8px;"></textarea>
         </div>
         <div class="row">
             <div class="col-md-6 mb-2">
                 <label class="form-label" style="font-weight: 600; color: #0F172A; margin-bottom: 8px;">Pilihan A</label>
-                <input type="text" name="soal[\${soalIndex}][pilihan_a]" class="form-control" required style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
+                <input type="text" name="soal[${soalIndex}][pilihan_a]" class="form-control" required style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
             </div>
             <div class="col-md-6 mb-2">
                 <label class="form-label" style="font-weight: 600; color: #0F172A; margin-bottom: 8px;">Pilihan B</label>
-                <input type="text" name="soal[\${soalIndex}][pilihan_b]" class="form-control" required style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
+                <input type="text" name="soal[${soalIndex}][pilihan_b]" class="form-control" required style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
             </div>
             <div class="col-md-6 mb-2">
                 <label class="form-label" style="font-weight: 600; color: #0F172A; margin-bottom: 8px;">Pilihan C</label>
-                <input type="text" name="soal[\${soalIndex}][pilihan_c]" class="form-control" style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
+                <input type="text" name="soal[${soalIndex}][pilihan_c]" class="form-control" style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
             </div>
             <div class="col-md-6 mb-2">
                 <label class="form-label" style="font-weight: 600; color: #0F172A; margin-bottom: 8px;">Pilihan D</label>
-                <input type="text" name="soal[\${soalIndex}][pilihan_d]" class="form-control" style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
+                <input type="text" name="soal[${soalIndex}][pilihan_d]" class="form-control" style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
             </div>
         </div>
         <div class="mb-2">
             <label class="form-label" style="font-weight: 600; color: #0F172A; margin-bottom: 8px;">Jawaban Benar</label>
-            <select name="soal[\${soalIndex}][jawaban_benar]" class="form-select" required style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
+            <select name="soal[${soalIndex}][jawaban_benar]" class="form-select" required style="padding:12px; border: 2px solid #E5E7EB; border-radius:8px;">
                 <option value="">Pilih</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
@@ -197,7 +197,7 @@ function tambahSoal() {
                 <option value="D">D</option>
             </select>
         </div>
-    </div>`;
+    </div>;
     
     document.getElementById('soal-wrapper').insertAdjacentHTML('beforeend', template);
 }
