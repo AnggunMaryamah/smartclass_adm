@@ -110,6 +110,7 @@
     .sidebar-admin .sidebar-footer {
         padding: 16px 12px 20px;
         border-top: 1px solid rgba(255, 255, 255, 0.15);
+        margin-top: auto;
     }
 
     .sidebar-admin .logout-btn {
@@ -136,6 +137,10 @@
         background: rgba(255, 255, 255, 0.15);
         border-color: rgba(255, 255, 255, 0.8);
         color: white;
+    }
+
+    .sidebar-admin .logout-btn:hover i {
+        transform: translateX(-3px);
     }
 
     /* ========== RESPONSIVE MOBILE ========== */
@@ -215,37 +220,41 @@
             <span>Users</span>
         </a>
         <a href="{{ route('admin.data_kelas') }}"
-       class="nav-link {{ request()->routeIs('admin.data_kelas*') ? 'active' : '' }}">
-        <i class="fas fa-school"></i> 
-        <span>Data Kelas</span>
-    </a>
-        <a href="{{ route('admin.laporan') }}"
-       class="nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
-        <i class="fas fa-chart-line"></i> 
-        <span>Laporan Data Kelas</span>
-    {{-- MENU PEMBAYARAN --}}
-    @if(auth()->user()->role === 'admin')
-        <a href="{{ route('admin.pembayaran.index') }}"
-           class="nav-link {{ request()->is('admin/pembayaran*') ? 'active' : '' }}">
-            <i class="fas fa-credit-card"></i>
-            <span>Pembayaran</span>
+           class="nav-link {{ request()->routeIs('admin.data_kelas*') ? 'active' : '' }}">
+            <i class="fas fa-school"></i>
+            <span>Data Kelas</span>
         </a>
-    @endif
+
+        <a href="{{ route('admin.laporan') }}"
+           class="nav-link {{ request()->routeIs('admin.laporan*') ? 'active' : '' }}">
+            <i class="fas fa-chart-line"></i>
+            <span>Laporan Data Kelas</span>
+        </a>
+
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('admin.pembayaran.index') }}"
+               class="nav-link {{ request()->is('admin/pembayaran*') ? 'active' : '' }}">
+                <i class="fas fa-credit-card"></i>
+                <span>Pembayaran</span>
+            </a>
+        @endif
+    </nav>
+
+    {{-- ✅ FOOTER DI LUAR <nav>, SEJAJAR DENGAN <nav> --}}
     <div class="sidebar-footer">
-    <form action="{{ route('logout') }}" method="POST">
-        @csrf
-        <button type="submit"
-                class="logout-btn"
-                onclick="return confirm('Yakin ingin logout?')">
-            <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i>
-            Logout
-        </button>
-    </form>
-</div>
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit"
+                    class="logout-btn"
+                    onclick="return confirm('Yakin ingin logout?')">
+                <i class="fas fa-sign-out-alt" style="margin-right:8px;"></i>
+                Logout
+            </button>
+        </form>
+    </div>
 </aside>
 
 <script>
-    // Close sidebar mobile - dipanggil dari button close dan event listener di layout
     function closeSidebarAdmin() {
         const sidebar = document.querySelector('.sidebar-admin');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -255,8 +264,4 @@
         if (sidebarToggle) sidebarToggle.classList.remove('active');
         document.body.style.overflow = '';
     }
-    .sidebar-admin .logout-btn:hover i {
-    transform: translateX(-3px);
-}
-
 </script>
