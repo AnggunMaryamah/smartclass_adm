@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\EnsureSiswaExists;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,19 +12,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // alias middleware kamu (TETAP)
         $middleware->alias([
-            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'role'         => \App\Http\Middleware\RoleMiddleware::class,
             'check.active' => \App\Http\Middleware\CheckActive::class,
-            'check.materi.completion' => \App\Http\Middleware\CheckMateriCompletion::class,
+            'siswa.exists' => EnsureSiswaExists::class,
+            'guru.active'  => \App\Http\Middleware\CheckGuruActive::class, // ✅ FINAL
         ]);
 
-        // 🔥 INI YANG KURANG & PENYEBAB 419
         $middleware->validateCsrfTokens(except: [
             'logout',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-
-    })->create();
+    })
+    ->create();

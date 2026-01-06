@@ -29,15 +29,16 @@ class Kelas extends Model
      * Kolom yang bisa diisi mass-assignment.
      */
     protected $fillable = [
-    'guru_id',
-    'nama_kelas',
-    'deskripsi',
-    'jenjang_pendidikan',
-    'harga',
-    'durasi',
-    'jumlah_siswa',
-    'status',
-];
+        'guru_id',
+        'nama_kelas',
+        'deskripsi',
+        'jenjang_pendidikan',
+        'harga',
+        'durasi',
+        'jumlah_siswa',
+        'status',
+        'jadwal_kelas',
+    ];
 
     /**
      * Casting atribut.

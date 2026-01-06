@@ -799,7 +799,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="/guru/daftar" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
@@ -886,12 +886,11 @@
                             SMA</a>
                     </div>
                 </li>
-                <li><a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <li><a href="/guru/daftar" class="nav-link">Guru</a>
                 </li>
                 <li><a href="{{ route('kontak') }}"class="nav-link">Kontak</a>
                 </li>
             </ul>
-            <a href="{{ route('login') }}" class="btn-cta" id="loginBtnHeader">Login</a>
         </div>
     </div>
 

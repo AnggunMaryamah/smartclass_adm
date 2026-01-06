@@ -1,516 +1,682 @@
-@extends('layouts.siswa_reader')
+@extends('layouts.siswa')
 
 @section('title', 'Hasil ' . $tugas->judul)
 
 @section('content')
-@php
-    $score = $attempt->skor;
-
-    if ($score < 50) {
-        $popupVariant = 'low';
-        $popupTitle   = 'Belajar itu proses, bukan hasil instan';
-        $popupText    = '"Setiap orang menjadi guru, setiap rumah menjadi sekolah." – Ki Hajar Dewantara. Nilai hari ini bukan penentu masa depanmu. Terus belajar dan jangan takut mencoba lagi.';
-    } elseif ($score < 80) {
-        $popupVariant = 'mid';
-        $popupTitle   = 'Sedikit lagi, teruskan usahamu';
-        $popupText    = '"Tanpa cinta, kecerdasan itu berbahaya. Dan tanpa kecerdasan, cinta itu tidak cukup." – B.J. Habibie. Kamu sudah punya dasar yang bagus, tinggal latihan dan fokus agar hasilnya maksimal.';
-    } elseif ($score < 100) {
-        $popupVariant = 'high';
-        $popupTitle   = 'Kerja kerasmu mulai terlihat';
-        $popupText    = '"Habis gelap terbitlah terang." – R.A. Kartini. Skormu sudah tinggi. Terus belajar dengan semangat, karena usaha tidak pernah mengkhianati hasil.';
-    } else {
-        $popupVariant = 'perfect';
-        $popupTitle   = 'Sempurna, terus jaga prestasimu';
-        $popupText    = '"Tujuan pendidikan itu untuk mempertajam kecerdasan, memperkukuh kemauan, serta memperhalus perasaan." – Tan Malaka. Nilai 100 adalah bukti disiplin dan ketekunanmu. Pertahankan kebiasaan baik ini.';
-    }
-@endphp
-
-<div class="quiz-result-page">
-    {{-- POPUP SKOR + QUOTE --}}
-    <div class="quiz-result-popup" id="quiz-result-popup">
-        <div class="quiz-result-popup-inner popup-theme-{{ $popupVariant }}">
-            <div class="popup-background-layer"></div>
-
-            {{-- TOMBOL CLOSE --}}
-            <button type="button" class="popup-close-btn" id="popup-close-btn" aria-label="Tutup">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-                    <path d="M18 6L6 18M6 6l12 12"/>
-                </svg>
-            </button>
-
-            <div class="popup-icon-wrapper popup-icon-{{ $popupVariant }}">
-                @if ($popupVariant === 'low')
-                    <svg xmlns="http://www.w3.org/2000/svg" class="popup-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <circle cx="12" cy="12" r="9" stroke-width="1.8"/>
-                        <path d="M9 10h.01M15 10h.01" stroke-linecap="round" stroke-width="1.8"/>
-                        <path d="M9 16c1-.8 2-.8 3-.8s2 0 3 .8" stroke-linecap="round" stroke-width="1.6"/>
-                    </svg>
-                @elseif ($popupVariant === 'mid')
-                    <svg xmlns="http://www.w3.org/2000/svg" class="popup-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M5 19l4-9 4 4 6-11" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
-                        <path d="M4 5h5M4 9h3" stroke-linecap="round" stroke-width="1.5"/>
-                    </svg>
-                @elseif ($popupVariant === 'high')
-                    <svg xmlns="http://www.w3.org/2000/svg" class="popup-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M12 3l2.3 4.7 5.2.8-3.8 3.7.9 5.2L12 15.8 7.4 17.4l.9-5.2-3.8-3.7 5.2-.8L12 3z"
-                              stroke-linejoin="round" stroke-width="1.6"/>
-                    </svg>
-                @else
-                    <svg xmlns="http://www.w3.org/2000/svg" class="popup-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M8 5h8v3a4 4 0 0 1-8 0V5z" stroke-linejoin="round" stroke-width="1.8"/>
-                        <path d="M9 21h6M10 17h4" stroke-linecap="round" stroke-width="1.6"/>
-                        <path d="M6 6H4v2a3 3 0 0 0 3 3" stroke-linecap="round" stroke-width="1.5"/>
-                        <path d="M18 6h2v2a3 3 0 0 1-3 3" stroke-linecap="round" stroke-width="1.5"/>
-                    </svg>
-                @endif
-            </div>
-
-            <h2 class="popup-title-text">{{ $popupTitle }}</h2>
-            <p class="popup-score-text">
-                Skor kamu <span>{{ $score }}</span> / 100
-            </p>
-            <p class="popup-description-text">{{ $popupText }}</p>
-        </div>
+<div class="result-container">
+    {{-- HEADER --}}
+    <div class="result-header">
+        <a href="{{ route('siswa.kuis.show', $tugas->id) }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Kembali
+        </a>
+        <h1>Hasil {{ ucfirst($tugas->tipe) }}</h1>
+        <p class="result-subtitle">{{ $tugas->judul }} - {{ $tugas->kelas->nama_kelas }}</p>
     </div>
 
-    {{-- KONTEN UTAMA --}}
-    <main class="quiz-result-main">
-        <section class="quiz-result-summary">
-            <h1 class="quiz-result-heading">Hasil {{ $tugas->judul }}</h1>
-            <p class="quiz-result-subheading">{{ $kelas->nama_kelas }}</p>
-
-            <div class="quiz-result-stat-grid">
-                <div class="quiz-result-stat-card stat-card-total">
-                    <div class="stat-card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="stat-label">Total Soal</span>
-                    <span class="stat-value">{{ $attempt->total_soal }}</span>
+    {{-- SKOR CARD --}}
+    <div class="score-card {{ $attempt->skor >= 75 ? 'pass' : 'fail' }}">
+        <div class="score-icon">
+            @if($attempt->skor >= 75)
+                <div class="icon-check-circle">
+                    <i class="fas fa-check"></i>
                 </div>
+            @else
+                <div class="icon-x-circle">
+                    <i class="fas fa-times"></i>
+                </div>
+            @endif
+        </div>
 
-                <div class="quiz-result-stat-card stat-card-correct">
-                    <div class="stat-card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
+        <div class="score-main">
+            <h2>{{ $attempt->skor >= 75 ? 'Selamat! Anda Lulus' : 'Belum Lulus' }}</h2>
+            <div class="score-value">{{ $attempt->skor }}<span class="score-unit">%</span></div>
+            <p class="score-desc">
+                @if($attempt->skor >= 75)
+                    Kerja bagus! Anda telah menyelesaikan {{ $tugas->tipe }} ini dengan baik.
+                @else
+                    Jangan menyerah! Terus belajar dan coba lagi untuk hasil yang lebih baik.
+                @endif
+            </p>
+        </div>
+
+        <div class="score-stats">
+            <div class="stat-item">
+                <div class="stat-icon correct">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="stat-info">
                     <span class="stat-label">Benar</span>
                     <span class="stat-value">{{ $attempt->total_benar }}</span>
                 </div>
+            </div>
 
-                <div class="quiz-result-stat-card stat-card-score">
-                    <div class="stat-card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="stat-label">Skor</span>
-                    <span class="stat-value main-score">{{ $attempt->skor }}</span>
+            <div class="stat-item">
+                <div class="stat-icon wrong">
+                    <i class="fas fa-times"></i>
                 </div>
-
-                <div class="quiz-result-stat-card stat-card-status">
-                    <div class="stat-card-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <span class="stat-label">Status</span>
-                    @if ($attempt->skor >= 75)
-                        <span class="status-badge status-pass">Lulus</span>
-                    @else
-                        <span class="status-badge status-fail">Belum Lulus</span>
-                    @endif
+                <div class="stat-info">
+                    <span class="stat-label">Salah</span>
+                    <span class="stat-value">{{ $attempt->total_soal - $attempt->total_benar }}</span>
                 </div>
             </div>
 
-            <div class="quiz-result-actions">
-                <a href="{{ route('siswa.kuis.index', $kelas->id) }}" class="result-back-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                        <path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    <span>Kembali ke Daftar Kuis</span>
-                </a>
+            <div class="stat-item">
+                <div class="stat-icon total">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">Total Soal</span>
+                    <span class="stat-value">{{ $attempt->total_soal }}</span>
+                </div>
             </div>
-        </section>
-    </main>
+        </div>
+
+        <div class="score-date">
+            <i class="far fa-calendar-alt"></i>
+            Dikerjakan pada {{ $attempt->created_at->format('d M Y H:i') }}
+        </div>
+    </div>
+
+    {{-- PEMBAHASAN SOAL --}}
+    <div class="review-section">
+        <div class="review-header">
+            <h2><i class="fas fa-book-open"></i> Pembahasan Soal</h2>
+            <p>Lihat jawaban Anda dan kunci jawaban yang benar</p>
+        </div>
+
+        <div class="review-questions">
+            @foreach($attempt->details as $index => $detail)
+                @php
+                    $soal = $detail->soal;
+                    $isCorrect = $detail->benar;
+                @endphp
+
+                <div class="review-card {{ $isCorrect ? 'correct' : 'wrong' }}">
+                    <div class="review-card-header">
+                        <div class="review-number">
+                            <span>Soal {{ $index + 1 }}</span>
+                            @if($isCorrect)
+                                <span class="badge badge-correct">
+                                    <i class="fas fa-check"></i> Benar
+                                </span>
+                            @else
+                                <span class="badge badge-wrong">
+                                    <i class="fas fa-times"></i> Salah
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="review-question">
+                        <h3>Pertanyaan:</h3>
+                        <p>{!! nl2br(e($soal->pertanyaan)) !!}</p>
+                    </div>
+
+                    <div class="review-options">
+                        @foreach(['A' => $soal->pilihan_a, 'B' => $soal->pilihan_b, 'C' => $soal->pilihan_c, 'D' => $soal->pilihan_d] as $key => $value)
+                            @if($value)
+                                @php
+                                    $isUserAnswer = ($detail->jawaban_siswa === $key);
+                                    $isCorrectAnswer = ($soal->jawaban_benar === $key);
+                                @endphp
+
+                                <div class="review-option 
+                                    {{ $isCorrectAnswer ? 'is-correct' : '' }} 
+                                    {{ $isUserAnswer && !$isCorrectAnswer ? 'is-wrong' : '' }}
+                                    {{ $isUserAnswer ? 'is-selected' : '' }}">
+                                    
+                                    <div class="option-marker">{{ $key }}</div>
+                                    <div class="option-text">{{ $value }}</div>
+                                    
+                                    @if($isCorrectAnswer)
+                                        <div class="option-badge correct-badge">
+                                            <i class="fas fa-check"></i> Kunci Jawaban
+                                        </div>
+                                    @endif
+                                    
+                                    @if($isUserAnswer && !$isCorrectAnswer)
+                                        <div class="option-badge wrong-badge">
+                                            <i class="fas fa-times"></i> Jawaban Anda
+                                        </div>
+                                    @endif
+
+                                    @if($isUserAnswer && $isCorrectAnswer)
+                                        <div class="option-badge correct-badge">
+                                            <i class="fas fa-check"></i> Jawaban Anda (Benar)
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                        @endforeach
+
+                        @if(!$detail->jawaban_siswa)
+                            <div class="no-answer-notice">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Anda tidak menjawab soal ini
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- ACTION BUTTONS --}}
+    <div class="result-actions">
+        @if($attempt->skor < 75)
+            <a href="{{ route('siswa.kuis.show', $tugas->id) }}" class="btn-retry">
+                <i class="fas fa-redo"></i> Coba Lagi
+            </a>
+        @endif
+        <a href="{{ route('siswa.kelas.read', $tugas->kelas_id) }}" class="btn-continue">
+            <i class="fas fa-arrow-right"></i> Lanjut Belajar
+        </a>
+    </div>
 </div>
-@endsection
 
-@push('styles')
 <style>
-    .quiz-result-page {
-        min-height: 100vh;
-        background: linear-gradient(135deg, #E0F2FE 0%, #F0FDF4 50%, #FEF3C7 100%);
-        display: flex;
-        justify-content: center;
-        padding: 2.5rem 1rem 3.5rem;
+.result-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.result-header {
+    margin-bottom: 2rem;
+}
+
+.result-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0.5rem 0;
+}
+
+.result-subtitle {
+    color: #6B7280;
+    font-size: 1rem;
+    margin: 0;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6B7280;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    transition: color 0.2s;
+}
+
+.btn-back:hover {
+    color: #0EA5E9;
+}
+
+/* SCORE CARD */
+.score-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.score-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+}
+
+.score-card.pass::before {
+    background: linear-gradient(90deg, #22C55E, #16A34A);
+}
+
+.score-card.fail::before {
+    background: linear-gradient(90deg, #EF4444, #DC2626);
+}
+
+.score-icon {
+    margin-bottom: 1.5rem;
+}
+
+.icon-check-circle,
+.icon-x-circle {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    animation: scaleIn 0.5s ease;
+}
+
+.icon-check-circle {
+    background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+    color: #16A34A;
+}
+
+.icon-x-circle {
+    background: linear-gradient(135deg, #FEE2E2, #FECACA);
+    color: #DC2626;
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.score-main h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 1rem;
+}
+
+.score-value {
+    font-size: 5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #0EA5E9, #0284C7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.score-card.fail .score-value {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.score-unit {
+    font-size: 2.5rem;
+}
+
+.score-desc {
+    font-size: 1rem;
+    color: #6B7280;
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.score-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: #F9FAFB;
+    border-radius: 12px;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.stat-icon.correct {
+    background: #D1FAE5;
+    color: #16A34A;
+}
+
+.stat-icon.wrong {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.stat-icon.total {
+    background: #DBEAFE;
+    color: #0284C7;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #6B7280;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.score-date {
+    font-size: 0.9rem;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #E5E7EB;
+}
+
+/* REVIEW SECTION */
+.review-section {
+    margin-bottom: 3rem;
+}
+
+.review-header {
+    margin-bottom: 2rem;
+}
+
+.review-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.review-header p {
+    color: #6B7280;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.review-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.review-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+    border-left: 4px solid #E5E7EB;
+}
+
+.review-card.correct {
+    border-left-color: #22C55E;
+}
+
+.review-card.wrong {
+    border-left-color: #EF4444;
+}
+
+.review-card-header {
+    margin-bottom: 1.5rem;
+}
+
+.review-number {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.review-number > span:first-child {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0EA5E9;
+}
+
+.badge {
+    padding: 0.4rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.badge-correct {
+    background: #D1FAE5;
+    color: #16A34A;
+}
+
+.badge-wrong {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.review-question {
+    margin-bottom: 1.5rem;
+}
+
+.review-question h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6B7280;
+    margin-bottom: 0.75rem;
+}
+
+.review-question p {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #111827;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.review-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.review-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    position: relative;
+}
+
+.review-option.is-correct {
+    background: #ECFDF5;
+    border-color: #22C55E;
+}
+
+.review-option.is-wrong {
+    background: #FEF2F2;
+    border-color: #EF4444;
+}
+
+.review-option .option-marker {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #D1D5DB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #6B7280;
+    flex-shrink: 0;
+}
+
+.review-option.is-correct .option-marker {
+    background: #22C55E;
+    border-color: #22C55E;
+    color: #fff;
+}
+
+.review-option.is-wrong .option-marker {
+    background: #EF4444;
+    border-color: #EF4444;
+    color: #fff;
+}
+
+.review-option .option-text {
+    flex: 1;
+    font-size: 0.95rem;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.option-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.correct-badge {
+    background: #22C55E;
+    color: #fff;
+}
+
+.wrong-badge {
+    background: #EF4444;
+    color: #fff;
+}
+
+.no-answer-notice {
+    padding: 1rem;
+    background: #FEF3C7;
+    border: 1px solid #FDE68A;
+    border-radius: 8px;
+    color: #92400E;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ACTION BUTTONS */
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.btn-retry,
+.btn-continue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+}
+
+.btn-retry {
+    background: #fff;
+    color: #0EA5E9;
+    border: 2px solid #0EA5E9;
+}
+
+.btn-retry:hover {
+    background: #0EA5E9;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+}
+
+.btn-continue {
+    background: linear-gradient(135deg, #0EA5E9, #0284C7);
+    color: #fff;
+    border: none;
+}
+
+.btn-continue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .result-container {
+        padding: 1.5rem 1rem;
     }
 
-    .quiz-result-main {
+    .score-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .score-value {
+        font-size: 4rem;
+    }
+
+    .score-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .review-card {
+        padding: 1.5rem;
+    }
+
+    .result-actions {
+        flex-direction: column;
+    }
+
+    .btn-retry,
+    .btn-continue {
         width: 100%;
-        max-width: 980px;
-    }
-
-    .quiz-result-summary {
-        background: linear-gradient(145deg, #FFFFFF, #F8FAFC);
-        border-radius: 28px;
-        padding: 2rem 2.2rem 1.9rem;
-        box-shadow: 0 20px 50px rgba(15, 23, 42, .14);
-        border: 2px solid rgba(56, 189, 248, .15);
-    }
-
-    .quiz-result-heading {
-        text-align: center;
-        font-size: 1.85rem;
-        font-weight: 800;
-        margin: 0;
-        color: #0F172A;
-    }
-
-    .quiz-result-subheading {
-        text-align: center;
-        margin-top: .3rem;
-        font-size: 1rem;
-        color: #64748B;
-        font-weight: 500;
-    }
-
-    .quiz-result-stat-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 1.2rem;
-        margin-top: 1.8rem;
-    }
-
-    .quiz-result-stat-card {
-        background: #FFFFFF;
-        border-radius: 20px;
-        padding: 1.1rem 1.2rem;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(15, 23, 42, .1);
-        position: relative;
-        overflow: hidden;
-        border: 2px solid transparent;
-        transition: transform .2s, box-shadow .2s;
-    }
-
-    .quiz-result-stat-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 14px 35px rgba(15, 23, 42, .16);
-    }
-
-    .stat-card-total {
-        border-color: #BFDBFE;
-        background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
-    }
-    .stat-card-correct {
-        border-color: #BBF7D0;
-        background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
-    }
-    .stat-card-score {
-        border-color: #DDD6FE;
-        background: linear-gradient(135deg, #F5F3FF, #EDE9FE);
-    }
-    .stat-card-status {
-        border-color: #FED7AA;
-        background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
-    }
-
-    .stat-card-icon {
-        width: 36px;
-        height: 36px;
-        margin: 0 auto .4rem;
-        display: flex;
-        align-items: center;
         justify-content: center;
     }
-    .stat-card-total .stat-card-icon { color: #3B82F6; }
-    .stat-card-correct .stat-card-icon { color: #22C55E; }
-    .stat-card-score .stat-card-icon { color: #8B5CF6; }
-    .stat-card-status .stat-card-icon { color: #F97316; }
+}
 
-    .stat-card-icon svg {
-        width: 28px;
-        height: 28px;
+@media (max-width: 480px) {
+    .result-header h1 {
+        font-size: 1.5rem;
     }
 
-    .stat-label {
-        display: block;
-        font-size: .85rem;
-        color: #64748B;
-        margin-bottom: .25rem;
-        font-weight: 600;
+    .score-value {
+        font-size: 3rem;
     }
 
-    .stat-value {
-        font-size: 1.3rem;
-        font-weight: 800;
-        color: #0F172A;
+    .score-unit {
+        font-size: 1.5rem;
     }
 
-    .main-score {
-        color: #8B5CF6;
-        font-size: 1.65rem;
+    .review-option {
+        padding: 0.875rem 1rem;
     }
-
-    .status-badge {
-        display: inline-block;
-        padding: .3rem .9rem;
-        border-radius: 999px;
-        font-size: .85rem;
-        font-weight: 700;
-    }
-
-    .status-pass {
-        background: #86EFAC;
-        color: #166534;
-    }
-
-    .status-fail {
-        background: #FCA5A5;
-        color: #991B1B;
-    }
-
-    .quiz-result-actions {
-        margin-top: 1.8rem;
-        display: flex;
-        justify-content: center;
-    }
-
-    .result-back-button {
-        display: inline-flex;
-        align-items: center;
-        gap: .5rem;
-        padding: .75rem 2rem;
-        border-radius: 999px;
-        border: 2px solid #3B82F6;
-        background: linear-gradient(135deg, #3B82F6, #2563EB);
-        font-size: 1rem;
-        font-weight: 700;
-        color: #FFFFFF;
-        text-decoration: none;
-        box-shadow: 0 12px 28px rgba(59, 130, 246, .35);
-        transition: transform .2s, box-shadow .2s;
-    }
-
-    .result-back-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 16px 35px rgba(59, 130, 246, .45);
-    }
-
-    .result-back-button svg {
-        width: 20px;
-        height: 20px;
-    }
-
-    /* POPUP */
-
-    .quiz-result-popup {
-        position: fixed;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 90;
-        background: rgba(15, 23, 42, .5);
-        animation: popupOverlayIn .3s ease-out;
-    }
-
-    .quiz-result-popup-inner {
-        position: relative;
-        max-width: 440px;
-        width: 92%;
-        background: #FFFFFF;
-        border-radius: 24px;
-        padding: 2rem 2.2rem 1.8rem;
-        text-align: center;
-        box-shadow: 0 25px 60px rgba(15, 23, 42, .5);
-        overflow: hidden;
-        animation: popupBounceIn .6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        border: 3px solid transparent;
-    }
-
-    .popup-theme-low    { border-color: #FB923C; }
-    .popup-theme-mid    { border-color: #38BDF8; }
-    .popup-theme-high   { border-color: #4ADE80; }
-    .popup-theme-perfect{ border-color: #FBBF24; }
-
-    .popup-background-layer {
-        position: absolute;
-        inset: -50%;
-        opacity: .3;
-        animation: popupBgDrift 14s linear infinite;
-        pointer-events: none;
-    }
-
-    .popup-theme-low .popup-background-layer {
-        background:
-            radial-gradient(circle at 20% 30%, #FB923C 0, transparent 45%),
-            radial-gradient(circle at 80% 70%, #F472B6 0, transparent 45%);
-    }
-    .popup-theme-mid .popup-background-layer {
-        background:
-            radial-gradient(circle at 20% 30%, #38BDF8 0, transparent 45%),
-            radial-gradient(circle at 80% 70%, #818CF8 0, transparent 45%);
-    }
-    .popup-theme-high .popup-background-layer {
-        background:
-            radial-gradient(circle at 20% 30%, #4ADE80 0, transparent 45%),
-            radial-gradient(circle at 80% 70%, #34D399 0, transparent 45%);
-    }
-    .popup-theme-perfect .popup-background-layer {
-        background:
-            radial-gradient(circle at 20% 30%, #FBBF24 0, transparent 45%),
-            radial-gradient(circle at 80% 70%, #FCD34D 0, transparent 45%);
-    }
-
-    .popup-close-btn {
-        position: absolute;
-        top: .9rem;
-        right: .9rem;
-        width: 32px;
-        height: 32px;
-        border-radius: 999px;
-        border: none;
-        background: rgba(15, 23, 42, .08);
-        color: #475569;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 2;
-        transition: background .15s, color .15s;
-    }
-
-    .popup-close-btn:hover {
-        background: rgba(15, 23, 42, .15);
-        color: #0F172A;
-    }
-
-    .popup-close-btn svg {
-        width: 18px;
-        height: 18px;
-    }
-
-    .popup-icon-wrapper {
-        width: 72px;
-        height: 72px;
-        border-radius: 999px;
-        background: #FFFFFF;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto .8rem;
-        box-shadow: 0 14px 35px rgba(15, 23, 42, .3);
-        position: relative;
-        z-index: 1;
-        border: 3px solid;
-    }
-
-    .popup-icon-low     { color: #F97316; border-color: #FDBA74; }
-    .popup-icon-mid     { color: #0EA5E9; border-color: #7DD3FC; }
-    .popup-icon-high    { color: #22C55E; border-color: #86EFAC; }
-    .popup-icon-perfect { color: #FACC15; border-color: #FDE047; }
-
-    .popup-icon-svg {
-        width: 38px;
-        height: 38px;
-    }
-
-    .popup-title-text {
-        position: relative;
-        z-index: 1;
-        margin: 0 0 .4rem;
-        font-size: 1.35rem;
-        font-weight: 900;
-        color: #0F172A;
-    }
-
-    .popup-score-text {
-        position: relative;
-        z-index: 1;
-        font-size: 1.05rem;
-        margin-bottom: .5rem;
-        color: #334155;
-        font-weight: 600;
-    }
-
-    .popup-score-text span {
-        font-size: 1.85rem;
-        font-weight: 900;
-        color: #8B5CF6;
-    }
-
-    .popup-description-text {
-        position: relative;
-        z-index: 1;
-        font-size: .95rem;
-        color: #475569;
-        margin: 0;
-        line-height: 1.6;
-    }
-
-    @keyframes popupOverlayIn {
-        from { opacity: 0; }
-        to   { opacity: 1; }
-    }
-
-    @keyframes popupBounceIn {
-        0%   { transform: translateY(35px) scale(.88); opacity: 0; }
-        60%  { transform: translateY(-8px) scale(1.04); opacity: 1; }
-        100% { transform: translateY(0) scale(1); }
-    }
-
-    @keyframes popupFadeOut {
-        from { opacity: 1; transform: translateY(0) scale(1); }
-        to   { opacity: 0; transform: translateY(12px) scale(.94); }
-    }
-
-    @keyframes popupBgDrift {
-        0%   { transform: translate3d(0,0,0) rotate(0deg); }
-        50%  { transform: translate3d(-15px,12px,0) rotate(3deg); }
-        100% { transform: translate3d(0,0,0) rotate(0deg); }
-    }
-
-    @media (max-width: 768px) {
-        .quiz-result-page {
-            padding: 2rem .9rem 3rem;
-        }
-        .quiz-result-summary {
-            padding: 1.7rem 1.4rem 1.5rem;
-        }
-        .quiz-result-stat-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 1rem;
-        }
-    }
+}
 </style>
-@endpush
-
-@push('scripts')
-<script>
-    const popupElement = document.getElementById('quiz-result-popup');
-    const popupCloseBtn = document.getElementById('popup-close-btn');
-
-    function closePopup() {
-        if (!popupElement) return;
-        const inner = popupElement.querySelector('.quiz-result-popup-inner');
-        if (inner) {
-            inner.style.animation = 'popupFadeOut .4s ease-out forwards';
-        }
-        setTimeout(() => {
-            popupElement.style.display = 'none';
-        }, 400);
-    }
-
-    if (popupCloseBtn) {
-        popupCloseBtn.addEventListener('click', closePopup);
-    }
-
-    if (popupElement) {
-        setTimeout(closePopup, 9000);
-    }
-</script>
-@endpush
+@endsection

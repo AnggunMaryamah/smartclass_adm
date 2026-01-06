@@ -44,7 +44,7 @@ class Tugas extends Model
     }
 
     // Relasi ke Soal
-    public function soals()
+    public function soal()
     {
         return $this->hasMany(TugasSoal::class, 'tugas_id');
     }

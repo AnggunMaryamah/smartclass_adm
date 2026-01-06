@@ -3,15 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class TugasJawaban extends Model
 {
     protected $table = 'tugas_jawabans';
-
-    // PENTING: primary key integer auto-increment
-    protected $primaryKey = 'id';
-    public $incrementing = true;
-    protected $keyType = 'int';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'tugas_id',
@@ -22,7 +20,15 @@ class TugasJawaban extends Model
         'status',
     ];
 
-    // TIDAK perlu boot() generate UUID, hapus seluruh method boot()
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
+    }
 
     // Relasi ke Tugas
     public function tugas()

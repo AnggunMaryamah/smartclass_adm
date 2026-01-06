@@ -1,641 +1,763 @@
-@extends('layouts.siswa_reader')
+@extends('layouts.siswa')
 
 @section('title', 'Mengerjakan ' . $tugas->judul)
 
 @section('content')
-<div class="kuis-attempt-wrapper">
-    <header class="kuis-attempt-header">
-        <div class="kuis-attempt-header-inner">
-            <span class="kuis-badge-title">
-                <i class="fas fa-calculator"></i> Kuis / Ujian
-            </span>
-            <h1 class="kuis-attempt-title">{{ $tugas->judul }}</h1>
-            <p class="kuis-attempt-subtitle">
-                {{ $kelas->nama_kelas }} · Total Soal: <strong>{{ $soal->count() }}</strong>
-            </p>
+<div class="quiz-attempt-container">
+    {{-- HEADER --}}
+    <div class="quiz-attempt-header">
+        <div class="quiz-header-info">
+            <a href="{{ route('siswa.kuis.show', $tugas->id) }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+            <h1>{{ $tugas->judul }}</h1>
+            <p class="quiz-subtitle">{{ $tugas->kelas->nama_kelas }}</p>
         </div>
-    </header>
 
-    <main class="kuis-attempt-main">
-        <form method="POST" action="{{ route('siswa.kuis.submit', $tugas->id) }}" id="form-kuis">
-            @csrf
-
-            <div class="soal-list">
-                @foreach ($soal as $index => $s)
-                    <article class="soal-card">
-                        <div class="soal-header">
-                            <span class="soal-number">{{ $index + 1 }}</span>
-                            <div>
-                                <p class="soal-label">
-                                    <i class="fas fa-question-circle text-blue"></i>
-                                    Pertanyaan {{ $index + 1 }}
-                                </p>
-                                <p class="soal-text">{{ $s->pertanyaan }}</p>
-                            </div>
-                        </div>
-
-                        <div class="pilihan-list">
-                            <label class="pilihan-item">
-                                <input type="radio" name="jawaban[{{ $s->id }}]" value="A" required>
-                                <span class="pilihan-label">
-                                    <span class="pilihan-code code-a">A</span>
-                                    <span class="pilihan-text">{{ $s->pilihan_a }}</span>
-                                </span>
-                            </label>
-
-                            <label class="pilihan-item">
-                                <input type="radio" name="jawaban[{{ $s->id }}]" value="B">
-                                <span class="pilihan-label">
-                                    <span class="pilihan-code code-b">B</span>
-                                    <span class="pilihan-text">{{ $s->pilihan_b }}</span>
-                                </span>
-                            </label>
-
-                            <label class="pilihan-item">
-                                <input type="radio" name="jawaban[{{ $s->id }}]" value="C">
-                                <span class="pilihan-label">
-                                    <span class="pilihan-code code-c">C</span>
-                                    <span class="pilihan-text">{{ $s->pilihan_c }}</span>
-                                </span>
-                            </label>
-
-                            <label class="pilihan-item">
-                                <input type="radio" name="jawaban[{{ $s->id }}]" value="D">
-                                <span class="pilihan-label">
-                                    <span class="pilihan-code code-d">D</span>
-                                    <span class="pilihan-text">{{ $s->pilihan_d }}</span>
-                                </span>
-                            </label>
-                        </div>
-                    </article>
-                @endforeach
+        {{-- TIMER --}}
+        <div class="quiz-timer" id="quizTimer">
+            <div class="timer-icon">
+                <i class="fas fa-clock"></i>
             </div>
-
-            <div class="kuis-attempt-actions">
-                <button type="button" class="btn-secondary" id="btn-batal">
-                    <i class="fas fa-times-circle"></i> Batal
-                </button>
-                <button type="button" class="btn-primary" id="btn-submit-open">
-                     Selesai
-                </button>
-            </div>
-        </form>
-    </main>
-
-    {{-- MODAL KONFIRMASI BATAL --}}
-    <div class="modal-backdrop" id="modal-batal" style="display:none;">
-        <div class="modal-dialog">
-            <h3 class="modal-title">
-                <i class="fas fa-exclamation-triangle text-orange"></i> Keluar dari Kuis?
-            </h3>
-            <p class="modal-text">
-                Apakah Anda yakin ingin membatalkan pengerjaan kuis ini?
-                Jika keluar sekarang, jawaban yang sudah diisi tidak akan disimpan.
-            </p>
-            <div class="modal-actions">
-                <button type="button" class="btn-modal-secondary" id="btn-batal-tutup">
-                    Lanjut Mengerjakan
-                </button>
-                <a href="{{ route('siswa.kuis.show', $tugas->id) }}" class="btn-modal-danger">
-                    Ya, Keluar
-                </a>
+            <div class="timer-display">
+                <span class="timer-label">Waktu Tersisa</span>
+                <span class="timer-value" id="timerValue">05:00</span>
             </div>
         </div>
     </div>
 
-    {{-- MODAL KONFIRMASI SUBMIT --}}
-    <div class="submit-backdrop" id="modal-submit" style="display:none;">
-        <div class="submit-dialog">
-            <div class="submit-bg-layer"></div>
+    {{-- FORM SOAL --}}
+    <form id="quizForm" class="quiz-form">
+        @csrf
+        <div class="quiz-questions">
+            @foreach($soal as $index => $item)
+                <div class="question-card" id="question-{{ $index + 1 }}">
+                    <div class="question-number">
+                        Pertanyaan {{ $index + 1 }} dari {{ $soal->count() }}
+                    </div>
 
-            <button type="button" class="submit-close-btn" id="submit-close-btn" aria-label="Tutup konfirmasi">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-                    <path d="M18 6L6 18M6 6l12 12"/>
-                </svg>
-            </button>
+                    <div class="question-text">
+                        {!! nl2br(e($item->pertanyaan)) !!}
+                    </div>
 
-            <div class="submit-icon-wrapper">
-                <div class="submit-icon-circle">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="submit-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 13l4 4L19 7"/>
-                    </svg>
+                    <div class="question-options">
+                        @foreach(['a' => $item->pilihan_a, 'b' => $item->pilihan_b, 'c' => $item->pilihan_c, 'd' => $item->pilihan_d] as $key => $value)
+                            @if($value)
+                                <label class="option-label">
+                                    <input 
+                                        type="radio" 
+                                        name="jawaban[{{ $item->id }}]" 
+                                        value="{{ strtoupper($key) }}"
+                                        {{ (isset($savedAnswers[$item->id]) && $savedAnswers[$item->id] === strtoupper($key)) ? 'checked' : '' }}
+                                    >
+                                    <span class="option-marker">{{ strtoupper($key) }}</span>
+                                    <span class="option-text">{{ $value }}</span>
+                                </label>
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
-                <div class="submit-icon-ring"></div>
-            </div>
+            @endforeach
+        </div>
 
-            <h3 class="submit-title">Yakin ingin mengumpulkan jawaban?</h3>
-            <p class="submit-text">
-                Setelah dikumpulkan, kamu tidak bisa mengubah jawaban lagi.
-                Pastikan semua soal sudah kamu cek terlebih dahulu.
-            </p>
-
-            <div class="submit-actions">
-                <button type="button" class="btn-submit-cancel" id="btn-submit-cancel">
-                    Tinjau Lagi
-                </button>
-                <button type="button" class="btn-submit-confirm" id="btn-submit-confirm">
-                    Kirim Jawaban
-                </button>
+        {{-- NAVIGASI SOAL --}}
+        <div class="quiz-navigation">
+            <div class="question-nav-grid">
+                @foreach($soal as $index => $item)
+                    <button 
+                        type="button" 
+                        class="question-nav-btn {{ isset($savedAnswers[$item->id]) ? 'answered' : '' }}" 
+                        data-question="{{ $index + 1 }}"
+                        data-soal-id="{{ $item->id }}">
+                        {{ $index + 1 }}
+                    </button>
+                @endforeach
             </div>
+        </div>
+
+        {{-- SUBMIT BUTTON --}}
+        <div class="quiz-submit-section">
+            <button type="button" id="submitQuizBtn" class="btn-submit-quiz">
+                <i class="fas fa-paper-plane"></i> Submit Jawaban
+            </button>
+        </div>
+    </form>
+</div>
+
+{{-- MODAL KONFIRMASI SUBMIT --}}
+<div class="modal-overlay" id="submitModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h3>Konfirmasi Submit</h3>
+            <button type="button" class="modal-close" id="closeSubmitModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Anda yakin ingin submit jawaban?</p>
+            <p class="modal-warning">Setelah submit, jawaban tidak dapat diubah lagi.</p>
+            <div class="modal-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Dijawab</span>
+                    <span class="stat-value" id="answeredCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Belum Dijawab</span>
+                    <span class="stat-value text-danger" id="unansweredCount">{{ $soal->count() }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="cancelSubmit">Batal</button>
+            <button type="button" class="btn-confirm" id="confirmSubmit">
+                <i class="fas fa-check"></i> Ya, Submit
+            </button>
         </div>
     </div>
 </div>
-@endsection
 
-@push('styles')
+{{-- LOADING OVERLAY --}}
+<div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div class="spinner"></div>
+    <p>Menyimpan jawaban...</p>
+</div>
+
 <style>
-    .kuis-attempt-wrapper {
-        min-height: 100vh;
-        background: radial-gradient(circle at top, #E0F7FA 0, #F9FAFB 55%, #FFFFFF 100%);
-        display: flex;
-        flex-direction: column;
+.quiz-attempt-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+}
+
+.quiz-attempt-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    align-items: start;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+}
+
+.quiz-header-info h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0.5rem 0;
+}
+
+.quiz-subtitle {
+    color: #6B7280;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6B7280;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.btn-back:hover {
+    color: #0EA5E9;
+}
+
+/* TIMER */
+.quiz-timer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #0EA5E9, #0284C7);
+    border-radius: 12px;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3); }
+    50% { box-shadow: 0 8px 24px rgba(14, 165, 233, 0.5); }
+}
+
+.timer-icon {
+    font-size: 2rem;
+}
+
+.timer-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.timer-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    margin-bottom: 0.25rem;
+}
+
+.timer-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.05em;
+}
+
+.quiz-timer.warning {
+    background: linear-gradient(135deg, #F97316, #EA580C);
+    animation: shake 0.5s infinite;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* FORM LAYOUT */
+.quiz-form {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* SOAL */
+.quiz-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.question-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+}
+
+.question-number {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #0EA5E9;
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: #EFF6FF;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.question-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.option-label:hover {
+    background: #EFF6FF;
+    border-color: #0EA5E9;
+}
+
+.option-label input[type="radio"] {
+    display: none;
+}
+
+.option-label input[type="radio"]:checked ~ .option-marker {
+    background: #0EA5E9;
+    color: #fff;
+    border-color: #0EA5E9;
+}
+
+.option-label input[type="radio"]:checked ~ .option-text {
+    color: #111827;
+    font-weight: 600;
+}
+
+.option-label:has(input[type="radio"]:checked) {
+    background: #EFF6FF;
+    border-color: #0EA5E9;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+
+.option-marker {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #D1D5DB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #6B7280;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.option-text {
+    flex: 1;
+    font-size: 0.95rem;
+    color: #374151;
+    line-height: 1.5;
+}
+
+/* NAVIGASI SOAL */
+.quiz-navigation {
+    position: sticky;
+    top: 100px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 18px rgba(15, 23, 42, 0.08);
+}
+
+.question-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.question-nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 2px solid #E5E7EB;
+    background: #fff;
+    color: #6B7280;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.question-nav-btn:hover {
+    border-color: #0EA5E9;
+    color: #0EA5E9;
+}
+
+.question-nav-btn.answered {
+    background: #0EA5E9;
+    color: #fff;
+    border-color: #0EA5E9;
+}
+
+.question-nav-btn.active {
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.3);
+}
+
+/* SUBMIT SECTION */
+.quiz-submit-section {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.btn-submit-quiz {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 3rem;
+    background: linear-gradient(135deg, #0EA5E9, #0284C7);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+}
+
+.btn-submit-quiz:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(14, 165, 233, 0.4);
+}
+
+/* MODAL */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-card {
+    background: #fff;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #F3F4F6;
+    color: #6B7280;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: #E5E7EB;
+    color: #111827;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body p {
+    font-size: 1rem;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.modal-warning {
+    font-size: 0.9rem;
+    color: #F97316;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.modal-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.modal-stats .stat-item {
+    padding: 1rem;
+    background: #F9FAFB;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.modal-stats .stat-label {
+    display: block;
+    font-size: 0.85rem;
+    color: #6B7280;
+    margin-bottom: 0.5rem;
+}
+
+.modal-stats .stat-value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.modal-stats .text-danger {
+    color: #EF4444;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid #E5E7EB;
+}
+
+.btn-cancel,
+.btn-confirm {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-cancel {
+    background: #F3F4F6;
+    color: #6B7280;
+}
+
+.btn-cancel:hover {
+    background: #E5E7EB;
+    color: #111827;
+}
+
+.btn-confirm {
+    background: #0EA5E9;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-confirm:hover {
+    background: #0284C7;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+}
+
+/* LOADING */
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    z-index: 1001;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #0EA5E9;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .quiz-form {
+        grid-template-columns: 1fr;
     }
 
-    .kuis-attempt-header {
-        padding: 1.5rem 1rem 1rem;
+    .quiz-navigation {
+        position: static;
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .quiz-attempt-header {
+        grid-template-columns: 1fr;
     }
 
-    .kuis-attempt-header-inner {
-        max-width: 960px;
-        margin: 0 auto;
-        text-align: center;
-    }
-
-    .kuis-badge-title {
-        display: inline-flex;
-        align-items: center;
-        gap: .4rem;
-        padding: .25rem .75rem;
-        border-radius: 999px;
-        font-size: .8rem;
-        font-weight: 600;
-        background: #E3F2FD;
-        color: #1565C0;
-    }
-
-    .kuis-attempt-title {
-        margin-top: .6rem;
-        font-size: 1.7rem;
-        font-weight: 800;
-    }
-
-    .kuis-attempt-subtitle {
-        margin-top: .15rem;
-        color: var(--text-secondary);
-        font-size: .95rem;
-    }
-
-    .kuis-attempt-main {
-        max-width: 960px;
-        margin: 0 auto 2rem;
-        padding: 0 1rem 2rem;
-    }
-
-    .soal-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-        margin-top: 1.25rem;
-    }
-
-    .soal-card {
-        background: #FFFFFF;
-        border-radius: 18px;
-        border: 1px solid #E5E7EB;
-        box-shadow: 0 10px 25px rgba(15, 23, 42, .06);
-        padding: 1.25rem 1.4rem 1.1rem;
-    }
-
-    .soal-header {
-        display: flex;
-        gap: .8rem;
-        align-items: flex-start;
-        margin-bottom: .9rem;
-    }
-
-    .soal-number {
-        width: 32px;
-        height: 32px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #38BDF8, #22C55E);
-        color: #fff;
-        display: flex;
-        align-items: center;
+    .quiz-timer {
         justify-content: center;
-        font-weight: 700;
-        font-size: .9rem;
-        flex-shrink: 0;
     }
 
-    .soal-label {
-        margin: 0;
-        font-size: .85rem;
-        color: #6B7280;
+    .question-nav-grid {
+        grid-template-columns: repeat(4, 1fr);
     }
-
-    .text-blue { color: #2563EB; }
-    .text-orange { color: #EA580C; }
-
-    .soal-text {
-        margin: .15rem 0 0;
-        font-weight: 600;
-    }
-
-    .pilihan-list {
-        display: flex;
-        flex-direction: column;
-        gap: .5rem;
-    }
-
-    .pilihan-item {
-        display: flex;
-        align-items: center;
-        gap: .45rem;
-        padding: .5rem .65rem;
-        border-radius: 12px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        transition: background .15s, border-color .15s, box-shadow .15s, transform .05s;
-    }
-
-    .pilihan-item:hover {
-        background: #F3F4FF;
-        border-color: #C7D2FE;
-        box-shadow: 0 4px 10px rgba(79, 70, 229, .12);
-        transform: translateY(-1px);
-    }
-
-    .pilihan-item input[type="radio"] {
-        flex-shrink: 0;
-        margin-right: .25rem;
-    }
-
-    .pilihan-label {
-        display: inline-flex;
-        align-items: center;
-        gap: .55rem;
-    }
-
-    .pilihan-code {
-        width: 26px;
-        height: 26px;
-        border-radius: 999px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: .8rem;
-        font-weight: 700;
-        color: #111827;
-    }
-
-    .code-a { background: #FDE68A; }
-    .code-b { background: #BFDBFE; }
-    .code-c { background: #BBF7D0; }
-    .code-d { background: #FBCFE8; }
-
-    .pilihan-text {
-        font-size: .95rem;
-    }
-
-    .kuis-attempt-actions {
-        margin-top: 1.5rem;
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-    }
-
-    .btn-primary,
-    .btn-secondary {
-        border-radius: 999px;
-        padding: .7rem 1.9rem;
-        font-weight: 600;
-        font-size: .95rem;
-        border: none;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: .5rem;
-    }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #0EA5E9, #22C55E);
-        color: #fff;
-        box-shadow: 0 8px 18px rgba(34, 197, 94, .35);
-    }
-
-    .btn-secondary {
-        background: #F3F4F6;
-        color: #374151;
-        border: 1px solid #D1D5DB;
-    }
-
-    /* Modal Batal */
-    .modal-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, .5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 80;
-    }
-
-    .modal-dialog {
-        background: #fff;
-        border-radius: 16px;
-        padding: 1.5rem 1.75rem 1.3rem;
-        max-width: 420px;
-        width: 90%;
-        box-shadow: 0 18px 40px rgba(15, 23, 42, .4);
-    }
-
-    .modal-title {
-        margin: 0 0 .75rem;
-        font-size: 1.05rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: .4rem;
-    }
-
-    .modal-text {
-        font-size: .9rem;
-        color: var(--text-secondary);
-        margin-bottom: 1.1rem;
-    }
-
-    .modal-actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: .7rem;
-    }
-
-    .btn-modal-secondary,
-    .btn-modal-danger {
-        border-radius: 10px;
-        padding: .45rem 1.1rem;
-        font-size: .9rem;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: .35rem;
-    }
-
-    .btn-modal-secondary {
-        background: #E5E7EB;
-        color: #374151;
-    }
-    .btn-modal-danger {
-        background: #EF4444;
-        color: #fff;
-    }
-
-    /* Modal Submit */
-    .submit-backdrop {
-        position: fixed;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 90;
-        background: rgba(15, 23, 42, .45);
-        animation: fadeIn .25s ease-out;
-    }
-
-    .submit-dialog {
-        position: relative;
-        max-width: 420px;
-        width: 90%;
-        background: #FFFFFF;
-        border-radius: 20px;
-        padding: 1.9rem 2rem 1.5rem;
-        text-align: center;
-        box-shadow: 0 24px 60px rgba(15, 23, 42, .55);
-        overflow: hidden;
-        border: 2px solid #BFDBFE;
-    }
-
-    .submit-bg-layer {
-        position: absolute;
-        inset: -40%;
-        background:
-            radial-gradient(circle at 0% 0%, #38BDF8 0, transparent 55%),
-            radial-gradient(circle at 100% 0%, #34D399 0, transparent 55%),
-            radial-gradient(circle at 50% 100%, #F9A8D4 0, transparent 60%);
-        opacity: .35;
-        animation: submitBgMove 14s linear infinite;
-        pointer-events: none;
-    }
-
-    .submit-close-btn {
-        position: absolute;
-        top: .8rem;
-        right: .8rem;
-        width: 30px;
-        height: 30px;
-        border-radius: 999px;
-        border: none;
-        background: rgba(248, 250, 252, .9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 2;
-        color: #64748B;
-        transition: background .15s, color .15s;
-    }
-
-    .submit-close-btn:hover {
-        background: #E5E7EB;
-        color: #0F172A;
-    }
-
-    .submit-close-btn svg {
-        width: 16px;
-        height: 16px;
-    }
-
-    .submit-icon-wrapper {
-        position: relative;
-        z-index: 1;
-        width: 88px;
-        height: 88px;
-        margin: 0 auto .7rem;
-    }
-
-    .submit-icon-circle {
-        width: 100%;
-        height: 100%;
-        border-radius: 999px;
-        background: #ECFEFF;
-        border: 3px solid #38BDF8;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #22C55E;
-        box-shadow: 0 14px 35px rgba(56, 189, 248, .5);
-        animation: scaleIn .6s ease-out;
-    }
-
-    .submit-icon-svg {
-        width: 40px;
-        height: 40px;
-    }
-
-    .submit-icon-ring {
-        position: absolute;
-        inset: 8px;
-        border-radius: 999px;
-        border: 2px dashed rgba(56, 189, 248, .6);
-        animation: spinRing 6s linear infinite;
-    }
-
-    .submit-title {
-        position: relative;
-        z-index: 1;
-        margin: .5rem 0 .3rem;
-        font-size: 1.2rem;
-        font-weight: 800;
-        color: #0F172A;
-    }
-
-    .submit-text {
-        position: relative;
-        z-index: 1;
-        font-size: .95rem;
-        color: #475569;
-        margin: 0 0 1.1rem;
-        line-height: 1.55;
-    }
-
-    .submit-actions {
-        position: relative;
-        z-index: 1;
-        display: flex;
-        justify-content: center;
-        gap: .7rem;
-    }
-
-    .btn-submit-cancel,
-    .btn-submit-confirm {
-        border-radius: 999px;
-        padding: .55rem 1.4rem;
-        font-size: .9rem;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-submit-cancel {
-        background: #FFFFFF;
-        color: #1F2937;
-        border: 1px solid #CBD5F5;
-    }
-
-    .btn-submit-confirm {
-        background: linear-gradient(135deg, #22C55E, #16A34A);
-        color: #FFFFFF;
-        box-shadow: 0 10px 26px rgba(34, 197, 94, .45);
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to   { opacity: 1; }
-    }
-
-    @keyframes submitBgMove {
-        0%   { transform: translate3d(0,0,0); }
-        50%  { transform: translate3d(-14px,10px,0); }
-        100% { transform: translate3d(0,0,0); }
-    }
-
-    @keyframes scaleIn {
-        0%   { transform: scale(.4); opacity: 0; }
-        60%  { transform: scale(1.05); opacity: 1; }
-        100% { transform: scale(1); }
-    }
-
-    @keyframes spinRing {
-        0%   { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 768px) {
-        .kuis-attempt-main {
-            padding: 0 .75rem 1.8rem;
-        }
-        .kuis-attempt-actions {
-            flex-direction: column-reverse;
-        }
-        .btn-primary,
-        .btn-secondary {
-            width: 100%;
-            justify-content: center;
-        }
-        .submit-dialog {
-            padding: 1.6rem 1.4rem 1.4rem;
-        }
-    }
+}
 </style>
-@endpush
 
-@push('scripts')
 <script>
-    const btnBatal       = document.getElementById('btn-batal');
-    const modalBatal     = document.getElementById('modal-batal');
-    const btnBatalTutup  = document.getElementById('btn-batal-tutup');
+document.addEventListener('DOMContentLoaded', function() {
+    // TIMER
+    const timerDuration = 5 * 60; // 5 menit dalam detik
+    let timeLeft = timerDuration;
+    const timerElement = document.getElementById('timerValue');
+    const timerContainer = document.getElementById('quizTimer');
+    const attemptId = "{{ $attempt->id }}";
 
-    const btnSubmitOpen   = document.getElementById('btn-submit-open');
-    const modalSubmit     = document.getElementById('modal-submit');
-    const btnSubmitCancel = document.getElementById('btn-submit-cancel');
-    const btnSubmitConfirm= document.getElementById('btn-submit-confirm');
-    const submitCloseBtn  = document.getElementById('submit-close-btn');
-    const formKuis        = document.getElementById('form-kuis');
-
-    if (btnBatal && modalBatal) {
-        btnBatal.addEventListener('click', () => {
-            modalBatal.style.display = 'flex';
-        });
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
-    if (btnBatalTutup && modalBatal) {
-        btnBatalTutup.addEventListener('click', () => {
-            modalBatal.style.display = 'none';
-        });
-    }
-
-    if (btnSubmitOpen && modalSubmit) {
-        btnSubmitOpen.addEventListener('click', () => {
-            modalSubmit.style.display = 'flex';
-        });
-    }
-
-    function closeSubmitModal() {
-        if (!modalSubmit) return;
-        const dialog = modalSubmit.querySelector('.submit-dialog');
-        if (dialog) {
-            dialog.style.animation = 'popupFadeOut .25s ease-out forwards';
+    function updateTimer() {
+        timerElement.textContent = formatTime(timeLeft);
+        
+        if (timeLeft <= 60) {
+            timerContainer.classList.add('warning');
         }
-        setTimeout(() => {
-            modalSubmit.style.display = 'none';
-            if (dialog) dialog.style.animation = ''; // reset
-        }, 250);
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            autoSubmit();
+        }
+        
+        timeLeft--;
     }
 
-    if (btnSubmitCancel) {
-        btnSubmitCancel.addEventListener('click', closeSubmitModal);
-    }
-    if (submitCloseBtn) {
-        submitCloseBtn.addEventListener('click', closeSubmitModal);
+    const timerInterval = setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // AUTO SUBMIT SAAT WAKTU HABIS
+    function autoSubmit() {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        submitAnswers();
     }
 
-    if (btnSubmitConfirm && formKuis) {
-        btnSubmitConfirm.addEventListener('click', () => {
-            formKuis.submit();
+    // NAVIGASI SOAL
+    const questionCards = document.querySelectorAll('.question-card');
+    const navBtns = document.querySelectorAll('.question-nav-btn');
+
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const questionNum = this.dataset.question;
+            const targetCard = document.getElementById(`question-${questionNum}`);
+            
+            if (targetCard) {
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                navBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            }
+        });
+    });
+
+    // UPDATE STATUS JAWABAN
+    const radioInputs = document.querySelectorAll('input[type="radio"]');
+    
+    function updateAnswerStatus() {
+        const answeredCount = document.querySelectorAll('input[type="radio"]:checked').length;
+        const totalQuestions = {{ $soal->count() }};
+        const unansweredCount = totalQuestions - answeredCount;
+        
+        document.getElementById('answeredCount').textContent = answeredCount;
+        document.getElementById('unansweredCount').textContent = unansweredCount;
+        
+        // Update navigasi
+        radioInputs.forEach(radio => {
+            if (radio.checked) {
+                const soalId = radio.name.match(/\[(.*?)\]/)[1];
+                const navBtn = document.querySelector(`[data-soal-id="${soalId}"]`);
+                if (navBtn) {
+                    navBtn.classList.add('answered');
+                }
+            }
         });
     }
+
+    radioInputs.forEach(radio => {
+        radio.addEventListener('change', updateAnswerStatus);
+    });
+
+    updateAnswerStatus();
+
+    // SUBMIT MODAL
+    const submitBtn = document.getElementById('submitQuizBtn');
+    const submitModal = document.getElementById('submitModal');
+    const closeModalBtn = document.getElementById('closeSubmitModal');
+    const cancelBtn = document.getElementById('cancelSubmit');
+    const confirmBtn = document.getElementById('confirmSubmit');
+
+    submitBtn.addEventListener('click', function() {
+        updateAnswerStatus();
+        submitModal.classList.add('show');
+    });
+
+    closeModalBtn.addEventListener('click', () => submitModal.classList.remove('show'));
+    cancelBtn.addEventListener('click', () => submitModal.classList.remove('show'));
+
+    confirmBtn.addEventListener('click', function() {
+        submitModal.classList.remove('show');
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        submitAnswers();
+    });
+
+    // SUBMIT JAWABAN
+    function submitAnswers() {
+        const formData = new FormData(document.getElementById('quizForm'));
+        
+        fetch(`/siswa/kuis/attempt/${attemptId}/submit`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect;
+            } else {
+                alert('Terjadi kesalahan: ' + (data.error || 'Unknown error'));
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Terjadi kesalahan saat submit jawaban');
+            document.getElementById('loadingOverlay').style.display = 'none';
+        });
+    }
+
+    // PREVENT ACCIDENTAL CLOSE
+    window.addEventListener('beforeunload', function(e) {
+        if (timeLeft > 0) {
+            e.preventDefault();
+            e.returnValue = 'Kuis belum selesai. Yakin ingin keluar?';
+        }
+    });
+});
 </script>
-@endpush
+@endsection

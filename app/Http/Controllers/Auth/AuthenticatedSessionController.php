@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Http\Requests\Auth\LoginRequest;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -22,22 +22,11 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
-        $role = strtolower(trim($user->role ?? ''));
 
-        if ($role === 'admin') {
-            return redirect()->intended('/admin/dashboard');
-        }
-
-        if ($role === 'guru') {
-            return redirect()->intended('/guru/dashboard');
-        }
-
-        if ($role === 'siswa') {
-            return redirect()->intended('/siswa/dashboard');
-        }
-
-        return redirect()->intended('/dashboard');
+        return redirect($user->getRedirectRoute());
     }
+
+
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
@@ -45,7 +34,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Setelah logout, arahkan ke halaman login
         return redirect()->route('login');
     }
 }

@@ -711,7 +711,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <a href="/guru/daftar" class="nav-link">Guru</a>
                 <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
             </nav>
 
@@ -908,9 +908,9 @@
                             SMK/SMA</a>
                     </div>
                 </li>
-                <li> <a href="{{ route('guru.index') }}" class="nav-link">Guru</a>
+                <li> <a href="/guru/daftar" class="nav-link">Guru</a>
                 </li>
-                <li><a href="{{ route('kontak') }}">konak</a>
+                <li> <a href="{{ route('kontak') }}">kontak</a>
             </ul>
         </div>
     </div>

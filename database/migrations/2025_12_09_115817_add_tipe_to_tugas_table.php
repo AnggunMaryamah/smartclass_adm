@@ -1,14 +1,16 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::table('tugas', function (Blueprint $table) {
-            $table->integer('durasi')
-                  ->default(5)
+            $table->enum('tipe', ['kuis', 'ujian_subbab', 'ujian_bab', 'ujian_akhir'])
+                  ->default('kuis')
                   ->after('status');
         });
     }
@@ -16,7 +18,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('tugas', function (Blueprint $table) {
-            $table->dropColumn('durasi');
+            $table->dropColumn('tipe');
         });
     }
 };

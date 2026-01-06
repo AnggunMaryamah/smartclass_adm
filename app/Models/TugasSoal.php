@@ -3,19 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo; 
 use Illuminate\Support\Str;
-use App\Models\Tugas;
 
 class TugasSoal extends Model
 {
-    protected $table = 'tugas_soals';
+    protected $table = 'tugas_soal_id';
     protected $keyType = 'string';
     public $incrementing = false;
 
     protected $fillable = [
-        'tugas_id', 'pertanyaan', 'pilihan_a', 'pilihan_b', 
-        'pilihan_c', 'pilihan_d', 'jawaban_benar',
+        'tugas_id',
+        'pertanyaan',
+        'pilihan_a',
+        'pilihan_b',
+        'pilihan_c',
+        'pilihan_d',
+        'jawaban_benar',
     ];
 
     protected static function boot()
@@ -28,7 +31,8 @@ class TugasSoal extends Model
         });
     }
 
-    public function tugas(): BelongsTo 
+    // Relasi ke Tugas
+    public function tugas()
     {
         return $this->belongsTo(Tugas::class, 'tugas_id');
     }

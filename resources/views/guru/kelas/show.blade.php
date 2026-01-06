@@ -75,6 +75,10 @@
                     <label>Durasi</label>
                     <p>{{ $kelas->durasi }}</p>
                 </div>
+                <div class="info-item full-width">
+                    <label>Jadwal</label>
+                    <p>{{ $kelas->jadwal_kelas ?? '-' }}</p>
+                </div>
             </div>
         </div>
 
