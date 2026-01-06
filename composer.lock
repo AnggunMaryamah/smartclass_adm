@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "91e3e24adbcc944415f1d81b4cd51c0e",
+    "content-hash": "b824c8b8d6a40530fd474128c2b7dc0b",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1905,16 +1905,16 @@
         },
         {
             "name": "laravel/socialite",
-            "version": "v5.23.2",
+            "version": "v5.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/socialite.git",
-                "reference": "41e65d53762d33d617bf0253330d672cb95e624b"
+                "reference": "1d19358c28e8951dde6e36603b89d8f09e6cfbfd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/socialite/zipball/41e65d53762d33d617bf0253330d672cb95e624b",
-                "reference": "41e65d53762d33d617bf0253330d672cb95e624b",
+                "url": "https://api.github.com/repos/laravel/socialite/zipball/1d19358c28e8951dde6e36603b89d8f09e6cfbfd",
+                "reference": "1d19358c28e8951dde6e36603b89d8f09e6cfbfd",
                 "shasum": ""
             },
             "require": {
@@ -1973,7 +1973,7 @@
                 "issues": "https://github.com/laravel/socialite/issues",
                 "source": "https://github.com/laravel/socialite"
             },
-            "time": "2025-11-21T14:00:38+00:00"
+            "time": "2025-12-09T15:37:06+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -9474,5 +9474,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
